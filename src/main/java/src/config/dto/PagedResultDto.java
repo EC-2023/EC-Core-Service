@@ -1,9 +1,9 @@
 package src.config.dto;
 
-import src.config.dto.payload.PagedResultDtoPayload;
+import lombok.Data;
 
 import java.util.List;
-
+@Data
 public class PagedResultDto<TDto> {
     public Pagination getPagination() {
         return pagination;
@@ -21,7 +21,7 @@ public class PagedResultDto<TDto> {
         this.pagination = pagination;
     }
 
-    public static <TDto>PagedResultDto<TDto> create(PagedResultDtoPayload<TDto> payload) {
-        return new PagedResultDto(payload.getPagination(), payload.getData());
+    public static <TDto>PagedResultDto<TDto> create( Pagination pagination , List<TDto> data) {
+        return new PagedResultDto(pagination, data);
     }
 }

@@ -19,7 +19,7 @@ public class GlobalExceptionFilter extends ResponseEntityExceptionHandler {
         errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorResponse.setPath(request.getRequestURL().toString() + "?" + request.getQueryString());
         errorResponse.setMessage(ex.getLocalizedMessage());
-        errorResponse.setError(ex.getCause() == null ? "Unknow" : ex.getCause().toString());
+        errorResponse.setError(ex.getCause() == null ? "Unknown" : ex.getCause().toString());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

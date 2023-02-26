@@ -1,6 +1,5 @@
 package src.config.dto;
 
-import src.config.dto.payload.PagedResultDtoPayload;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class SuccessResponsePagedDto <TDto>{
         this.pagination = pagination;
         this.success = true;
     }
-    public static <TDto>SuccessResponsePagedDto<TDto> create(PagedResultDtoPayload<TDto> payload) {
-        return new SuccessResponsePagedDto(payload.getPagination(), payload.getData());
+    public static <TDto>SuccessResponsePagedDto<TDto> create(Pagination pagination, List<TDto> data) {
+        return new SuccessResponsePagedDto(pagination, data);
     }
 }

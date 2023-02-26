@@ -2,12 +2,10 @@ package src;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import src.config.filter.GlobalExceptionFilter;
-import src.config.middleware.GlobalApiLoggerInterceptor;
+import src.config.mapper.AutoMappers;
 
 @SpringBootApplication
 @EnableWebMvc
@@ -17,6 +15,7 @@ public class main {
         return new GlobalExceptionFilter();
     }
     public static void main(String[] args) {
+        AutoMappers.create();
         SpringApplication.run(main.class, args);
         System.out.println("""
                 --------------------------------------------------------------------------------------------------------------------------------------------------------
