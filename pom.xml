@@ -16,8 +16,27 @@
     <properties>
         <java.version>17</java.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>springdoc</id>
+            <name>SpringDoc Maven Repository</name>
+            <url>https://maven.springframework.org/snapshot</url>
+        </repository>
+    </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>2.4.4</version>
+        </dependency>
+
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-core</artifactId>
+                <version>1.6.3-SNAPSHOT</version>
+            </dependency>
+
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -65,6 +84,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-spi</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
     </dependencies>

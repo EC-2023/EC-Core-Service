@@ -2,7 +2,6 @@ package src.config.filter;
 
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,7 +19,7 @@ public class GlobalExceptionFilter extends ResponseEntityExceptionHandler {
         errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         errorResponse.setPath(request.getRequestURL().toString() + "?" + request.getQueryString());
         errorResponse.setMessage(ex.getLocalizedMessage());
-        errorResponse.setError(((DataIntegrityViolationException) ex).getMostSpecificCause().toString());
+        errorResponse.setError(ex.getCause() == null ? "Unknow" : ex.getCause().toString());
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

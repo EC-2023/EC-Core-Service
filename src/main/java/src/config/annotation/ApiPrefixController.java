@@ -1,17 +1,20 @@
 package src.config.annotation;
 
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
+
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Component
-@RequestMapping("/api/")
+@RequestMapping("/api${path}")
 public @interface ApiPrefixController {
-    @AliasFor(annotation = Component.class)
-    String value() default "";
+    @AliasFor(annotation = RequestMapping.class, attribute = "path")
+    String[] value() default {};
+
+    @AliasFor(annotation = RequestMapping.class, attribute = "method")
+    RequestMethod[] method() default {};
 }

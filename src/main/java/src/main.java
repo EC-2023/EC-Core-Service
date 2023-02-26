@@ -2,9 +2,12 @@ package src;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import src.config.filter.GlobalExceptionFilter;
+import src.config.middleware.GlobalApiLoggerInterceptor;
 
 @SpringBootApplication
 @EnableWebMvc
@@ -13,7 +16,6 @@ public class main {
     public GlobalExceptionFilter globalExceptionFilter() {
         return new GlobalExceptionFilter();
     }
-
     public static void main(String[] args) {
         SpringApplication.run(main.class, args);
         System.out.println("""
