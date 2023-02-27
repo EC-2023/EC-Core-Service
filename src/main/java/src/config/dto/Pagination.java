@@ -1,5 +1,8 @@
 package src.config.dto;
 
+import lombok.Data;
+
+@Data
 public class Pagination {
 
     private int total;
