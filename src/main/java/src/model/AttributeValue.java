@@ -11,11 +11,11 @@ import java.util.UUID;
 public class AttributeValue {
 
     public UUID getAttributeValueId() {
-        return attributeValueId;
+        return Id;
     }
 
-    public void setAttributeValueId(UUID attributeValueId) {
-        this.attributeValueId = attributeValueId;
+    public void setAttributeValueId(UUID Id) {
+        this.Id = Id;
     }
 
     public String getName() {
@@ -35,19 +35,19 @@ public class AttributeValue {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     public UUID getAttribute_id() {
@@ -77,7 +77,7 @@ public class AttributeValue {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "attribute_value_id", nullable = false)
-    private UUID attributeValueId;
+    private UUID Id;
 
     @Basic
     @Column(name = "name", nullable = true)
@@ -88,12 +88,12 @@ public class AttributeValue {
     private Boolean isDeleted;
 
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate;
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
 
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
 
     @Basic
     @Column(name = "attribute_id", nullable = true)
@@ -149,12 +149,12 @@ public class AttributeValue {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AttributeValue cartItems = (AttributeValue) o;
-        return attributeValueId == cartItems.attributeValueId && name == cartItems.name && product_id == cartItems.product_id
+        return Id == cartItems.Id && name == cartItems.name && product_id == cartItems.product_id
                 && attribute_id == cartItems.attribute_id && orderItem_id == cartItems.orderItem_id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(attribute_id, attributeValueId, name, product_id, orderItem_id);
+        return Objects.hash(attribute_id, Id, name, product_id, orderItem_id);
     }
 }

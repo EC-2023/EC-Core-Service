@@ -12,7 +12,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "review_id", nullable = false)
-    private UUID reviewId;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -28,11 +28,17 @@ public class Review {
     @Basic
     @Column(name = "rating", nullable = false)
     private int rating;
+
+
+
     @Basic
-    @Column(name = "createDate", nullable = false)
+    @Column(name = "is_deleted", nullable = true)
+    private Boolean isDeleted = false;
+    @Basic
+    @Column(name = "createAt", nullable = false)
     private Date createDate;
     @Basic
-    @Column(name = "updateDate", nullable = true)
+    @Column(name = "updateAt", nullable = true)
     private Date updateDate;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
@@ -45,11 +51,11 @@ public class Review {
     private Store storeByStoreId;
 
     public UUID getReviewId() {
-        return reviewId;
+        return Id;
     }
 
-    public void setReviewId(UUID reviewId) {
-        this.reviewId = reviewId;
+    public void setReviewId(UUID Id) {
+        this.Id = Id;
     }
 
     public UUID getUserId() {
@@ -59,7 +65,13 @@ public class Review {
     public void setUserId(UUID userId) {
         this.userId = userId;
     }
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
 
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
     public UUID getProductId() {
         return productId;
     }
@@ -113,12 +125,12 @@ public class Review {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Review review = (Review) o;
-        return reviewId == review.reviewId && userId == review.userId && rating == review.rating && Objects.equals(productId, review.productId) && Objects.equals(storeId, review.storeId) && Objects.equals(content, review.content) && Objects.equals(createDate, review.createDate) && Objects.equals(updateDate, review.updateDate);
+        return Id == review.Id && userId == review.userId && rating == review.rating && Objects.equals(productId, review.productId) && Objects.equals(storeId, review.storeId) && Objects.equals(content, review.content) && Objects.equals(createDate, review.createDate) && Objects.equals(updateDate, review.updateDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reviewId, userId, productId, storeId, content, rating, createDate, updateDate);
+        return Objects.hash(Id, userId, productId, storeId, content, rating, createDate, updateDate);
     }
 
     public User getUserByUserId() {

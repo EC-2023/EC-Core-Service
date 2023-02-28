@@ -12,7 +12,7 @@ public class StoreLevel {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "store_level_id", nullable = false)
-    private UUID storeLevelId;
+    private UUID Id;
     @Basic
     @Column(name = "name", nullable = false, length = 255)
     private String name;
@@ -23,20 +23,20 @@ public class StoreLevel {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate= new Date(new java.util.Date().getTime());
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "storeLevel",fetch = FetchType.EAGER)
     private Collection<Store> stores;
 
     public UUID getStoreLevelId() {
-        return storeLevelId;
+        return Id;
     }
 
     public void setStoreLevelId(UUID storeLevelId) {
-        this.storeLevelId = storeLevelId;
+        this.Id = storeLevelId;
     }
 
     public Collection<Store> getStores() {
@@ -68,19 +68,19 @@ public class StoreLevel {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
 

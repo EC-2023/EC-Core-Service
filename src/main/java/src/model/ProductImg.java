@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class ProductImg {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "id_image", nullable = false)
-    private UUID idImage;
+    private UUID Id;
     @Basic
     @Column(name = "product_id", nullable = false)
     private UUID productId;
@@ -21,16 +22,49 @@ public class ProductImg {
     @Basic
     @Column(name = "location", nullable = true, length = 255)
     private String location;
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted = false;
+    @Basic
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable=false, updatable=false)
     private Product productByProductId;
 
     public UUID getIdImage() {
-        return idImage;
+        return Id;
     }
 
-    public void setIdImage(UUID idImage) {
-        this.idImage = idImage;
+    public void setIdImage(UUID Id) {
+        this.Id = Id;
     }
 
     public UUID getProductId() {
@@ -62,12 +96,12 @@ public class ProductImg {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProductImg that = (ProductImg) o;
-        return idImage == that.idImage && productId == that.productId && Objects.equals(fileName, that.fileName) && Objects.equals(location, that.location);
+        return Id == that.Id && productId == that.productId && Objects.equals(fileName, that.fileName) && Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idImage, productId, fileName, location);
+        return Objects.hash(Id, productId, fileName, location, isDeleted, createAt, updateAt);
     }
 
     public Product getProductByProductId() {

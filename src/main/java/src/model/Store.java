@@ -13,7 +13,7 @@ public class Store {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "store_id", nullable = false)
-    private UUID storeId;
+    private UUID Id;
     @Basic
     @Column(name = "name", nullable = false, length = 255)
     private String name;
@@ -47,12 +47,48 @@ public class Store {
     @Basic
     @Column(name = "e_wallet", nullable = true, precision = 0)
     private Double eWallet = 0D;
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
     @Basic
-    @Column(name = "createDate", nullable = true)
-    private Date createDate = new Date(new java.util.Date().getTime());
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted= false;
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "createAt", nullable = true)
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "storeByStoreId")
     private Collection<Orders> ordersByStoreId;
     @OneToMany(mappedBy = "storeByStoreId")
@@ -84,11 +120,11 @@ public class Store {
     }
 
     public UUID getStoreId() {
-        return storeId;
+        return Id;
     }
 
     public void setStoreId(UUID storeId) {
-        this.storeId = storeId;
+        this.Id = storeId;
     }
 
     public String getName() {
@@ -180,19 +216,19 @@ public class Store {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -200,12 +236,12 @@ public class Store {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Store store = (Store) o;
-        return storeId == store.storeId && ownId == store.ownId && commissionId == store.commissionId && isActive == store.isActive && Objects.equals(name, store.name) && Objects.equals(bio, store.bio) && Objects.equals(avatar, store.avatar) && Objects.equals(cover, store.cover) && Objects.equals(featuredImages, store.featuredImages) && Objects.equals(point, store.point) && Objects.equals(rating, store.rating) && Objects.equals(eWallet, store.eWallet) && Objects.equals(createDate, store.createDate) && Objects.equals(updateDate, store.updateDate);
+        return Id == store.Id && ownId == store.ownId && commissionId == store.commissionId && isActive == store.isActive && Objects.equals(name, store.name) && Objects.equals(bio, store.bio) && Objects.equals(avatar, store.avatar) && Objects.equals(cover, store.cover) && Objects.equals(featuredImages, store.featuredImages) && Objects.equals(point, store.point) && Objects.equals(rating, store.rating) && Objects.equals(eWallet, store.eWallet) && Objects.equals(createAt, store.createAt) && Objects.equals(updateAt, store.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(storeId, name, ownId, commissionId, bio, isActive, avatar, cover, featuredImages, point, rating, eWallet, createDate, updateDate);
+        return Objects.hash(Id, name, ownId, commissionId, bio, isActive, avatar, cover, featuredImages, point, rating, eWallet, isDeleted, createAt, updateAt);
     }
 
     public Collection<Orders> getOrdersByStoreId() {

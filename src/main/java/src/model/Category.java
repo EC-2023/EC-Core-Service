@@ -13,7 +13,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "category_id", nullable = false)
-    private UUID categoryId;
+    private UUID Id;
     @Basic
     @Column(name = "parent_category_id", nullable = true)
     private UUID parentCategoryId = null;
@@ -27,11 +27,11 @@ public class Category {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate= new Date(new java.util.Date().getTime());
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
 //    @ManyToOne
 //    @JoinColumn(name = "parent_category_id", referencedColumnName = "category_id", insertable=false, updatable=false)
 //    private Category categoryByParentCategoryId;
@@ -44,11 +44,11 @@ public class Category {
     private Collection<Attribute> attributesByCategoryId;
 
     public UUID getCategoryId() {
-        return categoryId;
+        return Id;
     }
 
-    public void setCategoryId(UUID categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryId(UUID Id) {
+        this.Id = Id;
     }
 
 //    public Integer getParentCategoryId() {
@@ -84,19 +84,19 @@ public class Category {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -104,12 +104,12 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Category category = (Category) o;
-        return categoryId == category.categoryId && Objects.equals(name, category.name) && Objects.equals(image, category.image) && Objects.equals(isDeleted, category.isDeleted) && Objects.equals(createDate, category.createDate) && Objects.equals(updateDate, category.updateDate);
+        return Id == category.Id && Objects.equals(name, category.name) && Objects.equals(image, category.image) && Objects.equals(isDeleted, category.isDeleted) && Objects.equals(createAt, category.createAt) && Objects.equals(updateAt, category.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(categoryId, name, image, isDeleted, createDate, updateDate);
+        return Objects.hash(Id, name, image, isDeleted, createAt, updateAt);
     }
 
 //    public Category getCategoryByParentCategoryId() {

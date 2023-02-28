@@ -12,7 +12,7 @@ import src.config.annotation.SetMetadata;
 @Component
 public class SetMetadataAspect {
     @Autowired
-        private MetadataService metadataService;
+    private MetadataService metadataService;
 
     @Around("@annotation(src.config.annotation.SetMetadata)")
     public Object setMetadata(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -20,13 +20,10 @@ public class SetMetadataAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         SetMetadata setMetadata = signature.getMethod().getAnnotation(SetMetadata.class);
         String metadataValue = setMetadata.value();
-
         // Call the method
         Object result = joinPoint.proceed();
-
         // Set the metadata using the MetadataService
         metadataService.setMetadata(metadataValue);
-
         // Return the result of the method call
         return result;
     }

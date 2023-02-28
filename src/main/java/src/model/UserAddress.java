@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class UserAddress {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "address_id", nullable = false)
-    private UUID addressId;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -20,7 +21,7 @@ public class UserAddress {
     private String country;
     @Basic
     @Column(name = "city", nullable = false, length = 255)
-    private String city;
+    private String city = "Viet Nam";
 
     @Basic
     @Column(name = "district", nullable = false, length = 255)
@@ -37,16 +38,51 @@ public class UserAddress {
     @Basic
     @Column(name = "name_recipient", nullable = false, length = 50)
     private String nameRecipient;
+
+    public Boolean getDelete() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean delete) {
+        isDeleted = delete;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted = false;
+    @Basic
+    @Column(name = "createAt", nullable = true)
+    private Date createAt = new Date(new java.util.Date().getTime());
+
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByUserId;
 
     public UUID getAddressId() {
-        return addressId;
+        return Id;
     }
 
     public void setAddressId(UUID addressId) {
-        this.addressId = addressId;
+        this.Id = addressId;
     }
 
     public UUID getUserId() {
@@ -119,14 +155,14 @@ public class UserAddress {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserAddress that = (UserAddress) o;
-        return addressId == that.addressId && userId == that.userId && Objects.equals(country, that.country) && Objects.equals(city, that.city) && Objects.equals(ward, that.ward)
+        return Id == that.Id && userId == that.userId && Objects.equals(country, that.country) && Objects.equals(city, that.city) && Objects.equals(ward, that.ward)
                 && Objects.equals(district, that.district) && Objects.equals(zipcode, that.zipcode) && Objects.equals(numberPhone, that.numberPhone)
                 && Objects.equals(nameRecipient, that.nameRecipient);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(addressId, userId, country, city, ward, district, zipcode, numberPhone, nameRecipient);
+        return Objects.hash(Id, userId, country, city, ward, district, zipcode, numberPhone, nameRecipient, createAt, updateAt, isDeleted);
     }
 
     public User getUserByUserId() {

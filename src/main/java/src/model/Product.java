@@ -13,7 +13,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "product_id", nullable = false)
-    private UUID productId;
+    private UUID Id;
     @Basic
     @Column(name = "name", nullable = false, length = 255)
     private String name;
@@ -45,12 +45,18 @@ public class Product {
 
     @Column(name = "rating", nullable = false, precision = 0)
     private double rating;
+
+
+
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate;
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted= false;
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "category_id", nullable = true)
     private UUID categoryId;
@@ -74,12 +80,8 @@ public class Product {
     private Collection<Review> reviewsByProductId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<UserFollowProduct> userFollowProductsByProductId;
-
-    public Product() {
-    }
-
     public Product(String name, String description, double price, Double promotionalPrice,
-                   int quantity, boolean isActive, String video, UUID storeId, Date createDate, UUID categoryId) {
+                   int quantity, boolean isActive, String video, UUID storeId, Date createAt, UUID categoryId) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -88,7 +90,7 @@ public class Product {
         this.isActive = isActive;
         this.video = video;
         this.storeId = storeId;
-        this.createDate = createDate;
+        this.createAt = createAt;
         this.categoryId = categoryId;
     }
 
@@ -101,11 +103,11 @@ public class Product {
     }
 
     public UUID getProductId() {
-        return productId;
+        return Id;
     }
 
-    public void setProductId(UUID productId) {
-        this.productId = productId;
+    public void setProductId(UUID Id) {
+        this.Id = Id;
     }
 
     public String getName() {
@@ -138,6 +140,45 @@ public class Product {
 
     public void setPromotionalPrice(Double promotionalPrice) {
         this.promotionalPrice = promotionalPrice;
+    }
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public Collection<Attribute> getAttributesByProductId() {
+        return attributesByProductId;
+    }
+
+    public void setAttributesByProductId(Collection<Attribute> attributesByProductId) {
+        this.attributesByProductId = attributesByProductId;
+    }
+
+    public Collection<AttributeValue> getAttributesValueByProductId() {
+        return attributesValueByProductId;
+    }
+
+    public void setAttributesValueByProductId(Collection<AttributeValue> attributesValueByProductId) {
+        this.attributesValueByProductId = attributesValueByProductId;
     }
 
     public int getQuantity() {
@@ -189,19 +230,19 @@ public class Product {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     public UUID getCategoryId() {
@@ -217,12 +258,12 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return productId == product.productId && Double.compare(product.price, price) == 0 && quantity == product.quantity && sold == product.sold && isActive == product.isActive && storeId == product.storeId && Double.compare(product.rating, rating) == 0 && Objects.equals(name, product.name) && Objects.equals(description, product.description) && Objects.equals(promotionalPrice, product.promotionalPrice) && Objects.equals(video, product.video) && Objects.equals(createDate, product.createDate) && Objects.equals(updateDate, product.updateDate) && Objects.equals(categoryId, product.categoryId);
+        return Id == product.Id && Double.compare(product.price, price) == 0 && quantity == product.quantity && sold == product.sold && isActive == product.isActive && storeId == product.storeId && Double.compare(product.rating, rating) == 0 && Objects.equals(name, product.name) && Objects.equals(description, product.description) && Objects.equals(promotionalPrice, product.promotionalPrice) && Objects.equals(video, product.video) && Objects.equals(createAt, product.createAt) && Objects.equals(updateAt, product.updateAt) && Objects.equals(categoryId, product.categoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, name, description, price, promotionalPrice, quantity, sold, isActive, video, storeId, rating, createDate, updateDate, categoryId);
+        return Objects.hash(Id, name, description, price, promotionalPrice, quantity, sold, isActive, video, storeId, rating, createAt, updateAt, isDeleted, categoryId);
     }
 
     public Collection<CartItems> getCartItemsByProductId() {

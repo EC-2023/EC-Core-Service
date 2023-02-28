@@ -13,7 +13,7 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "order_id", nullable = false)
-    private UUID orderId;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -44,12 +44,17 @@ public class Orders {
     @Basic
     @Column(name = "amountToGD", nullable = false, precision = 0)
     private double amountToGd;
+
+
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate;
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted= false;
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByUserId;
@@ -61,13 +66,36 @@ public class Orders {
     private Delivery deliveryByDeliveryId;
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private Collection<OrderItems> item;
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
 
     public UUID getOrderId() {
-        return orderId;
+        return Id;
     }
 
     public void setOrderId(UUID orderId) {
-        this.orderId = orderId;
+        this.Id = orderId;
     }
 
     public UUID getUserId() {
@@ -152,19 +180,19 @@ public class Orders {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -172,12 +200,12 @@ public class Orders {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Orders orders = (Orders) o;
-        return orderId == orders.orderId && userId == orders.userId && storeId == orders.storeId && deliveryId == orders.deliveryId && status == orders.status && isPaidBefore == orders.isPaidBefore && Double.compare(orders.amountFromUser, amountFromUser) == 0 && Double.compare(orders.amountToStore, amountToStore) == 0 && Double.compare(orders.amountToGd, amountToGd) == 0 && Objects.equals(address, orders.address) && Objects.equals(phone, orders.phone) && Objects.equals(createDate, orders.createDate) && Objects.equals(updateDate, orders.updateDate);
+        return Id == orders.Id && userId == orders.userId && storeId == orders.storeId && deliveryId == orders.deliveryId && status == orders.status && isPaidBefore == orders.isPaidBefore && Double.compare(orders.amountFromUser, amountFromUser) == 0 && Double.compare(orders.amountToStore, amountToStore) == 0 && Double.compare(orders.amountToGd, amountToGd) == 0 && Objects.equals(address, orders.address) && Objects.equals(phone, orders.phone) && Objects.equals(createAt, orders.createAt) && Objects.equals(updateAt, orders.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, userId, storeId, deliveryId, address, phone, status, isPaidBefore, amountFromUser, amountToStore, amountToGd, createDate, updateDate);
+        return Objects.hash(Id, userId, storeId, deliveryId, address, phone, status, isPaidBefore, amountFromUser, amountToStore, amountToGd, createAt, updateAt, isDeleted);
     }
 
     public User getUserByUserId() {
@@ -214,7 +242,7 @@ public class Orders {
 
     @Override
     public String toString() {
-        return orderId + ", \n"
-                + createDate + ",\n";
+        return Id + ", \n"
+                + createAt + ",\n";
     }
 }

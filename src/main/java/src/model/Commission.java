@@ -13,7 +13,7 @@ public class Commission {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "commissionId", nullable = false)
-    private UUID commissionId;
+    private UUID Id;
     @Basic
     @Column(name = "name", nullable = false, length = 255)
     private String name;
@@ -29,20 +29,20 @@ public class Commission {
     private Boolean isDeleted = false;
 
     @Basic
-    @Column(name = "createDate", nullable = false, updatable = false)
-    private Date createDate = new Date(new java.util.Date().getTime());
+    @Column(name = "createAt", nullable = false, updatable = false)
+    private Date createAt = new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "commissionByCommissionId")
     private Collection<Store> storesByCommissionId;
 
     public UUID getCommissionId() {
-        return commissionId;
+        return Id;
     }
 
     public void setCommissionId(UUID commissionId) {
-        this.commissionId = commissionId;
+        this.Id = commissionId;
     }
 
     public String getName() {
@@ -78,19 +78,19 @@ public class Commission {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -98,12 +98,12 @@ public class Commission {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Commission that = (Commission) o;
-        return commissionId == that.commissionId && Double.compare(that.cost, cost) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(isDeleted, that.isDeleted) && Objects.equals(createDate, that.createDate) && Objects.equals(updateDate, that.updateDate);
+        return Id == that.Id && Double.compare(that.cost, cost) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(isDeleted, that.isDeleted) && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(commissionId, name, cost, description, isDeleted, createDate, updateDate);
+        return Objects.hash(Id, name, cost, description, isDeleted, createAt, updateAt);
     }
 
     public Collection<Store> getStoresByCommissionId() {

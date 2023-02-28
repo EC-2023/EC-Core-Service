@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -12,19 +13,53 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "role_id", nullable = false)
-    private UUID roleId;
+    private UUID Id;
     @Basic
     @Column(name = "name", nullable = false, length = 10)
     private String name;
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted= false;
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    @Basic
+    @Column(name = "createAt", nullable = true)
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "roleByRoleId")
     private Collection<User> usersByRoleId;
 
     public UUID getRoleId() {
-        return roleId;
+        return Id;
     }
 
     public void setRoleId(UUID roleId) {
-        this.roleId = roleId;
+        this.Id = roleId;
     }
 
     public String getName() {
@@ -40,12 +75,12 @@ public class Role {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return roleId == role.roleId && Objects.equals(name, role.name);
+        return Id == role.Id && Objects.equals(name, role.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleId, name);
+        return Objects.hash(Id, name,  isDeleted, createAt, updateAt);
     }
 
     public Collection<User> getUsersByRoleId() {

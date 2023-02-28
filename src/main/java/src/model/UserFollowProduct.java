@@ -12,7 +12,7 @@ public class UserFollowProduct {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "id", nullable = false)
-    private UUID id;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -23,11 +23,11 @@ public class UserFollowProduct {
     @Column(name = "isDeleted", nullable = false)
     private boolean isDeleted;
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate;
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByUserId;
@@ -36,11 +36,11 @@ public class UserFollowProduct {
     private Product productByProductId;
 
     public UUID getId() {
-        return id;
+        return Id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public UUID getUserId() {
@@ -68,19 +68,19 @@ public class UserFollowProduct {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -88,12 +88,12 @@ public class UserFollowProduct {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserFollowProduct that = (UserFollowProduct) o;
-        return id == that.id && userId == that.userId && productId == that.productId && isDeleted == that.isDeleted && Objects.equals(createDate, that.createDate) && Objects.equals(updateDate, that.updateDate);
+        return Id == that.Id && userId == that.userId && productId == that.productId && isDeleted == that.isDeleted && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, productId, isDeleted, createDate, updateDate);
+        return Objects.hash(Id, userId, productId, isDeleted, createAt, updateAt);
     }
 
     public User getUserByUserId() {

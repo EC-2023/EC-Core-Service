@@ -13,7 +13,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    private UUID Id;
     @Basic
     @Column(name = "user_level_id", nullable = false)
     private UUID userLevelId;
@@ -99,11 +99,11 @@ public class User {
     private Collection<UserFollowStore> userFollowStoresByUserId;
 
     public UUID getUserId() {
-        return userId;
+        return Id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUserId(UUID Id) {
+        this.Id = Id;
     }
 
     public UUID getUserLevelId() {
@@ -223,8 +223,8 @@ public class User {
         return createdAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createdAt = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createdAt = createAt;
     }
 
     public Date getUpdatedAt() {
@@ -272,7 +272,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return userId == user.userId && userLevelId == user.userLevelId &&
+        return Id == user.Id && userLevelId == user.userLevelId &&
                 isRequiredVerify == user.isRequiredVerify &&
                 point == user.point
                 && Double.compare(user.eWallet, eWallet) == 0
@@ -295,7 +295,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, userLevelId, firstName, lastName, isRequiredVerify, middleName, displayName,
+        return Objects.hash(Id, userLevelId, firstName, lastName, isRequiredVerify, middleName, displayName,
                 idCard, email, middleName, displayName, hashedPassword, avatar, point, eWallet,
                 createdAt, updatedAt, isDeleted, roleId, phoneNumber, storeEmpId);
     }

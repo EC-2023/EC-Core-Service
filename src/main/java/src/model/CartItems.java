@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
+import java.sql.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "id", nullable = false)
-    private UUID id;
+    private UUID Id;
     @Basic
     @Column(name = "cart_id", nullable = false)
     private UUID cartId;
@@ -21,19 +22,53 @@ public class CartItems {
     @Basic
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+
+
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted = false;
+    @Basic
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "cart_id", nullable = false, insertable=false, updatable=false)
     private Cart cartByCartId;
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable=false, updatable=false)
     private Product productByProductId;
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
 
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
     public UUID getId() {
-        return id;
+        return Id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public UUID getCartId() {
@@ -65,12 +100,12 @@ public class CartItems {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CartItems cartItems = (CartItems) o;
-        return id == cartItems.id && cartId == cartItems.cartId && productId == cartItems.productId && quantity == cartItems.quantity;
+        return Id == cartItems.Id && cartId == cartItems.cartId && productId == cartItems.productId && quantity == cartItems.quantity;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cartId, productId, quantity);
+        return Objects.hash(Id, cartId, productId, quantity, isDeleted, createAt, updateAt);
     }
 
     public Cart getCartByCartId() {

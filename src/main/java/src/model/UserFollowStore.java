@@ -12,22 +12,39 @@ public class UserFollowStore {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "id", nullable = false)
-    private UUID id;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
     @Basic
     @Column(name = "store_id", nullable = false)
     private UUID storeId;
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate= new Date(new java.util.Date().getTime());
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
     private User userByUserId;
@@ -36,11 +53,11 @@ public class UserFollowStore {
     private Store storeByStoreId;
 
     public UUID getId() {
-        return id;
+        return Id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setId(UUID Id) {
+        this.Id = Id;
     }
 
     public UUID getUserId() {
@@ -68,19 +85,19 @@ public class UserFollowStore {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -88,12 +105,12 @@ public class UserFollowStore {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserFollowStore that = (UserFollowStore) o;
-        return id == that.id && userId == that.userId && storeId == that.storeId && Objects.equals(isDeleted, that.isDeleted) && Objects.equals(createDate, that.createDate) && Objects.equals(updateDate, that.updateDate);
+        return Id == that.Id && userId == that.userId && storeId == that.storeId && Objects.equals(isDeleted, that.isDeleted) && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, storeId, isDeleted, createDate, updateDate);
+        return Objects.hash(Id, userId, storeId, isDeleted, createAt, updateAt);
     }
 
     public User getUserByUserId() {

@@ -13,7 +13,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "cart_id", nullable = false)
-    private UUID cartId;
+    private UUID Id;
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -21,11 +21,11 @@ public class Cart {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted;
     @Basic
-    @Column(name = "createDate", nullable = false)
-    private Date createDate;
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateDate", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByUserId;
@@ -33,11 +33,11 @@ public class Cart {
     private Collection<CartItems> cartItemsByCartId;
 
     public UUID getCartId() {
-        return cartId;
+        return Id;
     }
 
-    public void setCartId(UUID cartId) {
-        this.cartId = cartId;
+    public void setCartId(UUID Id) {
+        this.Id = Id;
     }
 
     public UUID getUserId() {
@@ -57,19 +57,19 @@ public class Cart {
     }
 
     public Date getCreateDate() {
-        return createDate;
+        return createAt;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date createAt) {
+        this.createAt = createAt;
     }
 
     public Date getUpdateDate() {
-        return updateDate;
+        return updateAt;
     }
 
-    public void setUpdateDate(Date updateDate) {
-        this.updateDate = updateDate;
+    public void setUpdateDate(Date updateAt) {
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -77,12 +77,12 @@ public class Cart {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cart cart = (Cart) o;
-        return cartId == cart.cartId && userId == cart.userId && Objects.equals(isDeleted, cart.isDeleted) && Objects.equals(createDate, cart.createDate) && Objects.equals(updateDate, cart.updateDate);
+        return Id == cart.Id && userId == cart.userId && Objects.equals(isDeleted, cart.isDeleted) && Objects.equals(createAt, cart.createAt) && Objects.equals(updateAt, cart.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cartId, userId, isDeleted, createDate, updateDate);
+        return Objects.hash(Id, userId, isDeleted, createAt, updateAt);
     }
 
     public User getUserByUserId() {
