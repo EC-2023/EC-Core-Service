@@ -80,19 +80,19 @@ public class Product {
     private Collection<Review> reviewsByProductId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<UserFollowProduct> userFollowProductsByProductId;
-    public Product(String name, String description, double price, Double promotionalPrice,
-                   int quantity, boolean isActive, String video, UUID storeId, Date createAt, UUID categoryId) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.promotionalPrice = promotionalPrice;
-        this.quantity = quantity;
-        this.isActive = isActive;
-        this.video = video;
-        this.storeId = storeId;
-        this.createAt = createAt;
-        this.categoryId = categoryId;
-    }
+//    public Product(String name, String description, double price, Double promotionalPrice,
+//                   int quantity, boolean isActive, String video, UUID storeId, Date createAt, UUID categoryId) {
+//        this.name = name;
+//        this.description = description;
+//        this.price = price;
+//        this.promotionalPrice = promotionalPrice;
+//        this.quantity = quantity;
+//        this.isActive = isActive;
+//        this.video = video;
+//        this.storeId = storeId;
+//        this.createAt = createAt;
+//        this.categoryId = categoryId;
+//    }
 
     public Store getStoreByStoreId() {
         return storeByStoreId;
