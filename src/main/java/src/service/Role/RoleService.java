@@ -42,7 +42,7 @@ public class RoleService {
     @Async
     public CompletableFuture<RoleDto> create(RoleCreateDto input) {
         Role role = roleRepository.save(toDto.map(input, Role.class));
-        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(role), RoleDto.class));
+        return CompletableFuture.completedFuture(toDto.map(role, RoleDto.class));
     }
 
     @Async

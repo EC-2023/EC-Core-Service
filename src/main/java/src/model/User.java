@@ -1,15 +1,15 @@
 package src.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.sql.Date;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "user_id", nullable = false)
@@ -45,10 +45,10 @@ public class User {
     @Column(name = "last_login")
     private Date lastLogin;
     @Basic
-    @Column(name = "hashed_password", nullable = false, length = 50)
+    @Column(name = "hashed_password", nullable = false, length = 100)
     private String hashedPassword;
     @Basic
-    @Column(name = "avatar", nullable = true, length = 255)
+    @Column(name = "avatar", length = 255)
     private String avatar;
     @Basic
     @Column(name = "point", nullable = false)
@@ -57,19 +57,19 @@ public class User {
     @Column(name = "e_wallet", nullable = false, precision = 0)
     private double eWallet;
     @Basic
-    @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    @Column(name = "created_at")
+    private Date createAt = new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updated_at", nullable = true)
-    private Date updatedAt;
+    @Column(name = "updated_at")
+    private Date updateAt = new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "is_deleted", nullable = true)
+    @Column(name = "is_deleted")
     private Boolean isDeleted = false;
     @Basic
     @Column(name = "role_id", nullable = false)
     private UUID roleId;
     @Basic
-    @Column(name = "phone_number", nullable = true, length = 10)
+    @Column(name = "phone_number", length = 10)
     private String phoneNumber;
     @Basic
     @Column(name = "store_emp_id", nullable = true)
@@ -88,6 +88,42 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false, insertable = false, updatable = false)
     private Role roleByRoleId;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(roleByRoleId.getName()));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.hashedPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !this.isDeleted;
+    }
+
     @ManyToOne
     @JoinColumn(name = "store_emp_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     private Store storeByStoreEmpId;
@@ -114,11 +150,55 @@ public class User {
         this.userLevelId = userLevelId;
     }
 
-    public String getFirstname() {
+    public UUID getId() {
+        return Id;
+    }
+
+    public void setId(UUID id) {
+        Id = id;
+    }
+
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstname(String firstname) {
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public Date getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(Date updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setFirstname(String firstName) {
         this.firstName = firstName;
     }
 
@@ -220,19 +300,19 @@ public class User {
     }
 
     public Date getCreateDate() {
-        return createdAt;
+        return createAt;
     }
 
     public void setCreateDate(Date createAt) {
-        this.createdAt = createAt;
+        this.createAt = createAt;
     }
 
     public Date getUpdatedAt() {
-        return updatedAt;
+        return updateAt;
     }
 
     public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+        this.updateAt = updatedAt;
     }
 
     public Boolean getDeleted() {
@@ -285,8 +365,8 @@ public class User {
                 && Objects.equals(email, user.email)
                 && Objects.equals(hashedPassword, user.hashedPassword)
                 && Objects.equals(avatar, user.avatar)
-                && Objects.equals(createdAt, user.createdAt)
-                && Objects.equals(updatedAt, user.updatedAt)
+                && Objects.equals(createAt, user.createAt)
+                && Objects.equals(updateAt, user.updateAt)
                 && Objects.equals(verifiedAt, user.verifiedAt)
                 && Objects.equals(lastLogin, user.lastLogin)
                 && Objects.equals(isDeleted, user.isDeleted)
@@ -297,7 +377,7 @@ public class User {
     public int hashCode() {
         return Objects.hash(Id, userLevelId, firstName, lastName, isRequiredVerify, middleName, displayName,
                 idCard, email, middleName, displayName, hashedPassword, avatar, point, eWallet,
-                createdAt, updatedAt, isDeleted, roleId, phoneNumber, storeEmpId);
+                createAt, updateAt, isDeleted, roleId, phoneNumber, storeEmpId);
     }
 
     public Collection<Cart> getCartsByUserId() {

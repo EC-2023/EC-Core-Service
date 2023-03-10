@@ -2,7 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -14,6 +14,7 @@ public class Role {
     @Id
     @Column(name = "role_id", nullable = false)
     private UUID Id;
+
     @Basic
     @Column(name = "name", nullable = false, length = 10)
     private String name;

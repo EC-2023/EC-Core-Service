@@ -2,7 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;

@@ -1,7 +1,12 @@
 package src.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -19,31 +24,27 @@ public class AppConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(globalApiLoggerInterceptor);
     }
+
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.addPathPrefix("api/v1", HandlerTypePredicate.forAnnotation(ApiPrefixController.class));
     }
-//    @Override
-//    public void configurePathMatch(PathMatchConfigurer configurer) {
-//        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false) {
-//            @Override
-//            protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
-//                return true;
-//            }
-//        };
-//        provider.addIncludeFilter(new AnnotationTypeFilter(PrefixMapping.class));
-//
-//        String pkgName = "src.config.annotation";
-//        provider.findCandidateComponents(pkgName).forEach(bean -> {
-//            try {
-//                String className = bean.getBeanClassName();
-//                Class<? extends Annotation> clz = (Class<? extends Annotation>) Class.forName(className);
-//
-//                String prefix = clz.getDeclaredAnnotation(PrefixMapping.class).value();
-//                configurer.addPathPrefix(prefix, HandlerTypePredicate.forAnnotation(clz));
-//            } catch (ClassNotFoundException | ClassCastException e) {
-//                e.printStackTrace(System.err);
-//            }
-//        });
+//    @Bean
+//    public AuthenticationProvider authenticationProvider() {
+//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//        authProvider.setUserDetailsService(userDetailsService());
+//        authProvider.setPasswordEncoder(passwordEncoder());
+//        return authProvider;
 //    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
 }

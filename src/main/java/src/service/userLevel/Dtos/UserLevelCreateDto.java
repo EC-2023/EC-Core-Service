@@ -10,5 +10,5 @@ public class UserLevelCreateDto {
     @JsonProperty(value = "min point", required = true, defaultValue = "0")
     private int minPoint;
     @JsonProperty(value = "discount", required = true, defaultValue = "0")
-    private Double discount;
+        private Double discount;
 }

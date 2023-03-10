@@ -39,6 +39,7 @@ public class UserController {
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserDto> create(@RequestBody UserCreateDto input) {
+
         return userService.create(input);
     }
 

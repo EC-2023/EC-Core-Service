@@ -15,13 +15,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@ApiPrefixController(value = "/userlevels")
+
+@ApiPrefixController(value = "/userlevels") ///  api/v1/userlevels
 public class UserLevelController {
     @Autowired
     private UserLevelService userlevelService;
 
-
-    @GetMapping( "/{id}")
+    @GetMapping("/{id}")
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserLevelDto> findOneById(@PathVariable UUID id) {
@@ -32,7 +32,7 @@ public class UserLevelController {
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserLevelDto>> findAll() {
-       return userlevelService.getAll();
+        return userlevelService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

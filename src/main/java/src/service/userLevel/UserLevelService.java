@@ -17,14 +17,17 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class UserLevelService {
+public class UserLevelService  {
+    // @Inject
     @Autowired
-    private IUserLevelRepository userlevelRepository;
+    private IUserLevelRepository userlevelRepository  ;
     @Autowired
     private ModelMapper toDto;
+
 
     @Async
     public CompletableFuture<List<UserLevelDto>> getAll() {
@@ -39,10 +42,11 @@ public class UserLevelService {
         return CompletableFuture.completedFuture(toDto.map(userlevelRepository.findById(id), UserLevelDto.class));
     }
 
+    //public CompletableFuture<UserLevelDto> create(String name, int minPoint, Double discount)
     @Async
     public CompletableFuture<UserLevelDto> create(UserLevelCreateDto input) {
         UserLevel userlevel = userlevelRepository.save(toDto.map(input, UserLevel.class));
-        return CompletableFuture.completedFuture(toDto.map(userlevelRepository.save(userlevel), UserLevelDto.class));
+        return CompletableFuture.completedFuture(toDto.map(userlevel, UserLevelDto.class));
     }
 
     @Async
@@ -62,5 +66,7 @@ public class UserLevelService {
         userlevelRepository.save(toDto.map(existingUserLevel, UserLevel.class));
         return CompletableFuture.completedFuture(null);
     }
+
+
 }
 
