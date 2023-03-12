@@ -16,13 +16,10 @@ import src.service.User.UserService;
 @Aspect
 @Component
 public class AuthenticateAspect {
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
     @Autowired
     private UserService userDetailsService;
-
     @Before("@annotation(src.config.annotation.Authenticate)")
     public void authenticate(JoinPoint joinPoint) throws UnauthorizedException {
         String token = getTokenFromRequest();
