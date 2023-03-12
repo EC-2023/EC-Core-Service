@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtAuthFilter;
-//    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,10 +23,12 @@ public class SecurityConfig {
 //                        requests.requestMatchers("/vertretungsplan/*", "/", "/index.html").hasAnyRole("SCHUELER", "LEHRER", "VERWALTUNG")
 //                        .anyRequest().authenticated())
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**",
-                        "/v3/api-docs/**",
-                        "/swagger-ui/**",
+                .requestMatchers(
+//                        "/api/v1/auth/**",
+//                        "/v3/api-docs/**",
+//                        "/swagger-ui/**",
                         "/**"
+//                        ,"/api/v1/auth/login"
                       )
                 .permitAll()
                 .anyRequest()
@@ -36,9 +37,7 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

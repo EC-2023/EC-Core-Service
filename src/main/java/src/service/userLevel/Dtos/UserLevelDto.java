@@ -5,7 +5,7 @@ package src.service.UserLevel.Dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.UUID;
 
 @Data

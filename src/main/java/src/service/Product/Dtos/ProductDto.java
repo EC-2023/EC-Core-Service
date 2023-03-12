@@ -4,18 +4,18 @@ package src.service.Product.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import java.sql.Date;
+import java.util.Date;
 import java.util.UUID;
 
 import lombok.Data;
 
 @Data
 public class ProductDto extends ProductUpdateDto {
-    @JsonProperty(value = "name", required = true)
+ @JsonProperty(value = "Id", required = true)
     public UUID Id;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
 }
 

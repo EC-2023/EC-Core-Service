@@ -33,13 +33,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody @Valid LoginInputDto loginRequest) throws Exception {
-//        try {
-//            authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-//            );
-//        } catch (Exception e) {
-//            throw new Exception("Incorrect username or password", e);
-//        }
         final User user = userRepository.findByEmail(loginRequest.getUsername());
         if (user == null){
             throw new Exception("Cannot find user with email");
@@ -49,9 +42,6 @@ public class AuthController {
         }
         final String accessToken = jwtUtil.generateAccessToken(user);
         final String refreshToken = jwtUtil.generateRefreshToken(user);
-
-        // Save refresh token to database
-        // lafm stateless neen khong can
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return ResponseEntity.ok(new LoginDto(accessToken, refreshToken,toDto.map(user, UserProfileDto.class) ));
     }

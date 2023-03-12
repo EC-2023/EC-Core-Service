@@ -21,7 +21,6 @@ public class CustomOpenApiResponseInterceptor implements HandlerInterceptor {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();
-
             // Check if the method has the CustomOpenApiResponse annotation
             OpenApiResponse annotation = method.getAnnotation(OpenApiResponse.class);
             if (annotation != null) {
