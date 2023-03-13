@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,6 +34,16 @@ public class Delivery {
     private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "deliveryByDeliveryId")
     private Collection<Orders> ordersByDeliveryId;
+
+    public Delivery(UUID id, String name, double price, String description) {
+        Id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
+    public Delivery() {
+
+    }
 
     public UUID getDeliveryId() {
         return Id;

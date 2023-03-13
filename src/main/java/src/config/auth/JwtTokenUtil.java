@@ -1,4 +1,4 @@
-package src.config;
+package src.config.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -47,7 +47,6 @@ public class JwtTokenUtil {
                 .build()
                 .parseClaimsJws(token);
         return jws.getBody().getSubject();
-//        return getClaimsFromToken(token).getSubject();
     }
 
     public static String hashPassword(String password) {

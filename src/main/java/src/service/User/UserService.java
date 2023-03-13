@@ -2,11 +2,13 @@
 
 package src.service.User;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import src.config.JwtTokenUtil;
+import src.config.auth.JwtTokenUtil;
 import src.model.User;
 import src.repository.IUserRepository;
 import src.service.User.Dtos.UserCreateDto;
@@ -36,6 +38,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Transactional
 @Slf4j
 public class UserService implements UserDetailsService {
+    EntityManager em;
     @Autowired
     private IUserRepository userRepository;
     @Autowired
@@ -51,6 +54,38 @@ public class UserService implements UserDetailsService {
                 ).collect(Collectors.toList()));
     }
 
+//    @Async
+//    public CompletableFuture<List<UserDto>> find(String name) {
+//        CriteriaBuilder cb = em.getCriteriaBuilder();
+//        CriteriaQuery<User> cq = cb.createQuery(User.class);
+//        List<Predicate> predicates = new ArrayList<>();
+//        Root<User> user = cq.from(User.class);
+//        if ("d" != null) {
+//            predicates.add(cb.equal(user.get("author"), "123"));
+//        }
+//        if (name != null) {
+//            predicates.add(cb.like(user.get("name"), "%" + name + "%"));
+//        }
+//        Expression<String> concatenatedFields = cb.concat(user.get("field1"), " ");
+//        concatenatedFields = cb.concat(concatenatedFields, user.get("field2"));
+//        concatenatedFields = cb.concat(concatenatedFields, " ");
+//        concatenatedFields = cb.concat(concatenatedFields, user.get("field3"));
+//
+//        predicates.add(cb.like(concatenatedFields, "%" + name + "%"));
+//        cq.where(predicates.toArray(new Predicate[0]));
+//        predicates.add(cb.);
+//        return em.createQuery(cq).getResultList();
+//
+//
+//        return CompletableFuture.completedFuture(
+//                (List<UserDto>) userRepository.findAll().stream().map(
+//                        x -> toDto.map(x, UserDto.class)
+//                ).collect(Collectors.toList()));
+//    }
+
+    static Specification<User> titleContains(String... title) {
+        return (user, cq, cb) -> cb.like(user.get("title"), "%" + title + "%");
+    }
     @Async
     public CompletableFuture<UserDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userRepository.findById(id), UserDto.class));

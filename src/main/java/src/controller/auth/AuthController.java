@@ -9,7 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import src.config.JwtTokenUtil;
+import src.config.auth.JwtTokenUtil;
 import src.config.annotation.ApiPrefixController;
 import src.model.User;
 import src.repository.IUserRepository;
@@ -18,9 +18,6 @@ import src.service.User.Dtos.UserProfileDto;
 @RestController
 @ApiPrefixController("/auth")
 public class AuthController {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private JwtTokenUtil jwtUtil;

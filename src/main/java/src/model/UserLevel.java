@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -34,6 +34,17 @@ public class UserLevel {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "userLevelByUserLevelId")
     private Collection<User> usersByUserLevelId;
+
+    public UserLevel(UUID id, String name, int minPoint, Double discount) {
+        Id = id;
+        this.name = name;
+        this.minPoint = minPoint;
+        this.discount = discount;
+    }
+    public UserLevel() {
+
+    }
+
     public Date getCreateAt() {
         return createAt;
     }

@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -50,14 +50,6 @@ public class Category {
     public void setCategoryId(UUID Id) {
         this.Id = Id;
     }
-
-//    public Integer getParentCategoryId() {
-//        return parentCategoryId;
-//    }
-
-//    public void setParentCategoryId(Integer parentCategoryId) {
-//        this.parentCategoryId = parentCategoryId;
-//    }
 
     public String getName() {
         return name;

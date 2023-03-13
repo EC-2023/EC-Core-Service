@@ -3,6 +3,7 @@ package src.config.dto;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+
 import java.io.IOException;
 
 public class PaginationSerializer extends JsonSerializer<Pagination> {

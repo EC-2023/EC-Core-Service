@@ -30,13 +30,6 @@
             <artifactId>modelmapper</artifactId>
             <version>2.4.4</version>
         </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>org.springdoc</groupId>-->
-<!--                <artifactId>springdoc-openapi-core</artifactId>-->
-<!--                <version>1.6.3-SNAPSHOT</version>-->
-<!--            </dependency>-->
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

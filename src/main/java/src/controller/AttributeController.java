@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.service.Attribute.AttributeService;
 import src.service.Attribute.Dtos.AttributeCreateDto;
 import src.service.Attribute.Dtos.AttributeDto;
 import src.service.Attribute.Dtos.AttributeUpdateDto;
-import src.service.Attribute.AttributeService;
 
 import java.util.List;
 import java.util.UUID;

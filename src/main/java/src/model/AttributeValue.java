@@ -10,6 +10,41 @@ import java.util.UUID;
 @Table(name = "attribute_value")
 public class AttributeValue {
 
+
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
+    @Column(name = "attribute_value_id", nullable = false)
+    private UUID Id;
+
+    @Basic
+    @Column(name = "name", nullable = true)
+    private String name;
+
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted;
+
+    @Basic
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
+
+    @Basic
+    @Column(name = "attribute_id", nullable = true)
+    private UUID attribute_id;
+
+    @Basic
+    @Column(name = "product_id", nullable = true)
+    private UUID product_id;
+
+    @Basic
+    @Column(name = "order_item_id", nullable = true)
+    private UUID orderItem_id;
+
+
     public UUID getAttributeValueId() {
         return Id;
     }
@@ -73,39 +108,6 @@ public class AttributeValue {
     public void setOrderItem_id(UUID orderItem_id) {
         this.orderItem_id = orderItem_id;
     }
-
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Id
-    @Column(name = "attribute_value_id", nullable = false)
-    private UUID Id;
-
-    @Basic
-    @Column(name = "name", nullable = true)
-    private String name;
-
-    @Basic
-    @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted;
-
-    @Basic
-    @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
-
-    @Basic
-    @Column(name = "attribute_id", nullable = true)
-    private UUID attribute_id;
-
-    @Basic
-    @Column(name = "product_id", nullable = true)
-    private UUID product_id;
-
-    @Basic
-    @Column(name = "order_item_id", nullable = true)
-    private UUID orderItem_id;
 
     public Attribute getAttributeByAttributeId() {
         return attributeByAttributeId;

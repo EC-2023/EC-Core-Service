@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -44,8 +44,6 @@ public class Orders {
     @Basic
     @Column(name = "amountToGD", nullable = false, precision = 0)
     private double amountToGd;
-
-
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;

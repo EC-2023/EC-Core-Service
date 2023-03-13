@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -41,13 +41,8 @@ public class Product {
     @Basic
     @Column(name = "store_id", nullable = false)
     private UUID storeId;
-
-
     @Column(name = "rating", nullable = false, precision = 0)
     private double rating;
-
-
-
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;

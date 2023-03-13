@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,9 +25,7 @@ public class Commission {
     private String description;
     @Basic
     @Column(name = "isDeleted", nullable = true)
-
     private Boolean isDeleted = false;
-
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
     private Date createAt = new Date(new java.util.Date().getTime());
@@ -36,6 +34,15 @@ public class Commission {
     private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "commissionByCommissionId")
     private Collection<Store> storesByCommissionId;
+
+    public Commission(UUID id, String name, double cost, String description) {
+        Id = id;
+        this.name = name;
+        this.cost = cost;
+        this.description = description;
+    }
+    public Commission() {
+    }
 
     public UUID getCommissionId() {
         return Id;

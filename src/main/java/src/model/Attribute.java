@@ -17,7 +17,21 @@ public class Attribute {
     @Basic
     @Column(name = "name", nullable = true)
     private String name;
-
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted;
+    @Basic
+    @Column(name = "createAt", nullable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "product_id", nullable = true)
+    private UUID product_id;
+    @Basic
+    @Column(name = "category_id", nullable = true)
+    private UUID category_id;
     public UUID getId() {
         return Id;
     }
@@ -73,22 +87,6 @@ public class Attribute {
     public void setCategory_id(UUID category_id) {
         this.category_id = category_id;
     }
-
-    @Basic
-    @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted;
-    @Basic
-    @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "product_id", nullable = true)
-    private UUID product_id;
-    @Basic
-    @Column(name = "category_id", nullable = true)
-    private UUID category_id;
     @OneToMany(mappedBy = "attributeByAttributeId", fetch = FetchType.LAZY)
     private Collection<AttributeValue> attributeValueByAttribute;
     public Product getAttributesByProductId() {

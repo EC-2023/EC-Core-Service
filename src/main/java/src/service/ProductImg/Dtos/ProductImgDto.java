@@ -4,10 +4,9 @@ package src.service.ProductImg.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
 import java.util.Date;
 import java.util.UUID;
-
-import lombok.Data;
 
 @Data
 public class ProductImgDto extends ProductImgUpdateDto {

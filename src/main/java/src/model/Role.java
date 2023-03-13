@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,6 +21,14 @@ public class Role {
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
+
+    public Role(UUID id, String name ) {
+        Id = id;
+        this.name = name;
+    }
+    public Role() {
+
+    }
 
     public Boolean getDeleted() {
         return isDeleted;

@@ -2,8 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,29 +32,23 @@ public class OrderItems {
     public Boolean getDeleted() {
         return isDeleted;
     }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public Collection<AttributeValue> getAttributesValueByOrderItemId() {
-        return attributesValueByOrderItemId;
-    }
-
-    public void setAttributesValueByOrderItemId(Collection<AttributeValue> attributesValueByOrderItemId) {
-        this.attributesValueByOrderItemId = attributesValueByOrderItemId;
-    }
-
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
     private Product productByProductId;
-
     @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.LAZY)
     private Collection<AttributeValue> attributesValueByOrderItemId;
-
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+    public Collection<AttributeValue> getAttributesValueByOrderItemId() {
+        return attributesValueByOrderItemId;
+    }
+    public void setAttributesValueByOrderItemId(Collection<AttributeValue> attributesValueByOrderItemId) {
+        this.attributesValueByOrderItemId = attributesValueByOrderItemId;
+    }
     public UUID getId() {
         return Id;
     }

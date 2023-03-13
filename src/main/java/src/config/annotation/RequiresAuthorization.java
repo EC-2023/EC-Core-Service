@@ -5,11 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.ANNOTATION_TYPE)
+
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PrefixMapping {
-    /**
-     * The prefix to prepend to path mappings
-     * */
-    String value() default "";
+public @interface RequiresAuthorization {
+    String[] value();
 }

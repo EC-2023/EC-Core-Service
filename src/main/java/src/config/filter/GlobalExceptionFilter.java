@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import src.config.exception.BadRequestException;
+import src.config.exception.ForbiddenException;
 import src.config.exception.NotFoundException;
 import src.config.exception.UnauthorizedException;
 
@@ -22,6 +23,10 @@ public class GlobalExceptionFilter {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
         return new ResponseEntity<>(createError(ex, request, HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Object> handleForbiddenException(ForbiddenException ex, HttpServletRequest request) {
+        return new ResponseEntity<>(createError(ex, request, HttpStatus.FORBIDDEN.value()), HttpStatus.FORBIDDEN);
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleInternalException(RuntimeException ex, HttpServletRequest request) {
