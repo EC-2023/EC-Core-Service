@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.annotation.RequiresAuthorization;
-import src.config.utils.Constant;
 import src.service.User.Dtos.UserCreateDto;
 import src.service.User.Dtos.UserDto;
 import src.service.User.Dtos.UserUpdateDto;
@@ -32,8 +31,10 @@ public class UserController {
     }
 
     @GetMapping()
+    // khi dddawng nhap vao thi moi dung duoc chuc nang
     @Authenticate
-    @RequiresAuthorization(Constant.ADMIN)
+    // check role co duoc quyen goi api k
+    @RequiresAuthorization("string")
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserDto>> findAll() {
@@ -44,7 +45,6 @@ public class UserController {
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserDto> create(@RequestBody UserCreateDto input) {
-
         return userService.create(input);
     }
 

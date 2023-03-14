@@ -26,7 +26,6 @@ public class AttributeService {
     private IAttributeRepository attributeRepository;
     @Autowired
     private ModelMapper toDto;
-
     @Async
     public CompletableFuture<List<AttributeDto>> getAll() {
         return CompletableFuture.completedFuture(
@@ -34,7 +33,6 @@ public class AttributeService {
                         x -> toDto.map(x, AttributeDto.class)
                 ).collect(Collectors.toList()));
     }
-
     @Async
     public CompletableFuture<AttributeDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(attributeRepository.findById(id), AttributeDto.class));

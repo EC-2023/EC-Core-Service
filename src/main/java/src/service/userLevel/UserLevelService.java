@@ -27,10 +27,9 @@ public class UserLevelService  {
     private IUserLevelRepository userlevelRepository  ;
     @Autowired
     private ModelMapper toDto;
-
-
     @Async
     public CompletableFuture<List<UserLevelDto>> getAll() {
+        // search theo teen phaan trang
         return CompletableFuture.completedFuture(
                 (List<UserLevelDto>) userlevelRepository.findAll().stream().map(
                         x -> toDto.map(x, UserLevelDto.class)
@@ -41,8 +40,6 @@ public class UserLevelService  {
     public CompletableFuture<UserLevelDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userlevelRepository.findById(id), UserLevelDto.class));
     }
-
-    //public CompletableFuture<UserLevelDto> create(String name, int minPoint, Double discount)
     @Async
     public CompletableFuture<UserLevelDto> create(UserLevelCreateDto input) {
         UserLevel userlevel = userlevelRepository.save(toDto.map(input, UserLevel.class));

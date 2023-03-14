@@ -1,9 +1,11 @@
 package src;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import src.config.utils.Seed;
 
 @SpringBootApplication
 @EnableWebMvc
@@ -11,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class main {
     public static void main(String[] args) {
         SpringApplication.run(main.class, args);
+
+
 
         System.out.println("""
                 --------------------------------------------------------------------------------------------------------------------------------------------------------
