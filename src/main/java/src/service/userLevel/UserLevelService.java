@@ -62,7 +62,7 @@ public class UserLevelService  {
         UserLevel existingUserLevel = userlevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingUserLevel.setDeleted(true);
+        existingUserLevel.setIsDeleted(true);
         userlevelRepository.save(toDto.map(existingUserLevel, UserLevel.class));
         return CompletableFuture.completedFuture(null);
     }
