@@ -59,7 +59,7 @@ public class CartItemsService {
         CartItems existingCartItems = cartitemsRepository.findById(id).orElse(null);
         if (existingCartItems == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCartItems.setDeleted(true);
+        existingCartItems.setIsDeleted(true);
         cartitemsRepository.save(toDto.map(existingCartItems, CartItems.class));
         return CompletableFuture.completedFuture(null);
     }

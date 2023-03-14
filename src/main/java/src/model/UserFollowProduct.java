@@ -1,13 +1,14 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "user_follow_product")
+@Data
 public class UserFollowProduct {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -20,7 +21,7 @@ public class UserFollowProduct {
     @Column(name = "product_id", nullable = false)
     private UUID productId;
     @Basic
-    @Column(name = "isDeleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
     @Basic
     @Column(name = "createAt", nullable = false)
@@ -34,81 +35,4 @@ public class UserFollowProduct {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
     private Product productByProductId;
-
-    public UUID getId() {
-        return Id;
-    }
-
-    public void setId(UUID id) {
-        this.Id = id;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public UUID getProductId() {
-        return productId;
-    }
-
-    public void setProductId(UUID productId) {
-        this.productId = productId;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public Date getCreateDate() {
-        return createAt;
-    }
-
-    public void setCreateDate(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateDate() {
-        return updateAt;
-    }
-
-    public void setUpdateDate(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserFollowProduct that = (UserFollowProduct) o;
-        return Id == that.Id && userId == that.userId && productId == that.productId && isDeleted == that.isDeleted && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, userId, productId, isDeleted, createAt, updateAt);
-    }
-
-    public User getUserByUserId() {
-        return userByUserId;
-    }
-
-    public void setUserByUserId(User userByUserId) {
-        this.userByUserId = userByUserId;
-    }
-
-    public Product getProductByProductId() {
-        return productByProductId;
-    }
-
-    public void setProductByProductId(Product productByProductId) {
-        this.productByProductId = productByProductId;
-    }
 }

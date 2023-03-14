@@ -1,14 +1,15 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "delivery")
+@Data
 public class Delivery {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -34,7 +35,6 @@ public class Delivery {
     private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "deliveryByDeliveryId")
     private Collection<Orders> ordersByDeliveryId;
-
     public Delivery(UUID id, String name, double price, String description) {
         Id = id;
         this.name = name;
@@ -42,83 +42,5 @@ public class Delivery {
         this.description = description;
     }
     public Delivery() {
-
-    }
-
-    public UUID getDeliveryId() {
-        return Id;
-    }
-
-    public void setDeliveryId(UUID deliveryId) {
-        this.Id = deliveryId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public Date getCreateDate() {
-        return createAt;
-    }
-
-    public void setCreateDate(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateDate() {
-        return updateAt;
-    }
-
-    public void setUpdateDate(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Delivery delivery = (Delivery) o;
-        return Id == delivery.Id && Double.compare(delivery.price, price) == 0 && Objects.equals(name, delivery.name) && Objects.equals(description, delivery.description) && Objects.equals(isDeleted, delivery.isDeleted) && Objects.equals(createAt, delivery.createAt) && Objects.equals(updateAt, delivery.updateAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, name, price, description, isDeleted, createAt, updateAt);
-    }
-
-    public Collection<Orders> getOrdersByDeliveryId() {
-        return ordersByDeliveryId;
-    }
-
-    public void setOrdersByDeliveryId(Collection<Orders> ordersByDeliveryId) {
-        this.ordersByDeliveryId = ordersByDeliveryId;
     }
 }

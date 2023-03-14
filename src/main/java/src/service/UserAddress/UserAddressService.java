@@ -59,7 +59,7 @@ public class UserAddressService {
         UserAddress existingUserAddress = useraddressRepository.findById(id).orElse(null);
         if (existingUserAddress == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingUserAddress.setDeleted(true);
+        existingUserAddress.setIsDeleted(true);
         useraddressRepository.save(toDto.map(existingUserAddress, UserAddress.class));
         return CompletableFuture.completedFuture(null);
     }

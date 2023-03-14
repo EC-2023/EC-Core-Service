@@ -1,6 +1,7 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name="commission")
+@Data
 public class Commission {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -34,7 +36,6 @@ public class Commission {
     private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "commissionByCommissionId")
     private Collection<Store> storesByCommissionId;
-
     public Commission(UUID id, String name, double cost, String description) {
         Id = id;
         this.name = name;
@@ -42,82 +43,5 @@ public class Commission {
         this.description = description;
     }
     public Commission() {
-    }
-
-    public UUID getCommissionId() {
-        return Id;
-    }
-
-    public void setCommissionId(UUID commissionId) {
-        this.Id = commissionId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public Date getCreateDate() {
-        return createAt;
-    }
-
-    public void setCreateDate(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateDate() {
-        return updateAt;
-    }
-
-    public void setUpdateDate(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Commission that = (Commission) o;
-        return Id == that.Id && Double.compare(that.cost, cost) == 0 && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(isDeleted, that.isDeleted) && Objects.equals(createAt, that.createAt) && Objects.equals(updateAt, that.updateAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, name, cost, description, isDeleted, createAt, updateAt);
-    }
-
-    public Collection<Store> getStoresByCommissionId() {
-        return storesByCommissionId;
-    }
-
-    public void setStoresByCommissionId(Collection<Store> storesByCommissionId) {
-        this.storesByCommissionId = storesByCommissionId;
     }
 }

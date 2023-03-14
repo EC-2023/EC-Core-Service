@@ -59,7 +59,7 @@ public class DeliveryService {
         Delivery existingDelivery = deliveryRepository.findById(id).orElse(null);
         if (existingDelivery == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingDelivery.setDeleted(true);
+        existingDelivery.setIsDeleted(true);
         deliveryRepository.save(toDto.map(existingDelivery, Delivery.class));
         return CompletableFuture.completedFuture(null);
     }

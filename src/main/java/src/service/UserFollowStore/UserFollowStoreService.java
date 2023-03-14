@@ -59,7 +59,7 @@ public class UserFollowStoreService {
         UserFollowStore existingUserFollowStore = userfollowstoreRepository.findById(id).orElse(null);
         if (existingUserFollowStore == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingUserFollowStore.setDeleted(true);
+        existingUserFollowStore.setIsDeleted(true);
         userfollowstoreRepository.save(toDto.map(existingUserFollowStore, UserFollowStore.class));
         return CompletableFuture.completedFuture(null);
     }

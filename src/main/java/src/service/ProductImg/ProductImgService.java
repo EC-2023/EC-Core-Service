@@ -59,7 +59,7 @@ public class ProductImgService {
         ProductImg existingProductImg = productimgRepository.findById(id).orElse(null);
         if (existingProductImg == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingProductImg.setDeleted(true);
+        existingProductImg.setIsDeleted(true);
         productimgRepository.save(toDto.map(existingProductImg, ProductImg.class));
         return CompletableFuture.completedFuture(null);
     }

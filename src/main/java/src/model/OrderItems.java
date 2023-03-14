@@ -1,6 +1,7 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "order_items",  catalog = "")
+@Data
 public class OrderItems {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -40,80 +42,5 @@ public class OrderItems {
     private Product productByProductId;
     @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.LAZY)
     private Collection<AttributeValue> attributesValueByOrderItemId;
-    public void setDeleted(Boolean deleted) {
-        isDeleted = deleted;
-    }
-    public Collection<AttributeValue> getAttributesValueByOrderItemId() {
-        return attributesValueByOrderItemId;
-    }
-    public void setAttributesValueByOrderItemId(Collection<AttributeValue> attributesValueByOrderItemId) {
-        this.attributesValueByOrderItemId = attributesValueByOrderItemId;
-    }
-    public UUID getId() {
-        return Id;
-    }
 
-    public void setId(UUID id) {
-        this.Id = id;
-    }
-
-    public Orders getOrder() {
-        return order;
-    }
-
-    public void setOrder(Orders order) {
-        this.order = order;
-    }
-
-    public UUID getProductId() {
-        return productId;
-    }
-
-    public void setProductId(UUID productId) {
-        this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderItems that = (OrderItems) o;
-        return Id == that.Id && productId == that.productId && quantity == that.quantity;
-    }
-
-    public Product getProductByProductId() {
-        return productByProductId;
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, productId,quantity,order, isDeleted, createAt, updateAt);
-    }
-    public void setProductByProductId(Product productByProductId) {
-        this.productByProductId = productByProductId;
-    }
 }

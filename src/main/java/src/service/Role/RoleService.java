@@ -59,7 +59,7 @@ public class RoleService {
         Role existingRole = roleRepository.findById(id).orElse(null);
         if (existingRole == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingRole.setDeleted(true);
+        existingRole.setIsDeleted(true);
         roleRepository.save(toDto.map(existingRole, Role.class));
         return CompletableFuture.completedFuture(null);
     }

@@ -59,7 +59,7 @@ public class CategoryService {
         Category existingCategory = categoryRepository.findById(id).orElse(null);
         if (existingCategory == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCategory.setDeleted(true);
+        existingCategory.setIsDeleted(true);
         categoryRepository.save(toDto.map(existingCategory, Category.class));
         return CompletableFuture.completedFuture(null);
     }

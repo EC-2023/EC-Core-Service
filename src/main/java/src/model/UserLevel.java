@@ -1,6 +1,7 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
@@ -8,7 +9,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "user_level", catalog = "")
+@Table(name = "user_level")
+@Data
 public class UserLevel {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -42,90 +44,5 @@ public class UserLevel {
         this.discount = discount;
     }
     public UserLevel() {
-
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
-    }
-    public UUID getUserLevelId() {
-        return Id;
-    }
-
-    public void setUserLevelId(UUID Id) {
-        this.Id = Id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getMinPoint() {
-        return minPoint;
-    }
-
-    public void setMinPoint(int minPoint) {
-        this.minPoint = minPoint;
-    }
-
-    public Double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-    }
-
-    public Boolean getDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(Boolean delete) {
-        isDeleted = delete;
-    }
-
-    public Date getCreateDate() {
-        return createAt;
-    }
-
-    public void setCreateDate(Date createAt) {
-        this.createAt = createAt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserLevel level = (UserLevel) o;
-        return Id == level.Id && minPoint == level.minPoint && Objects.equals(name, level.name) && Objects.equals(discount, level.discount) && Objects.equals(isDeleted, level.isDeleted) && Objects.equals(createAt, level.createAt);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, name, minPoint, discount, isDeleted, createAt);
-    }
-
-    public Collection<User> getUsersByUserLevelId() {
-        return usersByUserLevelId;
-    }
-
-    public void setUsersByUserLevelId(Collection<User> usersByUserLevelId) {
-        this.usersByUserLevelId = usersByUserLevelId;
     }
 }

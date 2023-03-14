@@ -59,7 +59,7 @@ public class OrderItemsService {
         OrderItems existingOrderItems = orderitemsRepository.findById(id).orElse(null);
         if (existingOrderItems == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingOrderItems.setDeleted(true);
+        existingOrderItems.setIsDeleted(true);
         orderitemsRepository.save(toDto.map(existingOrderItems, OrderItems.class));
         return CompletableFuture.completedFuture(null);
     }

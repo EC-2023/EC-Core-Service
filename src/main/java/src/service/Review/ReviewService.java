@@ -59,7 +59,7 @@ public class ReviewService {
         Review existingReview = reviewRepository.findById(id).orElse(null);
         if (existingReview == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingReview.setDeleted(true);
+        existingReview.setIsDeleted(true);
         reviewRepository.save(toDto.map(existingReview, Review.class));
         return CompletableFuture.completedFuture(null);
     }

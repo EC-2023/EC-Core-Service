@@ -59,7 +59,7 @@ public class StoreLevelService {
         StoreLevel existingStoreLevel = storelevelRepository.findById(id).orElse(null);
         if (existingStoreLevel == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingStoreLevel.setDeleted(true);
+        existingStoreLevel.setIsDeleted(true);
         storelevelRepository.save(toDto.map(existingStoreLevel, StoreLevel.class));
         return CompletableFuture.completedFuture(null);
     }

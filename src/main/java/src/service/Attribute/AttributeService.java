@@ -59,7 +59,7 @@ public class AttributeService {
         Attribute existingAttribute = attributeRepository.findById(id).orElse(null);
         if (existingAttribute == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingAttribute.setDeleted(true);
+        existingAttribute.setIsDeleted(true);
         attributeRepository.save(toDto.map(existingAttribute, Attribute.class));
         return CompletableFuture.completedFuture(null);
     }

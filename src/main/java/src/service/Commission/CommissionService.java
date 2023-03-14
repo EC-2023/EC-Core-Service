@@ -59,7 +59,7 @@ public class CommissionService {
         Commission existingCommission = commissionRepository.findById(id).orElse(null);
         if (existingCommission == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCommission.setDeleted(true);
+        existingCommission.setIsDeleted(true);
         commissionRepository.save(toDto.map(existingCommission, Commission.class));
         return CompletableFuture.completedFuture(null);
     }

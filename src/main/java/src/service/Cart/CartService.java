@@ -59,7 +59,7 @@ public class CartService {
         Cart existingCart = cartRepository.findById(id).orElse(null);
         if (existingCart == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCart.setDeleted(true);
+        existingCart.setIsDeleted(true);
         cartRepository.save(toDto.map(existingCart, Cart.class));
         return CompletableFuture.completedFuture(null);
     }

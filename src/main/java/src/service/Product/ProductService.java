@@ -59,7 +59,7 @@ public class ProductService {
         Product existingProduct = productRepository.findById(id).orElse(null);
         if (existingProduct == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingProduct.setDeleted(true);
+        existingProduct.setIsDeleted(true);
         productRepository.save(toDto.map(existingProduct, Product.class));
         return CompletableFuture.completedFuture(null);
     }

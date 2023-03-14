@@ -115,7 +115,7 @@ public class UserService implements UserDetailsService {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingUser.setDeleted(true);
+        existingUser.setIsDeleted(true);
         userRepository.save(toDto.map(existingUser, User.class));
         return CompletableFuture.completedFuture(null);
     }
