@@ -1,6 +1,6 @@
 
 
-package src.service.UserLevel;
+package src.service.userLevel;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.model.UserLevel;
 import src.repository.IUserLevelRepository;
-import src.service.UserLevel.Dtos.UserLevelCreateDto;
-import src.service.UserLevel.Dtos.UserLevelDto;
-import src.service.UserLevel.Dtos.UserLevelUpdateDto;
+import src.service.userLevel.Dtos.UserLevelCreateDto;
+import src.service.userLevel.Dtos.UserLevelDto;
+import src.service.userLevel.Dtos.UserLevelUpdateDto;
 
 import java.util.List;
 import java.util.UUID;

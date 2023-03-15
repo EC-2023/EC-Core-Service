@@ -1,4 +1,4 @@
-package src.service.UserLevel.Dtos;
+package src.service.userLevel.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
