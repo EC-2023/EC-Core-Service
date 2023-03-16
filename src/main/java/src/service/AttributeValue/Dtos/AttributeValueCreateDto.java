@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class AttributeValueCreateDto {
-
+    @JsonProperty(value = "name", required = true)
+    private String name;
 }

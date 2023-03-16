@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
-import src.service.UserLevel.Dtos.UserLevelCreateDto;
-import src.service.UserLevel.Dtos.UserLevelDto;
-import src.service.UserLevel.Dtos.UserLevelUpdateDto;
-import src.service.UserLevel.UserLevelService;
+import src.service.userLevel.Dtos.UserLevelCreateDto;
+import src.service.userLevel.Dtos.UserLevelDto;
+import src.service.userLevel.Dtos.UserLevelUpdateDto;
+import src.service.userLevel.UserLevelService;
 
 import java.util.List;
 import java.util.UUID;
