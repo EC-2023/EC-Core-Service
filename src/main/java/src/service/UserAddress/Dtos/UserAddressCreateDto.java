@@ -12,9 +12,9 @@ public class UserAddressCreateDto {
     @JsonProperty(value = "district", required = true, defaultValue = "0")
     private String district;
 
-    @JsonProperty(value = "name recipient", required = true, defaultValue = "0")
+    @JsonProperty(value = "ameRecipient", required = true, defaultValue = "0")
     private String nameRecipient;
-    @JsonProperty(value = "number phone", required = true, defaultValue = "0")
+    @JsonProperty(value = "numberPhone", required = true, defaultValue = "0")
     private String numberPhone;
 
     @JsonProperty(value = "ward", required = true, defaultValue = "0")

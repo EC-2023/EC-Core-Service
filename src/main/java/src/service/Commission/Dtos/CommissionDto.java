@@ -11,11 +11,11 @@ import lombok.Data;
 
 @Data
 public class CommissionDto extends CommissionUpdateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "Id", required = true)
     public UUID Id;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
 }
 

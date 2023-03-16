@@ -11,11 +11,15 @@ import lombok.Data;
 
 @Data
 public class AttributeDto extends AttributeUpdateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "Id", required = true)
     public UUID Id;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "createAt", required = true)
     public Date updateAt ;
+    @JsonProperty(value = "categoryId", required = true)
+    public UUID categoryId;
+    @JsonProperty(value = "productId", required = true)
+    public UUID productId;
 }
 

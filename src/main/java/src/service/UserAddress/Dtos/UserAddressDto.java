@@ -11,11 +11,13 @@ import lombok.Data;
 
 @Data
 public class UserAddressDto extends UserAddressUpdateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "Id", required = true)
     public UUID Id;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
+    @JsonProperty(value = "userId", required = true)
+    public UUID userId;
 }
 

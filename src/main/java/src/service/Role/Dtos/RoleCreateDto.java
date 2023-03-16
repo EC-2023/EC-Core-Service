@@ -6,7 +6,6 @@ import lombok.Data;
 public class RoleCreateDto {
     @JsonProperty(value = "name", required = true)
     private String name;
-
     @JsonProperty(value = "image", required = true)
     private String image;
 }
