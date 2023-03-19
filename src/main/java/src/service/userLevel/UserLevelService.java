@@ -6,7 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.UserLevel;
 import src.repository.IUserLevelRepository;
 import src.service.UserLevel.Dtos.UserLevelCreateDto;
@@ -18,15 +18,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @Service
-public class UserLevelService  {
+public class UserLevelService {
     // @Inject
     @Autowired
-    private IUserLevelRepository userlevelRepository  ;
+    private IUserLevelRepository userlevelRepository;
     @Autowired
     private ModelMapper toDto;
+
     @Async
     public CompletableFuture<List<UserLevelDto>> getAll() {
         // search theo teen phaan trang
@@ -40,6 +39,7 @@ public class UserLevelService  {
     public CompletableFuture<UserLevelDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userlevelRepository.findById(id), UserLevelDto.class));
     }
+
     @Async
     public CompletableFuture<UserLevelDto> create(UserLevelCreateDto input) {
         UserLevel userlevel = userlevelRepository.save(toDto.map(input, UserLevel.class));
@@ -50,20 +50,20 @@ public class UserLevelService  {
     public CompletableFuture<UserLevelDto> update(UUID id, UserLevelUpdateDto userlevel) {
         UserLevel existingUserLevel = userlevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(userlevelRepository.save(toDto.map(userlevel, UserLevel.class)), UserLevelDto.class));
+            throw new NotFoundException("Unable to find user level!");
+        existingUserLevel = toDto.map(userlevel, UserLevel.class);
+        existingUserLevel.setId(id);
+        return CompletableFuture.completedFuture(toDto.map(userlevelRepository.save(existingUserLevel), UserLevelDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         UserLevel existingUserLevel = userlevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find user level!");
         existingUserLevel.setIsDeleted(true);
-        userlevelRepository.save(toDto.map(existingUserLevel, UserLevel.class));
+        userlevelRepository.save(existingUserLevel);
         return CompletableFuture.completedFuture(null);
     }
-
-
 }
 
