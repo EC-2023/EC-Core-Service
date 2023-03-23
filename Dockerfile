@@ -6,7 +6,7 @@ RUN apk add --no-cache maven
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn jar:jar -f pom.xml
+RUN #mvn jar:jar -f pom.xml
 RUN ls
 RUN #mvn clean install
 
