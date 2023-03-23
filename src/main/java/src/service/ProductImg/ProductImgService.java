@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.ProductImg;
 import src.repository.IProductImgRepository;
 import src.service.ProductImg.Dtos.ProductImgCreateDto;
@@ -50,15 +51,17 @@ public class ProductImgService {
     public CompletableFuture<ProductImgDto> update(UUID id, ProductImgUpdateDto productimg) {
         ProductImg existingProductImg = productimgRepository.findById(id).orElse(null);
         if (existingProductImg == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(toDto.map(productimg, ProductImg.class)), ProductImgDto.class));
+            throw new NotFoundException("Unable to find product image!");
+        existingProductImg = toDto.map(productimg, ProductImg.class);
+        existingProductImg.setId(id);
+        return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(existingProductImg), ProductImgDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         ProductImg existingProductImg = productimgRepository.findById(id).orElse(null);
         if (existingProductImg == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find product image!");
         existingProductImg.setIsDeleted(true);
         productimgRepository.save(toDto.map(existingProductImg, ProductImg.class));
         return CompletableFuture.completedFuture(null);

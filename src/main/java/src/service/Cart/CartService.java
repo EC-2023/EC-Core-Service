@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.Cart;
 import src.repository.ICartRepository;
 import src.service.Cart.Dtos.CartCreateDto;
@@ -50,15 +51,17 @@ public class CartService {
     public CompletableFuture<CartDto> update(UUID id, CartUpdateDto cart) {
         Cart existingCart = cartRepository.findById(id).orElse(null);
         if (existingCart == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(cartRepository.save(toDto.map(cart, Cart.class)), CartDto.class));
+            throw new NotFoundException("Unable to find cart!");
+        existingCart = toDto.map(cart, Cart.class);
+        existingCart.setId(id);
+        return CompletableFuture.completedFuture(toDto.map(cartRepository.save(existingCart), CartDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Cart existingCart = cartRepository.findById(id).orElse(null);
         if (existingCart == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find cart!");
         existingCart.setIsDeleted(true);
         cartRepository.save(toDto.map(existingCart, Cart.class));
         return CompletableFuture.completedFuture(null);

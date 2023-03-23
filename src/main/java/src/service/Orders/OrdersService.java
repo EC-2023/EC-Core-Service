@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.Orders;
 import src.repository.IOrdersRepository;
 import src.service.Orders.Dtos.OrdersCreateDto;
@@ -50,15 +51,15 @@ public class OrdersService {
     public CompletableFuture<OrdersDto> update(UUID id, OrdersUpdateDto orders) {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(toDto.map(orders, Orders.class)), OrdersDto.class));
+            throw new NotFoundException("Unable to find orders!");
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(existingOrders), OrdersDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find orders!");
         existingOrders.setIsDeleted(true);
         ordersRepository.save(toDto.map(existingOrders, Orders.class));
         return CompletableFuture.completedFuture(null);
