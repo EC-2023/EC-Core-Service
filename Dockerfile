@@ -13,7 +13,7 @@ RUN mvn package -f pom.xml
 EXPOSE 8080
 
 # Set the entrypoint to run the application
-ENTRYPOINT ["java", "-jar", "Freelancer-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "target/Freelancer-0.0.1-SNAPSHOT.jar"]
 
 
 #FROM openjdk:17-jdk-alpine
