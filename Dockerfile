@@ -2,7 +2,7 @@
 #Freelancer-0.0.1-SNAPSHOT.jar
 # Use latest openjdk image as the base image
 FROM openjdk:17-jdk-alpine
-RUN apk add --no-cache maven
+RUN apk add --no-cache openjdk17 maven
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
