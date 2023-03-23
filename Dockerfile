@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy the necessary files to the container
 COPY pom.xml .
 COPY src ./src
-RUN ./mvn clean package
+RUN mvn -f . clean package
 RUN #jar:jar -f pom.xml
 
 # Expose port 8080
