@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+// Mo cmt de tao data
+//@Component
 public class Seed {
     @Autowired
     IUserRepository user;
@@ -27,8 +29,9 @@ public class Seed {
     @Autowired
     IStoreRepository store;
 
-    public Seed() {
-
+    // Mo cmt de tao data
+//    @PostConstruct
+    public void Seeder() {
         // Add role
         List<Role> roles = new ArrayList<>();
         roles.add(new Role(Constant.UUID_ADMIN, Constant.ADMIN));

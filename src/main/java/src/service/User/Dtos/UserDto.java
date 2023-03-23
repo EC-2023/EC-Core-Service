@@ -15,6 +15,6 @@ public class UserDto extends UserUpdateDto {
     @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
-    public Date updatedAt ;
+    public Date updateAt ;
 }
 

@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -26,13 +25,13 @@ public class UserLevel {
     @Column(name = "discount", precision = 0)
     private Double discount;
     @Basic
-    @Column(name = "isDeleted", nullable = true)
+    @Column(name = "isDeleted")
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createAt", nullable = true)
+    @Column(name = "createAt", updatable = false)
     private Date createAt = new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateAt", nullable = true)
+    @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "userLevelByUserLevelId")
     private Collection<User> usersByUserLevelId;
