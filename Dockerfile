@@ -22,7 +22,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 # Compile the application
-RUN javac -d ./bin ./src/main/java/*.java
+RUN javac -d ./bin ./src/main/java/src/main.java
 
 # Expose port 8080
 EXPOSE 8080
