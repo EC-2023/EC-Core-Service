@@ -21,6 +21,7 @@ RUN apk add --no-cache maven
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+RUN mvn clean install
 # Compile the application
 RUN javac -d ./bin ./src/main/java/src/main.java
 
