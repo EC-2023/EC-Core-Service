@@ -21,7 +21,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean install
-# RUN jar:jar -f pom.xml
+RUN jar:jar -f pom.xml
 
 # Expose port 8080
 EXPOSE 8080
