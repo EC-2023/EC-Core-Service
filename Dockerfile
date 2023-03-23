@@ -8,7 +8,7 @@ RUN mvn -f /home/app/pom.xml clean package
 
 #
 # Package stage
-#
+# test
 FROM openjdk:17-jre-slim
 COPY --from=build /home/app/target/Freelancer-0.0.1-SNAPSHOT.jar /usr/local/lib/demo.jar
 EXPOSE 8080
