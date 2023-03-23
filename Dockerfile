@@ -1,10 +1,8 @@
 
 #Freelancer-0.0.1-SNAPSHOT.jar
 # Use latest openjdk image as the base image
-FROM adoptopenjdk/openjdk17
-RUN apt-get update && \
-    apt-get install -y maven && \
-    rm -rf /var/lib/apt/lists/*
+FROM openjdk:17-jdk-alpine
+RUN apk add --no-cache maven
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
