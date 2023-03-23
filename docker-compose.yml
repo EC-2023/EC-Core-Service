@@ -1,15 +1,25 @@
 version: '3.8'
 
 services:
+  mysqldb:
+    image: mysql8.0
+    volumes:
+      - ./data/db:/var/lib/mysql/data
+    networks:
+      - app-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=A12.2312334g
   app:
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - mysqldb
     ports:
       - "8080:8080"
     networks:
       - app-network
-
 networks:
   app-network:
     driver: bridge
