@@ -8,7 +8,7 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn jar:jar -f pom.xml
 RUN ls
-RUN mvn clean install
+RUN #mvn clean install
 
 # Expose port 8080
 EXPOSE 8080
