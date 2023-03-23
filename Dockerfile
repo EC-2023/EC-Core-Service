@@ -1,5 +1,7 @@
 FROM openjdk:17-jdk-alpine
-COPY . /app
-WORKDIR /app
-RUN ./mvnw package -DskipTests
-CMD ["java", "-jar", "target/Spring_EC.jar"]
+VOLUME /tmp
+ARG DEPENDENCY=target/dependency
+COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY ${DEPENDENCY}/META-INF /app/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes /app
+ENTRYPOINT ["java","-cp","app:app/lib/*","src.main"]
