@@ -16,11 +16,8 @@
 
 # Use latest openjdk image as the base image
 FROM openjdk:17-jdk-alpine
-
-# Set the working directory to /app
+RUN apk add --no-cache maven
 WORKDIR /app
-
-# Copy the necessary files to the container
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean install
