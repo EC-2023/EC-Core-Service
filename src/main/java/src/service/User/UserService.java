@@ -93,8 +93,6 @@ public class UserService implements UserDetailsService {
 
     @Async
     public CompletableFuture<UserDto> create(UserCreateDto input) {
-        input.setRoleId(UUID.fromString("b6df51f3-dc09-46b4-9f5f-d65d3c1db92c"));
-        input.setUserLevelId(UUID.fromString("94749cce-77c5-4e5b-8cf5-6ad2bcc37e45"));
         input.setHashedPassword(jwtUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
         User user = userRepository.save(toDto.map(input, User.class));
