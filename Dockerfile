@@ -7,6 +7,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn jar:jar -f pom.xml
+RUN  cd target
 RUN ls
 #RUN mvn clean install
 
