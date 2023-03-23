@@ -23,7 +23,7 @@ WORKDIR /app
 # Copy the necessary files to the container
 COPY pom.xml .
 COPY src ./src
-RUN ./mvnw clean package
+RUN ./mvn clean package
 
 # Expose port 8080
 EXPOSE 8080
