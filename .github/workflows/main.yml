@@ -20,10 +20,11 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Deploy to Heroku
-        run: |
-          heroku login -i
-          heroku config:set SPRING_DATASOURCE_INITIALIZATION_MODE=never --app ec-api
-          heroku plugins:install java
-          heroku deploy:jar target/*.jar --app ec-api --jdk 17
+        uses: akhileshns/heroku-deploy@v4.2.5
+        with:
+          heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
+          heroku_app_name: ec-api
+          jdk_version: '17'
         env:
-          HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
+          JAR_FILE: target/*.jar
+          SPRING_DATASOURCE_INITIALIZATION_MODE: never
