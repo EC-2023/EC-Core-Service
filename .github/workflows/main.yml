@@ -1,0 +1,18 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.13 # This is the action
+        with:
+          heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
+          heroku_app_name: "ECAPI" #Must be unique in Heroku
+          heroku_email: "lulueve3@gmail.com"
+          usedocker: true
