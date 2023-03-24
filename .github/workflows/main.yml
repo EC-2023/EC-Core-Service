@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ../../Dockerfile
+      - uses: Dockerfile
         with:
           heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
           heroku_app_name: "ECAPI" #Must be unique in Heroku
