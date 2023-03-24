@@ -20,7 +20,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v4.2.5
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
           heroku_app_name: ec-api
