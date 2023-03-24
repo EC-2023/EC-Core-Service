@@ -6,19 +6,19 @@ jobs:
     steps:
       - uses: actions/checkout@main
       - name: login
-        uses: actions/heroku@master
+        uses: actions/checkout@main
         env:
           HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
         with:
           args: container:login
       - name: push
-        uses: actions/heroku@master
+        uses: actions/checkout@main
         env:
           HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
         with:
           args: container:push -a calm-fortress-1234 web
       - name: release
-        uses: actions/heroku@master
+        uses: actions/checkout@main
         env:
           HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
         with:
