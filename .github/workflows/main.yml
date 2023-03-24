@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.12.12
+      - uses: longho2002/heroku-deploy@v3.12.12
         with:
           branch: "main"
           heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
