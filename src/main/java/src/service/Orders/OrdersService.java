@@ -14,6 +14,7 @@ import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,7 @@ public class OrdersService {
 
     @Async
     public CompletableFuture<OrdersDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(ordersRepository.findById(id), OrdersDto.class));
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.findById(id).get(), OrdersDto.class));
     }
 
     @Async
@@ -52,6 +53,10 @@ public class OrdersService {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
             throw new NotFoundException("Unable to find orders!");
+        Date createAt = existingOrders.getCreateAt();
+        existingOrders = toDto.map(orders, Orders.class);
+        existingOrders.setId(id);
+        existingOrders.setCreateAt(createAt);
         return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(existingOrders), OrdersDto.class));
     }
 

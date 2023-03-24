@@ -14,6 +14,7 @@ import src.service.StoreLevel.Dtos.StoreLevelCreateDto;
 import src.service.StoreLevel.Dtos.StoreLevelDto;
 import src.service.StoreLevel.Dtos.StoreLevelUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -52,8 +53,10 @@ public class StoreLevelService {
         StoreLevel existingStoreLevel = storelevelRepository.findById(id).orElse(null);
         if (existingStoreLevel == null)
             throw new NotFoundException("Unable to find store level!");
+        Date createAt = existingStoreLevel.getCreateAt();
         existingStoreLevel = toDto.map(storelevel, StoreLevel.class);
         existingStoreLevel.setId(id);
+        existingStoreLevel.setCreateAt(createAt);
         return CompletableFuture.completedFuture(toDto.map(storelevelRepository.save(existingStoreLevel), StoreLevelDto.class));
     }
 

@@ -14,6 +14,7 @@ import src.service.CartItems.Dtos.CartItemsCreateDto;
 import src.service.CartItems.Dtos.CartItemsDto;
 import src.service.CartItems.Dtos.CartItemsUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,7 @@ public class CartItemsService {
 
     @Async
     public CompletableFuture<CartItemsDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.findById(id), CartItemsDto.class));
+        return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.findById(id).get(), CartItemsDto.class));
     }
 
     @Async
@@ -52,8 +53,10 @@ public class CartItemsService {
         CartItems existingCartItems = cartitemsRepository.findById(id).orElse(null);
         if (existingCartItems == null)
             throw new NotFoundException("Unable to find cart items!");
+        Date createAt = existingCartItems.getCreateAt();
         existingCartItems = toDto.map(cartitems, CartItems.class);
         existingCartItems.setId(id);
+        existingCartItems.setCreateAt(createAt);
         return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.save(existingCartItems), CartItemsDto.class));
     }
 

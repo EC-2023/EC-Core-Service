@@ -14,6 +14,7 @@ import src.service.ProductImg.Dtos.ProductImgCreateDto;
 import src.service.ProductImg.Dtos.ProductImgDto;
 import src.service.ProductImg.Dtos.ProductImgUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +39,7 @@ public class ProductImgService {
 
     @Async
     public CompletableFuture<ProductImgDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(productimgRepository.findById(id), ProductImgDto.class));
+        return CompletableFuture.completedFuture(toDto.map(productimgRepository.findById(id).get(), ProductImgDto.class));
     }
 
     @Async
@@ -52,8 +53,10 @@ public class ProductImgService {
         ProductImg existingProductImg = productimgRepository.findById(id).orElse(null);
         if (existingProductImg == null)
             throw new NotFoundException("Unable to find product image!");
+        Date createAt = existingProductImg.getCreateAt();
         existingProductImg = toDto.map(productimg, ProductImg.class);
         existingProductImg.setId(id);
+        existingProductImg.setCreateAt(createAt);
         return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(existingProductImg), ProductImgDto.class));
     }
 

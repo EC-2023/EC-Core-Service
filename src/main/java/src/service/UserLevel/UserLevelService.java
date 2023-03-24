@@ -13,6 +13,7 @@ import src.service.UserLevel.Dtos.UserLevelCreateDto;
 import src.service.UserLevel.Dtos.UserLevelDto;
 import src.service.UserLevel.Dtos.UserLevelUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -51,8 +52,10 @@ public class UserLevelService {
         UserLevel existingUserLevel = userlevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
             throw new NotFoundException("Unable to find user level!");
+        Date creatAt = existingUserLevel.getCreateAt();
         existingUserLevel = toDto.map(userlevel, UserLevel.class);
         existingUserLevel.setId(id);
+        existingUserLevel.setCreateAt(creatAt);
         return CompletableFuture.completedFuture(toDto.map(userlevelRepository.save(existingUserLevel), UserLevelDto.class));
     }
 
