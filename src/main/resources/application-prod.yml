@@ -1,0 +1,29 @@
+apiContactEmail: '"ec_2023gmail.com"'
+apiContactName: '"Royal Falcon Fire Team"'
+apiContactUrl: '"NotFound"'
+apiDescription: '"This is first version api for ecommerce website."'
+apiTitle: '"Super Ecommerce Website"'
+apiVersion: '"1.0.0"'
+jwt:
+    access-token-expiration: 1800000
+    refresh-token-expiration: 86400000
+    secret: W1vmiY6pBqp6#i!ly^EgP!n9aWcn9yv&A*1r@c%2Cz8lAuW
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: q2U8MtjgrJzN
+        url: jdbc:postgresql://ep-solitary-cell-554297.ap-southeast-1.aws.neon.tech/neondb
+        username: thaithangpc
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+            jakarta:
+                persistence:
+                    sharedCache:
+                        mode: ALL
+        show-sql: true
+    main:
+        allow-bean-definition-overriding: true
