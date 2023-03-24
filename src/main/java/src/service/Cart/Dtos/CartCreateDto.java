@@ -7,6 +7,6 @@ import java.util.UUID;
 
 @Data
 public class CartCreateDto {
-    @JsonProperty(value="user id", required = true)
+    @JsonProperty(value="userId", required = true)
     private UUID userId;
 }

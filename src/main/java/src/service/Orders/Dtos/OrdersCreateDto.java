@@ -9,22 +9,22 @@ import java.util.UUID;
 public class OrdersCreateDto {
     @JsonProperty(value = "address", required = true)
     private String address;
-    @JsonProperty(value = "amount from user", required = true)
+    @JsonProperty(value = "amountFromUser", required = true)
     private double amountFromUser;
-    @JsonProperty(value = "amount togd")
+    @JsonProperty(value = "amountToGd")
     private double amountToGd;
-    @JsonProperty(value = "amount to store", required = true)
+    @JsonProperty(value = "amountToStore", required = true)
     private double amountToStore;
-    @JsonProperty(value = "delivery id", required = true)
+    @JsonProperty(value = "deliveryId", required = true)
     private UUID deliveryId;
-    @JsonProperty(value = "is paid before", required = true)
+    @JsonProperty(value = "isPaidBefore", required = true)
     private boolean isPaidBefore;
     @JsonProperty(value = "phone", required = true)
     private String phone;
     @JsonProperty(value = "status", required = true)
     private String status;
-    @JsonProperty(value = "store id", required = true)
+    @JsonProperty(value = "storeId", required = true)
     private UUID storeId;
-    @JsonProperty(value = "user id", required = true)
+    @JsonProperty(value = "userId", required = true)
     private UUID userId;
 }

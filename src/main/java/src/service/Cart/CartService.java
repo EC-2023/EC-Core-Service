@@ -38,7 +38,7 @@ public class CartService {
 
     @Async
     public CompletableFuture<CartDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(cartRepository.findById(id), CartDto.class));
+        return CompletableFuture.completedFuture(toDto.map(cartRepository.findById(id).get(), CartDto.class));
     }
 
     @Async
