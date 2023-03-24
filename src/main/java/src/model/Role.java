@@ -90,4 +90,5 @@ public class Role {
     public void setUsersByRoleId(Collection<User> usersByRoleId) {
         this.usersByRoleId = usersByRoleId;
     }
+
 }

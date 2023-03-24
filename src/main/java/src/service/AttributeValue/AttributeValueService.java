@@ -13,10 +13,10 @@ import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
 import src.service.AttributeValue.Dtos.AttributeValueDto;
 import src.service.AttributeValue.Dtos.AttributeValueUpdateDto;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -61,6 +61,34 @@ public class AttributeValueService {
         existingAttributeValue.setDeleted(true);
         attributevalueRepository.save(toDto.map(existingAttributeValue, AttributeValue.class));
         return CompletableFuture.completedFuture(null);
+    }
+
+    // tìm kiếm Attribute Value theo name
+    @Async
+    public CompletableFuture<List<AttributeValueDto>> findByName(String name) {
+        Collection<Object> attributevalues = attributevalueRepository.findByNameContainingIgnoreCase(name);
+        List<AttributeValueDto> attributevalueDtos = new ArrayList<>();
+
+        for (Object attributevalue : attributevalues) {
+            AttributeValueDto attributevalueDto = toDto.map(attributevalue, AttributeValueDto.class);
+            if (attributevalueDto.getName().equalsIgnoreCase(name)) {
+                attributevalueDtos.add(attributevalueDto);
+            }
+        }
+        if (attributevalueDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any attributes with name: " + name);
+        }
+        return CompletableFuture.completedFuture(attributevalueDtos);
+    }
+
+    // sắp xếp Attribute Value theo name
+    @Async
+    public CompletableFuture<List<AttributeValueDto>> getAllSortedByName() {
+        List<AttributeValueDto> attributevalueDtos = attributevalueRepository.findAll().stream()
+                .map(attributevalue -> toDto.map(attributevalue, AttributeValueDto.class))
+                .sorted(Comparator.comparing(AttributeValueDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(attributevalueDtos);
     }
 }
 

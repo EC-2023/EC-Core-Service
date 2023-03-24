@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.service.AttributeValue.AttributeValueService;
 import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
 import src.service.AttributeValue.Dtos.AttributeValueDto;
 import src.service.AttributeValue.Dtos.AttributeValueUpdateDto;
-import src.service.AttributeValue.AttributeValueService;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class AttributeValueController {
 //    @Tag(name = "attributevalues", description = "Operations related to attributevalues")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<AttributeValueDto>> findAll() {
-       return attributevalueService.getAll();
+        return attributevalueService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class AttributeValueController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return attributevalueService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<AttributeValueDto>> searchByName(@RequestParam String name) {
+        return attributevalueService.findByName(name);
+    }
+
+    // sắp xếp theo attribute theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<AttributeValueDto>> getAllSortedByName() {
+        return attributevalueService.getAllSortedByName();
     }
 }

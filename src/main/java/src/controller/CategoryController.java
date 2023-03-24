@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.service.Category.CategoryService;
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
 import src.service.Category.Dtos.CategoryUpdateDto;
-import src.service.Category.CategoryService;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class CategoryController {
 //    @Tag(name = "categorys", description = "Operations related to categorys")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<CategoryDto>> findAll() {
-       return categoryService.getAll();
+        return categoryService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class CategoryController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return categoryService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<CategoryDto>> searchByName(@RequestParam String name) {
+        return categoryService.findByName(name);
+    }
+
+    // sắp xếp theo Category theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<CategoryDto>> getAllSortedByName() {
+        return categoryService.getAllSortedByName();
     }
 }

@@ -13,10 +13,11 @@ import src.service.Attribute.Dtos.AttributeCreateDto;
 import src.service.Attribute.Dtos.AttributeDto;
 import src.service.Attribute.Dtos.AttributeUpdateDto;
 
-import java.util.List;
-import java.util.UUID;
+
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -25,7 +26,6 @@ public class AttributeService {
     private IAttributeRepository attributeRepository;
     @Autowired
     private ModelMapper toDto;
-
     @Async
     public CompletableFuture<List<AttributeDto>> getAll() {
         return CompletableFuture.completedFuture(
@@ -33,7 +33,6 @@ public class AttributeService {
                         x -> toDto.map(x, AttributeDto.class)
                 ).collect(Collectors.toList()));
     }
-
     @Async
     public CompletableFuture<AttributeDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(attributeRepository.findById(id), AttributeDto.class));
@@ -61,6 +60,34 @@ public class AttributeService {
         existingAttribute.setDeleted(true);
         attributeRepository.save(toDto.map(existingAttribute, Attribute.class));
         return CompletableFuture.completedFuture(null);
+    }
+
+    // tìm kiếm Attribute theo name
+    @Async
+    public CompletableFuture<List<AttributeDto>> findByName(String name) {
+        Collection<Object> attributes = attributeRepository.findByNameContainingIgnoreCase(name);
+        List<AttributeDto> attributeDtos = new ArrayList<>();
+
+        for (Object attribute : attributes) {
+            AttributeDto attributeDto = toDto.map(attribute, AttributeDto.class);
+            if (attributeDto.getName().equalsIgnoreCase(name)) {
+                attributeDtos.add(attributeDto);
+            }
+        }
+        if (attributeDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any attributes with name: " + name);
+        }
+        return CompletableFuture.completedFuture(attributeDtos);
+    }
+
+    // sắp xếp Attribute theo name
+    @Async
+    public CompletableFuture<List<AttributeDto>> getAllSortedByName() {
+        List<AttributeDto> attributeDtos = attributeRepository.findAll().stream()
+                .map(attribute -> toDto.map(attribute, AttributeDto.class))
+                .sorted(Comparator.comparing(AttributeDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(attributeDtos);
     }
 }
 

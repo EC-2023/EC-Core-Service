@@ -9,14 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.model.Commission;
 import src.repository.ICommissionRepository;
+
 import src.service.Commission.Dtos.CommissionCreateDto;
 import src.service.Commission.Dtos.CommissionDto;
 import src.service.Commission.Dtos.CommissionUpdateDto;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -61,6 +62,34 @@ public class CommissionService {
         existingCommission.setDeleted(true);
         commissionRepository.save(toDto.map(existingCommission, Commission.class));
         return CompletableFuture.completedFuture(null);
+    }
+
+    // tìm kiếm Commission theo name
+    @Async
+    public CompletableFuture<List<CommissionDto>> findByName(String name) {
+        Collection<Object> commissions = commissionRepository.findByNameContainingIgnoreCase(name);
+        List<CommissionDto> commissionDtos = new ArrayList<>();
+
+        for (Object commission : commissions) {
+            CommissionDto commissionDto = toDto.map(commission, CommissionDto.class);
+            if (commissionDto.getName().equalsIgnoreCase(name)) {
+                commissionDtos.add(commissionDto);
+            }
+        }
+        if (commissionDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any commissions with name: " + name);
+        }
+        return CompletableFuture.completedFuture(commissionDtos);
+    }
+
+    // sắp xếp Commission theo name
+    @Async
+    public CompletableFuture<List<CommissionDto>> getAllSortedByName() {
+        List<CommissionDto> commissionDtos = commissionRepository.findAll().stream()
+                .map(commission -> toDto.map(commission, CommissionDto.class))
+                .sorted(Comparator.comparing(CommissionDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(commissionDtos);
     }
 }
 

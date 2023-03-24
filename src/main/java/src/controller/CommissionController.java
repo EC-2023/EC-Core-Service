@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.service.Commission.CommissionService;
 import src.service.Commission.Dtos.CommissionCreateDto;
 import src.service.Commission.Dtos.CommissionDto;
 import src.service.Commission.Dtos.CommissionUpdateDto;
-import src.service.Commission.CommissionService;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class CommissionController {
 //    @Tag(name = "commissions", description = "Operations related to commissions")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<CommissionDto>> findAll() {
-       return commissionService.getAll();
+        return commissionService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class CommissionController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return commissionService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<CommissionDto>> searchByName(@RequestParam String name) {
+        return commissionService.findByName(name);
+    }
+
+    // sắp xếp theo commission theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<CommissionDto>> getAllSortedByName() {
+        return commissionService.getAllSortedByName();
     }
 }

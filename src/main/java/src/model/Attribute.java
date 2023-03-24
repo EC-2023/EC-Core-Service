@@ -131,4 +131,5 @@ public class Attribute {
     public int hashCode() {
         return Objects.hash(Id, name, product_id, category_id);
     }
+
 }
