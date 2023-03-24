@@ -7,16 +7,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-       - name: setup
-         uses: actions/checkout@v2
-       - name: deploy
-         uses: akhileshns/heroku-deploy@v3.12.12
-         with:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
           branch: "main"
           heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
           heroku_app_name: "ec-api"
           heroku_email: "lulueve3@gmail.com"
           args: --skip-database-initialization
-          env:
-            SPRING_DATASOURCE_INITIALIZATION_MODE: never
 
