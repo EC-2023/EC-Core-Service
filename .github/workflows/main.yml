@@ -1,17 +1,25 @@
-name: Deploy
-
-on:
-  push:
-    branches:
-      - main
-
+on: push
+name: Deploy to Heroku
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
+      - name: login
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
         with:
-          heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
-          heroku_app_name: "ECAPI" #Must be unique in Heroku
-          heroku_email: "lulueve3@gmail.com"
-          usedocker: true
+          args: container:login
+      - name: push
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
+        with:
+          args: container:push -a calm-fortress-1234 web
+      - name: release
+        uses: actions/heroku@master
+        env:
+          HEROKU_API_KEY: "95725347-4959-4454-ae92-37abf2b437ef"
+        with:
+          args: container:release -a calm-fortress-1234 web
