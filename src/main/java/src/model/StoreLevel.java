@@ -25,7 +25,7 @@ public class StoreLevel {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
     @Basic
-    @Column(name = "createAt", nullable = false)
+    @Column(name = "createAt", nullable = false, updatable = false)
     private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "updateAt", nullable = true)
