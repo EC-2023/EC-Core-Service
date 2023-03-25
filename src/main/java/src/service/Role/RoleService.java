@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.model.Role;
 import src.repository.IRoleRepository;
-import src.service.Role.Dtos.RoleCreateDto;
+
 import src.service.Role.Dtos.RoleDto;
+import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleUpdateDto;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -62,6 +62,35 @@ public class RoleService {
         existingRole.setIsDeleted(true);
         roleRepository.save(toDto.map(existingRole, Role.class));
         return CompletableFuture.completedFuture(null);
+    }
+
+    // tìm kiếm Role theo name
+    @Async
+    public CompletableFuture<List<RoleDto>> findByName(String name) {
+        Collection<Object> roles = roleRepository.findByNameContainingIgnoreCase(name);
+        List<RoleDto> roleDtos = new ArrayList<>();
+
+        for (Object role : roles) {
+            RoleDto aoleDto = toDto.map(role, RoleDto.class);
+            if (aoleDto.getName().equalsIgnoreCase(name)) {
+                roleDtos.add(aoleDto);
+            }
+        }
+        if (roleDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any roles with name: " + name);
+        }
+        return CompletableFuture.completedFuture(roleDtos);
+    }
+
+
+    // sắp xếp Role theo name
+    @Async
+    public CompletableFuture<List<RoleDto>> getAllSortedByName() {
+        List<RoleDto> roleDtos = roleRepository.findAll().stream()
+                .map(role -> toDto.map(role, RoleDto.class))
+                .sorted(Comparator.comparing(RoleDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(roleDtos);
     }
 }
 

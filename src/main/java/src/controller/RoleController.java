@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
-import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleDto;
+import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleUpdateDto;
 import src.service.Role.RoleService;
 
@@ -32,7 +32,7 @@ public class RoleController {
 //    @Tag(name = "roles", description = "Operations related to roles")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<RoleDto>> findAll() {
-       return roleService.getAll();
+        return roleService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class RoleController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return roleService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<RoleDto>> searchByName(@RequestParam String name) {
+        return roleService.findByName(name);
+    }
+
+    // sắp xếp theo Role theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<RoleDto>> getAllSortedByName() {
+        return roleService.getAllSortedByName();
     }
 }

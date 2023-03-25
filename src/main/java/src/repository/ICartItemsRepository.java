@@ -1,9 +1,9 @@
 
-package src.repository;
+    package src.repository;
 
+import src.model.CartItems;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import src.model.CartItems;
 
 import java.util.UUID;
 
