@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.Role;
 import src.repository.IRoleRepository;
-
 import src.service.Role.Dtos.RoleDto;
 import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleUpdateDto;
@@ -48,10 +48,14 @@ public class RoleService {
 
     @Async
     public CompletableFuture<RoleDto> update(UUID id, RoleUpdateDto role) {
-        Role existingRole = roleRepository.findById(id).orElse(null);
-        if (existingRole == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(toDto.map(role, Role.class)), RoleDto.class));
+        Role existingrole = roleRepository.findById(id).orElse(null);
+        if (existingrole == null)
+            throw new NotFoundException("Unable to find role!");
+        Date createAt = existingrole.getCreateAt();
+        existingrole = toDto.map(role, Role.class);
+        existingrole.setId(id);
+        existingrole.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(existingrole), RoleDto.class));
     }
 
     @Async
@@ -59,7 +63,7 @@ public class RoleService {
         Role existingRole = roleRepository.findById(id).orElse(null);
         if (existingRole == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingRole.setDeleted(true);
+        existingRole.setIsDeleted(true);
         roleRepository.save(toDto.map(existingRole, Role.class));
         return CompletableFuture.completedFuture(null);
     }

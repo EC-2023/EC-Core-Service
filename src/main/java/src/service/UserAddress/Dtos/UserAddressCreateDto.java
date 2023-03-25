@@ -2,6 +2,8 @@ package src.service.UserAddress.Dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class UserAddressCreateDto {
     @JsonProperty(value = "city", required = true)
@@ -21,5 +23,8 @@ public class UserAddressCreateDto {
     private String ward;
     @JsonProperty(value = "zipcode", required = true, defaultValue = "0")
     private String zipcode;
+
+    @JsonProperty(value = "userId", required = true)
+    public UUID userId;
 
 }

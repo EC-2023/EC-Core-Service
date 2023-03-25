@@ -17,7 +17,6 @@ public class CategoryDto extends CategoryUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
-    @JsonProperty(value = "parentCategoryId", required = true)
-    public UUID parentCategoryId;
+
 }
 

@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.Category;
 import src.repository.ICategoryRepository;
-
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
 import src.service.Category.Dtos.CategoryUpdateDto;
@@ -48,10 +48,14 @@ public class CategoryService {
 
     @Async
     public CompletableFuture<CategoryDto> update(UUID id, CategoryUpdateDto category) {
-        Category existingCategory = categoryRepository.findById(id).orElse(null);
-        if (existingCategory == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(toDto.map(category, Category.class)), CategoryDto.class));
+        Category existingcategory = categoryRepository.findById(id).orElse(null);
+        if (existingcategory == null)
+            throw new NotFoundException("Unable to find category!");
+        Date createAt = existingcategory.getCreateAt();
+        existingcategory = toDto.map(category, Category.class);
+        existingcategory.setId(id);
+        existingcategory.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingcategory), CategoryDto.class));
     }
 
     @Async
@@ -59,7 +63,7 @@ public class CategoryService {
         Category existingCategory = categoryRepository.findById(id).orElse(null);
         if (existingCategory == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCategory.setDeleted(true);
+        existingCategory.setIsDeleted(true);
         categoryRepository.save(toDto.map(existingCategory, Category.class));
         return CompletableFuture.completedFuture(null);
     }

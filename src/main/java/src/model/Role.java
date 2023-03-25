@@ -1,14 +1,16 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name="role")
+@Data
 public class Role {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -20,8 +22,16 @@ public class Role {
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
+    @Basic
+    @Column(name = "createAt", nullable = false, updatable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
+    @OneToMany(mappedBy = "roleByRoleId")
+    private Collection<User> usersByRoleId;
 
-    public Boolean getDeleted() {
+/*    public Boolean getDeleted() {
         return isDeleted;
     }
 
@@ -44,15 +54,6 @@ public class Role {
     public void setUpdateAt(Date updateAt) {
         this.updateAt = updateAt;
     }
-
-    @Basic
-    @Column(name = "createAt", nullable = true)
-    private Date createAt = new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
-    @OneToMany(mappedBy = "roleByRoleId")
-    private Collection<User> usersByRoleId;
 
     public UUID getRoleId() {
         return Id;
@@ -90,5 +91,7 @@ public class Role {
     public void setUsersByRoleId(Collection<User> usersByRoleId) {
         this.usersByRoleId = usersByRoleId;
     }
+
+ */
 
 }

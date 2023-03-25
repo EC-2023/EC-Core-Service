@@ -7,18 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.UserAddress;
-import src.repository.IUserAddressRepository;
-import src.service.Category.Dtos.CategoryDto;
-import src.service.Role.Dtos.RoleDto;
+import src.repository.IUserAddressRepository;;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -52,19 +48,23 @@ public class UserAddressService {
 
     @Async
     public CompletableFuture<UserAddressDto> update(UUID id, UserAddressUpdateDto useraddress) {
-        UserAddress existingUserAddress = useraddressRepository.findById(id).orElse(null);
-        if (existingUserAddress == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(toDto.map(useraddress, UserAddress.class)), UserAddressDto.class));
+        UserAddress existinguseraddress = useraddressRepository.findById(id).orElse(null);
+        if (existinguseraddress == null)
+            throw new NotFoundException("Unable to find User Address!");
+        Date createAt = existinguseraddress.getCreateAt();
+        existinguseraddress = toDto.map(useraddress, UserAddress.class);
+        existinguseraddress.setId(id);
+        existinguseraddress.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(existinguseraddress), UserAddressDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
-        UserAddress existingUserAddress = useraddressRepository.findById(id).orElse(null);
-        if (existingUserAddress == null)
+        UserAddress existinguseraddress = useraddressRepository.findById(id).orElse(null);
+        if (existinguseraddress == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingUserAddress.setDeleted(true);
-        useraddressRepository.save(toDto.map(existingUserAddress, UserAddress.class));
+        existinguseraddress.setIsDeleted(true);
+        useraddressRepository.save(toDto.map(existinguseraddress, UserAddress.class));
         return CompletableFuture.completedFuture(null);
     }
 

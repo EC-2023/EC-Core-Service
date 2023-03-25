@@ -1,13 +1,16 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Date;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "user_address", catalog = "")
+@Data
 public class UserAddress {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -22,7 +25,6 @@ public class UserAddress {
     @Basic
     @Column(name = "city", nullable = false, length = 255)
     private String city = "Viet Nam";
-
     @Basic
     @Column(name = "district", nullable = false, length = 255)
     private String district;
@@ -38,8 +40,20 @@ public class UserAddress {
     @Basic
     @Column(name = "name_recipient", nullable = false, length = 50)
     private String nameRecipient;
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted = false;
+    @Basic
+    @Column(name = "createAt", nullable = false, updatable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    private User userByUserId;
 
-    public Boolean getDelete() {
+/*    public Boolean getDelete() {
         return isDeleted;
     }
 
@@ -62,20 +76,6 @@ public class UserAddress {
     public void setUpdateAt(Date updateAt) {
         this.updateAt = updateAt;
     }
-
-    @Basic
-    @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted = false;
-    @Basic
-    @Column(name = "createAt", nullable = true)
-    private Date createAt = new Date(new java.util.Date().getTime());
-
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt = new Date(new java.util.Date().getTime());
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
-    private User userByUserId;
 
     public UUID getAddressId() {
         return Id;
@@ -171,5 +171,5 @@ public class UserAddress {
 
     public void setUserByUserId(User userByUserId) {
         this.userByUserId = userByUserId;
-    }
+    } */
 }

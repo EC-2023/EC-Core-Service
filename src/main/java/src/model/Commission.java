@@ -1,14 +1,16 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name="commission")
+@Data
 public class Commission {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -30,14 +32,14 @@ public class Commission {
 
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
-    private Date createAt = new Date(new java.util.Date().getTime());
+    private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "updateAt", nullable = true)
     private Date updateAt= new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "commissionByCommissionId")
     private Collection<Store> storesByCommissionId;
 
-    public UUID getCommissionId() {
+ /*   public UUID getCommissionId() {
         return Id;
     }
 
@@ -112,5 +114,5 @@ public class Commission {
 
     public void setStoresByCommissionId(Collection<Store> storesByCommissionId) {
         this.storesByCommissionId = storesByCommissionId;
-    }
+    } */
 }

@@ -1,14 +1,16 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "attribute")
+@Data
 public class Attribute {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -17,8 +19,31 @@ public class Attribute {
     @Basic
     @Column(name = "name", nullable = true)
     private String name;
+    @Basic
+    @Column(name = "isDeleted", nullable = true)
+    private Boolean isDeleted;
+    @Basic
+    @Column(name = "createAt", nullable = false, updatable = false)
+    private Date createAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "updateAt", nullable = true)
+    private Date updateAt= new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "product_id", nullable = true)
+    private UUID productId;
+    @Basic
+    @Column(name = "category_id", nullable = true)
+    private UUID categoryId;
+    @OneToMany(mappedBy = "attributeByAttributeId", fetch = FetchType.LAZY)
+    private Collection<AttributeValue> attributeValueByAttribute;
+    @ManyToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
+    private Product attributesByProductId;
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false, insertable = false, updatable = false)
+    private Category attributesByCategoryId;
 
-    public UUID getId() {
+  /*  public UUID getId() {
         return Id;
     }
 
@@ -73,25 +98,10 @@ public class Attribute {
     public void setCategory_id(UUID category_id) {
         this.category_id = category_id;
     }
+*/
 
-    @Basic
-    @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted;
-    @Basic
-    @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "product_id", nullable = true)
-    private UUID product_id;
-    @Basic
-    @Column(name = "category_id", nullable = true)
-    private UUID category_id;
-    @OneToMany(mappedBy = "attributeByAttributeId", fetch = FetchType.LAZY)
-    private Collection<AttributeValue> attributeValueByAttribute;
-    public Product getAttributesByProductId() {
+
+ /*   public Product getAttributesByProductId() {
         return attributesByProductId;
     }
     public void setAttributesByProductId(Product attributesByProductId) {
@@ -103,12 +113,6 @@ public class Attribute {
     public void setAttributesByCategoryId(Category attributesByCategoryId) {
         this.attributesByCategoryId = attributesByCategoryId;
     }
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
-    private Product attributesByProductId;
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false, insertable = false, updatable = false)
-    private Category attributesByCategoryId;
 
     public Collection<AttributeValue> getAttributeValueByAttribute() {
         return attributeValueByAttribute;
@@ -130,6 +134,6 @@ public class Attribute {
     @Override
     public int hashCode() {
         return Objects.hash(Id, name, product_id, category_id);
-    }
+    } */
 
 }

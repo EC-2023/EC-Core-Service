@@ -17,9 +17,6 @@ public class AttributeDto extends AttributeUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "createAt", required = true)
     public Date updateAt ;
-    @JsonProperty(value = "categoryId", required = true)
-    public UUID categoryId;
-    @JsonProperty(value = "productId", required = true)
-    public UUID productId;
+
 }
 

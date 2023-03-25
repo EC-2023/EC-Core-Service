@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.Attribute;
 import src.repository.IAttributeRepository;
 import src.service.Attribute.Dtos.AttributeCreateDto;
 import src.service.Attribute.Dtos.AttributeDto;
 import src.service.Attribute.Dtos.AttributeUpdateDto;
-
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -48,8 +48,12 @@ public class AttributeService {
     public CompletableFuture<AttributeDto> update(UUID id, AttributeUpdateDto attribute) {
         Attribute existingAttribute = attributeRepository.findById(id).orElse(null);
         if (existingAttribute == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(attributeRepository.save(toDto.map(attribute, Attribute.class)), AttributeDto.class));
+            throw new NotFoundException("Unable to find Attribute!");
+        Date createAt = existingAttribute.getCreateAt();
+        existingAttribute = toDto.map(attribute, Attribute.class);
+        existingAttribute.setId(id);
+        existingAttribute.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(attributeRepository.save(existingAttribute), AttributeDto.class));
     }
 
     @Async
@@ -57,7 +61,7 @@ public class AttributeService {
         Attribute existingAttribute = attributeRepository.findById(id).orElse(null);
         if (existingAttribute == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingAttribute.setDeleted(true);
+        existingAttribute.setIsDeleted(true);
         attributeRepository.save(toDto.map(existingAttribute, Attribute.class));
         return CompletableFuture.completedFuture(null);
     }

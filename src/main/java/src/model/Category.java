@@ -1,14 +1,16 @@
 package src.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "category")
+@Data
 public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -27,7 +29,7 @@ public class Category {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createAt", nullable = false)
+    @Column(name = "createAt", nullable = false, updatable = false)
     private Date createAt= new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "updateAt", nullable = true)
@@ -43,7 +45,7 @@ public class Category {
     @OneToMany(mappedBy = "attributesByCategoryId")
     private Collection<Attribute> attributesByCategoryId;
 
-    public UUID getCategoryId() {
+ /*   public UUID getCategoryId() {
         return Id;
     }
 
@@ -134,5 +136,5 @@ public class Category {
 
     public void setProductsByCategoryId(Collection<Product> productsByCategoryId) {
         this.productsByCategoryId = productsByCategoryId;
-    }
+    } */
 }

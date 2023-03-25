@@ -7,9 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
+import src.model.Commission;
 import src.model.Commission;
 import src.repository.ICommissionRepository;
 
+import src.service.Commission.Dtos.CommissionDto;
+import src.service.Commission.Dtos.CommissionUpdateDto;
 import src.service.Commission.Dtos.CommissionCreateDto;
 import src.service.Commission.Dtos.CommissionDto;
 import src.service.Commission.Dtos.CommissionUpdateDto;
@@ -48,10 +52,14 @@ public class CommissionService {
 
     @Async
     public CompletableFuture<CommissionDto> update(UUID id, CommissionUpdateDto commission) {
-        Commission existingCommission = commissionRepository.findById(id).orElse(null);
-        if (existingCommission == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(toDto.map(commission, Commission.class)), CommissionDto.class));
+        Commission existingcommission = commissionRepository.findById(id).orElse(null);
+        if (existingcommission == null)
+            throw new NotFoundException("Unable to find commission!");
+        Date createAt = existingcommission.getCreateAt();
+        existingcommission = toDto.map(commission, Commission.class);
+        existingcommission.setId(id);
+        existingcommission.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(existingcommission), CommissionDto.class));
     }
 
     @Async
@@ -59,7 +67,7 @@ public class CommissionService {
         Commission existingCommission = commissionRepository.findById(id).orElse(null);
         if (existingCommission == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        existingCommission.setDeleted(true);
+        existingCommission.setIsDeleted(true);
         commissionRepository.save(toDto.map(existingCommission, Commission.class));
         return CompletableFuture.completedFuture(null);
     }
