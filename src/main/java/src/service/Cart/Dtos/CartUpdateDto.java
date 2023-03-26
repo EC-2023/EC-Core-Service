@@ -6,8 +6,6 @@ import lombok.Data;
 
 @Data
 public class CartUpdateDto extends  CartCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted  = false;
 
 }
 

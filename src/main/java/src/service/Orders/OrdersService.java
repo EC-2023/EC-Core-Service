@@ -3,6 +3,7 @@
 package src.service.Orders;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,7 @@ public class OrdersService {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
             throw new NotFoundException("Unable to find orders!");
-        Date createAt = existingOrders.getCreateAt();
-        existingOrders = toDto.map(orders, Orders.class);
-        existingOrders.setId(id);
-        existingOrders.setCreateAt(createAt);
+        BeanUtils.copyProperties(orders, existingOrders);
         return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(existingOrders), OrdersDto.class));
     }
 

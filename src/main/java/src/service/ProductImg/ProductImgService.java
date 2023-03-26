@@ -3,6 +3,7 @@
 package src.service.ProductImg;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,7 @@ public class ProductImgService {
         ProductImg existingProductImg = productimgRepository.findById(id).orElse(null);
         if (existingProductImg == null)
             throw new NotFoundException("Unable to find product image!");
-        Date createAt = existingProductImg.getCreateAt();
-        existingProductImg = toDto.map(productimg, ProductImg.class);
-        existingProductImg.setId(id);
-        existingProductImg.setCreateAt(createAt);
+        BeanUtils.copyProperties(productimg, existingProductImg);
         return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(existingProductImg), ProductImgDto.class));
     }
 

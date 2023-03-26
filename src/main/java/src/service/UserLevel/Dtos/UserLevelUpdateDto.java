@@ -6,7 +6,5 @@ import lombok.Data;
 
 @Data
 public class UserLevelUpdateDto extends  UserLevelCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted = false;
 }
 

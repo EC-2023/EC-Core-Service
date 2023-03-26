@@ -6,8 +6,6 @@ import lombok.Data;
 
 @Data
 public class OrdersUpdateDto extends  OrdersCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted  = false;
 
 }
 

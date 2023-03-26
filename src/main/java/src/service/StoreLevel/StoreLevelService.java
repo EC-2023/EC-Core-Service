@@ -3,6 +3,7 @@
 package src.service.StoreLevel;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,7 @@ public class StoreLevelService {
         StoreLevel existingStoreLevel = storelevelRepository.findById(id).orElse(null);
         if (existingStoreLevel == null)
             throw new NotFoundException("Unable to find store level!");
-        Date createAt = existingStoreLevel.getCreateAt();
-        existingStoreLevel = toDto.map(storelevel, StoreLevel.class);
-        existingStoreLevel.setId(id);
-        existingStoreLevel.setCreateAt(createAt);
+        BeanUtils.copyProperties(storelevel, existingStoreLevel);
         return CompletableFuture.completedFuture(toDto.map(storelevelRepository.save(existingStoreLevel), StoreLevelDto.class));
     }
 

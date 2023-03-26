@@ -3,6 +3,7 @@
 package src.service.UserLevel;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -52,10 +53,7 @@ public class UserLevelService {
         UserLevel existingUserLevel = userlevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
             throw new NotFoundException("Unable to find user level!");
-        Date creatAt = existingUserLevel.getCreateAt();
-        existingUserLevel = toDto.map(userlevel, UserLevel.class);
-        existingUserLevel.setId(id);
-        existingUserLevel.setCreateAt(creatAt);
+        BeanUtils.copyProperties(userlevel, existingUserLevel);
         return CompletableFuture.completedFuture(toDto.map(userlevelRepository.save(existingUserLevel), UserLevelDto.class));
     }
 
