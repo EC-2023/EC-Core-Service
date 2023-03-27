@@ -3,20 +3,18 @@
 package src.service.Commission;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 import src.model.Commission;
-import src.model.Commission;
 import src.repository.ICommissionRepository;
 
 import src.service.Commission.Dtos.CommissionDto;
 import src.service.Commission.Dtos.CommissionUpdateDto;
 import src.service.Commission.Dtos.CommissionCreateDto;
-import src.service.Commission.Dtos.CommissionDto;
-import src.service.Commission.Dtos.CommissionUpdateDto;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -51,15 +49,12 @@ public class CommissionService {
     }
 
     @Async
-    public CompletableFuture<CommissionDto> update(UUID id, CommissionUpdateDto commission) {
-        Commission existingcommission = commissionRepository.findById(id).orElse(null);
-        if (existingcommission == null)
+    public CompletableFuture<CommissionDto> update(UUID id, CommissionUpdateDto commissions) {
+        Commission existingCommission = commissionRepository.findById(id).orElse(null);
+        if (existingCommission == null)
             throw new NotFoundException("Unable to find commission!");
-        Date createAt = existingcommission.getCreateAt();
-        existingcommission = toDto.map(commission, Commission.class);
-        existingcommission.setId(id);
-        existingcommission.setCreateAt(createAt);
-        return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(existingcommission), CommissionDto.class));
+        BeanUtils.copyProperties(commissions, existingCommission);
+        return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(existingCommission), CommissionDto.class));
     }
 
     @Async

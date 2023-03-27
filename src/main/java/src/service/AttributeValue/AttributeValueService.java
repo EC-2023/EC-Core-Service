@@ -3,6 +3,7 @@
 package src.service.AttributeValue;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -47,14 +48,11 @@ public class AttributeValueService {
     }
 
     @Async
-    public CompletableFuture<AttributeValueDto> update(UUID id, AttributeValueUpdateDto attributevalue) {
+    public CompletableFuture<AttributeValueDto> update(UUID id, AttributeValueUpdateDto attributevalues) {
         AttributeValue existingAttributeValue = attributevalueRepository.findById(id).orElse(null);
         if (existingAttributeValue == null)
             throw new NotFoundException("Unable to find Attribute Value!");
-        Date createAt = existingAttributeValue.getCreateAt();
-        existingAttributeValue = toDto.map(attributevalue, AttributeValue.class);
-        existingAttributeValue.setId(id);
-        existingAttributeValue.setCreateAt(createAt);
+        BeanUtils.copyProperties(attributevalues, existingAttributeValue);
         return CompletableFuture.completedFuture(toDto.map(attributevalueRepository.save(existingAttributeValue), AttributeValueDto.class));
     }
 

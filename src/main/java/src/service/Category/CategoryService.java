@@ -3,6 +3,7 @@
 package src.service.Category;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -47,22 +48,19 @@ public class CategoryService {
     }
 
     @Async
-    public CompletableFuture<CategoryDto> update(UUID id, CategoryUpdateDto category) {
-        Category existingcategory = categoryRepository.findById(id).orElse(null);
-        if (existingcategory == null)
+    public CompletableFuture<CategoryDto> update(UUID id, CategoryUpdateDto categorys) {
+        Category existingCategory = categoryRepository.findById(id).orElse(null);
+        if (existingCategory == null)
             throw new NotFoundException("Unable to find category!");
-        Date createAt = existingcategory.getCreateAt();
-        existingcategory = toDto.map(category, Category.class);
-        existingcategory.setId(id);
-        existingcategory.setCreateAt(createAt);
-        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingcategory), CategoryDto.class));
+        BeanUtils.copyProperties(categorys, existingCategory);
+        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingCategory), CategoryDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Category existingCategory = categoryRepository.findById(id).orElse(null);
         if (existingCategory == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find category!");
         existingCategory.setIsDeleted(true);
         categoryRepository.save(toDto.map(existingCategory, Category.class));
         return CompletableFuture.completedFuture(null);

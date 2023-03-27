@@ -3,6 +3,7 @@
 package src.service.UserAddress;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -48,14 +49,11 @@ public class UserAddressService {
 
     @Async
     public CompletableFuture<UserAddressDto> update(UUID id, UserAddressUpdateDto useraddress) {
-        UserAddress existinguseraddress = useraddressRepository.findById(id).orElse(null);
-        if (existinguseraddress == null)
+        UserAddress existingUserAddress = useraddressRepository.findById(id).orElse(null);
+        if (existingUserAddress == null)
             throw new NotFoundException("Unable to find User Address!");
-        Date createAt = existinguseraddress.getCreateAt();
-        existinguseraddress = toDto.map(useraddress, UserAddress.class);
-        existinguseraddress.setId(id);
-        existinguseraddress.setCreateAt(createAt);
-        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(existinguseraddress), UserAddressDto.class));
+        BeanUtils.copyProperties(useraddress, existingUserAddress);
+        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(existingUserAddress), UserAddressDto.class));
     }
 
     @Async

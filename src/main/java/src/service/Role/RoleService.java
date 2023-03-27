@@ -3,6 +3,7 @@
 package src.service.Role;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -47,15 +48,12 @@ public class RoleService {
     }
 
     @Async
-    public CompletableFuture<RoleDto> update(UUID id, RoleUpdateDto role) {
-        Role existingrole = roleRepository.findById(id).orElse(null);
-        if (existingrole == null)
+    public CompletableFuture<RoleDto> update(UUID id, RoleUpdateDto roles) {
+        Role existingRole = roleRepository.findById(id).orElse(null);
+        if (existingRole == null)
             throw new NotFoundException("Unable to find role!");
-        Date createAt = existingrole.getCreateAt();
-        existingrole = toDto.map(role, Role.class);
-        existingrole.setId(id);
-        existingrole.setCreateAt(createAt);
-        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(existingrole), RoleDto.class));
+        BeanUtils.copyProperties(roles, existingRole);
+        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(existingRole), RoleDto.class));
     }
 
     @Async
