@@ -13,6 +13,8 @@ import lombok.Data;
 public class RoleDto extends RoleUpdateDto {
     @JsonProperty(value = "Id", required = true)
     public UUID Id;
+    @JsonProperty(value = "isDeleted")
+    public Boolean isDeleted  = false;
     @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)

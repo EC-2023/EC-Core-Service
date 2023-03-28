@@ -10,11 +10,13 @@ import java.util.UUID;
 
 @Data
 public class CartDto extends CartUpdateDto {
- @JsonProperty(value = "Id", required = true)
-    public UUID Id;
-    @JsonProperty(value = "createAt", required = true)
-    public Date createAt ;
-    @JsonProperty(value = "updateAt", required = true)
-    public Date updateAt ;
+   @JsonProperty(value = "Id", required = true)
+   public UUID Id;
+   @JsonProperty(value = "isDeleted")
+   public Boolean isDeleted  = false;
+   @JsonProperty(value = "createAt", required = true)
+   public Date createAt ;
+   @JsonProperty(value = "updateAt", required = true)
+   public Date updateAt ;
 }
 

@@ -3,10 +3,12 @@
 package src.service.UserAddress;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.UserAddress;
 import src.repository.IUserAddressRepository;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
@@ -52,8 +54,9 @@ public class UserAddressService {
     public CompletableFuture<UserAddressDto> update(UUID id, UserAddressUpdateDto useraddress) {
         UserAddress existingUserAddress = useraddressRepository.findById(id).orElse(null);
         if (existingUserAddress == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(toDto.map(useraddress, UserAddress.class)), UserAddressDto.class));
+            throw new NotFoundException("Unable to find User Address!");
+        BeanUtils.copyProperties(useraddress, existingUserAddress);
+        return CompletableFuture.completedFuture(toDto.map(useraddressRepository.save(existingUserAddress), UserAddressDto.class));
     }
 
     @Async

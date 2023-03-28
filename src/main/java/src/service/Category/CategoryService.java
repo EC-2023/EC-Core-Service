@@ -3,13 +3,14 @@
 package src.service.Category;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.Category;
 import src.repository.ICategoryRepository;
-
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
 import src.service.Category.Dtos.CategoryUpdateDto;
@@ -47,11 +48,12 @@ public class CategoryService {
     }
 
     @Async
-    public CompletableFuture<CategoryDto> update(UUID id, CategoryUpdateDto category) {
+    public CompletableFuture<CategoryDto> update(UUID id, CategoryUpdateDto categorys) {
         Category existingCategory = categoryRepository.findById(id).orElse(null);
         if (existingCategory == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(toDto.map(category, Category.class)), CategoryDto.class));
+            throw new NotFoundException("Unable to find category!");
+        BeanUtils.copyProperties(categorys, existingCategory);
+        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingCategory), CategoryDto.class));
     }
 
     @Async

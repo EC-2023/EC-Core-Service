@@ -3,6 +3,7 @@
 package src.service.CartItems;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -53,10 +54,7 @@ public class CartItemsService {
         CartItems existingCartItems = cartitemsRepository.findById(id).orElse(null);
         if (existingCartItems == null)
             throw new NotFoundException("Unable to find cart items!");
-        Date createAt = existingCartItems.getCreateAt();
-        existingCartItems = toDto.map(cartitems, CartItems.class);
-        existingCartItems.setId(id);
-        existingCartItems.setCreateAt(createAt);
+        BeanUtils.copyProperties(cartitems, existingCartItems);
         return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.save(existingCartItems), CartItemsDto.class));
     }
 

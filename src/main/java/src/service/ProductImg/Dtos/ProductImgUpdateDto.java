@@ -6,8 +6,6 @@ import lombok.Data;
 
 @Data
 public class ProductImgUpdateDto extends  ProductImgCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted  = false;
 
 }
 

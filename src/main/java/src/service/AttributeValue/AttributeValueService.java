@@ -3,10 +3,12 @@
 package src.service.AttributeValue;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.AttributeValue;
 import src.repository.IAttributeValueRepository;
 import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
@@ -46,11 +48,12 @@ public class AttributeValueService {
     }
 
     @Async
-    public CompletableFuture<AttributeValueDto> update(UUID id, AttributeValueUpdateDto attributevalue) {
+    public CompletableFuture<AttributeValueDto> update(UUID id, AttributeValueUpdateDto attributevalues) {
         AttributeValue existingAttributeValue = attributevalueRepository.findById(id).orElse(null);
         if (existingAttributeValue == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(attributevalueRepository.save(toDto.map(attributevalue, AttributeValue.class)), AttributeValueDto.class));
+            throw new NotFoundException("Unable to find Attribute Value!");
+        BeanUtils.copyProperties(attributevalues, existingAttributeValue);
+        return CompletableFuture.completedFuture(toDto.map(attributevalueRepository.save(existingAttributeValue), AttributeValueDto.class));
     }
 
     @Async

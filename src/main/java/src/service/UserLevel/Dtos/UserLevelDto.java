@@ -12,11 +12,11 @@ import java.util.UUID;
 public class UserLevelDto extends UserLevelUpdateDto {
     @JsonProperty(value = "Id", required = true)
     public UUID Id;
+    @JsonProperty(value = "isDeleted")
+    public Boolean isDeleted = false;
     @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
-    @JsonProperty(value = "isDeleted", required = true)
-    public Boolean isDeleted ;
 }
 
