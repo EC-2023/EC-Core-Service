@@ -3,13 +3,14 @@
 package src.service.Role;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.webjars.NotFoundException;
 import src.model.Role;
 import src.repository.IRoleRepository;
-
 import src.service.Role.Dtos.RoleDto;
 import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleUpdateDto;
@@ -47,11 +48,12 @@ public class RoleService {
     }
 
     @Async
-    public CompletableFuture<RoleDto> update(UUID id, RoleUpdateDto role) {
+    public CompletableFuture<RoleDto> update(UUID id, RoleUpdateDto roles) {
         Role existingRole = roleRepository.findById(id).orElse(null);
         if (existingRole == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(toDto.map(role, Role.class)), RoleDto.class));
+            throw new NotFoundException("Unable to find role!");
+        BeanUtils.copyProperties(roles, existingRole);
+        return CompletableFuture.completedFuture(toDto.map(roleRepository.save(existingRole), RoleDto.class));
     }
 
     @Async
