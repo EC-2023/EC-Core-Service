@@ -5,7 +5,7 @@ package src.service.UserLevel.Dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 @Data
@@ -16,5 +16,7 @@ public class UserLevelDto extends UserLevelUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
+    @JsonProperty(value = "isDeleted", required = true)
+    public Boolean isDeleted ;
 }
 

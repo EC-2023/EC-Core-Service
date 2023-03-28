@@ -32,7 +32,7 @@ public class CategoryController {
 //    @Tag(name = "categorys", description = "Operations related to categorys")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<CategoryDto>> findAll() {
-       return categoryService.getAll();
+        return categoryService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class CategoryController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return categoryService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<CategoryDto>> searchByName(@RequestParam String name) {
+        return categoryService.findByName(name);
+    }
+
+    // sắp xếp theo Category theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<CategoryDto>> getAllSortedByName() {
+        return categoryService.getAllSortedByName();
     }
 }

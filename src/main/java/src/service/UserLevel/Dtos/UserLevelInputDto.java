@@ -10,5 +10,3 @@ public class UserLevelInputDto {
     @JsonProperty(value = "name", required = true)
     private String name;
 }
-
-// findAll  find name  hoawjc find

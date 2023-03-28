@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.model.Category;
 import src.repository.ICategoryRepository;
+
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
 import src.service.Category.Dtos.CategoryUpdateDto;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -62,6 +62,35 @@ public class CategoryService {
         existingCategory.setIsDeleted(true);
         categoryRepository.save(toDto.map(existingCategory, Category.class));
         return CompletableFuture.completedFuture(null);
+    }
+
+    // tìm kiếm Category theo name
+    @Async
+    public CompletableFuture<List<CategoryDto>> findByName(String name) {
+        Collection<Object> categorys = categoryRepository.findByNameContainingIgnoreCase(name);
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+
+        for (Object category : categorys) {
+            CategoryDto categoryDto = toDto.map(category, CategoryDto.class);
+            if (categoryDto.getName().equalsIgnoreCase(name)) {
+                categoryDtos.add(categoryDto);
+            }
+        }
+        if (categoryDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any categorys with name: " + name);
+        }
+        return CompletableFuture.completedFuture(categoryDtos);
+    }
+
+
+    // sắp xếp category theo name
+    @Async
+    public CompletableFuture<List<CategoryDto>> getAllSortedByName() {
+        List<CategoryDto> categoryDtos = categoryRepository.findAll().stream()
+                .map(category -> toDto.map(category, CategoryDto.class))
+                .sorted(Comparator.comparing(CategoryDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(categoryDtos);
     }
 }
 

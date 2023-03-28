@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.Orders;
 import src.repository.IOrdersRepository;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +39,7 @@ public class OrdersService {
 
     @Async
     public CompletableFuture<OrdersDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(ordersRepository.findById(id), OrdersDto.class));
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.findById(id).get(), OrdersDto.class));
     }
 
     @Async
@@ -50,15 +52,19 @@ public class OrdersService {
     public CompletableFuture<OrdersDto> update(UUID id, OrdersUpdateDto orders) {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(toDto.map(orders, Orders.class)), OrdersDto.class));
+            throw new NotFoundException("Unable to find orders!");
+        Date createAt = existingOrders.getCreateAt();
+        existingOrders = toDto.map(orders, Orders.class);
+        existingOrders.setId(id);
+        existingOrders.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(existingOrders), OrdersDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Orders existingOrders = ordersRepository.findById(id).orElse(null);
         if (existingOrders == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find orders!");
         existingOrders.setIsDeleted(true);
         ordersRepository.save(toDto.map(existingOrders, Orders.class));
         return CompletableFuture.completedFuture(null);

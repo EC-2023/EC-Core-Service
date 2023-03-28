@@ -32,7 +32,7 @@ public class AttributeValueController {
 //    @Tag(name = "attributevalues", description = "Operations related to attributevalues")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<AttributeValueDto>> findAll() {
-       return attributevalueService.getAll();
+        return attributevalueService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,5 +54,16 @@ public class AttributeValueController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return attributevalueService.remove(id);
+    }
+
+    @GetMapping("/search/{name}")
+    public CompletableFuture<List<AttributeValueDto>> searchByName(@RequestParam String name) {
+        return attributevalueService.findByName(name);
+    }
+
+    // sắp xếp theo attribute theo tên
+    @GetMapping("/sort-name")
+    public CompletableFuture<List<AttributeValueDto>> getAllSortedByName() {
+        return attributevalueService.getAllSortedByName();
     }
 }

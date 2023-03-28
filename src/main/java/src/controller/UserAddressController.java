@@ -32,7 +32,7 @@ public class UserAddressController {
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserAddressDto>> findAll() {
-       return useraddressService.getAll();
+        return useraddressService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,4 +55,28 @@ public class UserAddressController {
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return useraddressService.remove(id);
     }
+
+    // tìm kiếm địa chỉ người dùng theo city
+    @GetMapping("/search/city/{city}")
+    public CompletableFuture<List<UserAddressDto>> searchByCity(@RequestParam String city) {
+        return useraddressService.findByCity(city);
+    }
+
+    // tìm kiếm địa chỉ người dùng theo country
+    @GetMapping("/search/country/{country}")
+    public CompletableFuture<List<UserAddressDto>> searchByCountry(@RequestParam String country) {
+        return useraddressService.findByCountry(country);
+    }
+
+    // sắp xếp theo User Address theo city
+    @GetMapping("/sort-city")
+    public CompletableFuture<List<UserAddressDto>> getAllSortedByCiTy() {
+        return useraddressService.getAllSortedByCiTy();
+    }
+    // sắp xếp theo User Address theo country
+    @GetMapping("/sort-country")
+    public CompletableFuture<List<UserAddressDto>> getAllSortedByCountry() {
+        return useraddressService.getAllSortedByCountry();
+    }
+
 }

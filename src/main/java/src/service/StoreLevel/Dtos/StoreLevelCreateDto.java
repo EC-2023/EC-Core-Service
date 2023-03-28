@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class StoreLevelCreateDto {
-    @JsonProperty(value = "first_name", required = true)
-    private String firstName;
+    @JsonProperty(value = "name", required = true)
+    private String name;
 }

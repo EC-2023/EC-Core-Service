@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.exception.NotFoundException;
 import src.model.StoreLevel;
 import src.repository.IStoreLevelRepository;
 import src.service.StoreLevel.Dtos.StoreLevelCreateDto;
 import src.service.StoreLevel.Dtos.StoreLevelDto;
 import src.service.StoreLevel.Dtos.StoreLevelUpdateDto;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +39,7 @@ public class StoreLevelService {
 
     @Async
     public CompletableFuture<StoreLevelDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(storelevelRepository.findById(id), StoreLevelDto.class));
+        return CompletableFuture.completedFuture(toDto.map(storelevelRepository.findById(id).get(), StoreLevelDto.class));
     }
 
     @Async
@@ -50,17 +52,21 @@ public class StoreLevelService {
     public CompletableFuture<StoreLevelDto> update(UUID id, StoreLevelUpdateDto storelevel) {
         StoreLevel existingStoreLevel = storelevelRepository.findById(id).orElse(null);
         if (existingStoreLevel == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(storelevelRepository.save(toDto.map(storelevel, StoreLevel.class)), StoreLevelDto.class));
+            throw new NotFoundException("Unable to find store level!");
+        Date createAt = existingStoreLevel.getCreateAt();
+        existingStoreLevel = toDto.map(storelevel, StoreLevel.class);
+        existingStoreLevel.setId(id);
+        existingStoreLevel.setCreateAt(createAt);
+        return CompletableFuture.completedFuture(toDto.map(storelevelRepository.save(existingStoreLevel), StoreLevelDto.class));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         StoreLevel existingStoreLevel = storelevelRepository.findById(id).orElse(null);
         if (existingStoreLevel == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new NotFoundException("Unable to find store level!");
         existingStoreLevel.setIsDeleted(true);
-        storelevelRepository.save(toDto.map(existingStoreLevel, StoreLevel.class));
+        storelevelRepository.save(existingStoreLevel);
         return CompletableFuture.completedFuture(null);
     }
 }
