@@ -3,7 +3,7 @@ package src.config.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class SuccessResponseDto<T> {
-    private Boolean success;
+    private Boolean success = true;
     private T data;
 
     public SuccessResponseDto(T data) {

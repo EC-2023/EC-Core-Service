@@ -61,7 +61,7 @@ public class ApiQuery<T> {
                         break;
                     }
                     case "search": {
-                        predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3).toLowerCase()  + "%"));
+                        predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3)  + "%"));
                         break;
                     }
                 }

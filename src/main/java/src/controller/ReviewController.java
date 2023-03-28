@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.ServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
+import src.model.User;
 import src.service.Review.Dtos.ReviewCreateDto;
 import src.service.Review.Dtos.ReviewDto;
 import src.service.Review.Dtos.ReviewUpdateDto;
@@ -34,11 +37,15 @@ public class ReviewController {
     public CompletableFuture<List<ReviewDto>> findAll() {
        return reviewService.getAll();
     }
-
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "reviews", description = "Operations related to reviews")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<ReviewDto> create(@RequestBody ReviewCreateDto input) {
+    public CompletableFuture<ReviewDto> create(ServletRequest request, @RequestBody ReviewCreateDto input) {
+
+        User user = (User) request.getAttribute("user");
+     // map qua model
+        // twf model set user_id tuwf user.getId()
         return reviewService.create(input);
     }
 

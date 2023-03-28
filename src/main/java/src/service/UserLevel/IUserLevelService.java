@@ -7,4 +7,6 @@ import src.service.UserLevel.Dtos.UserLevelDto;
 import src.service.UserLevel.Dtos.UserLevelUpdateDto;
 
 public interface IUserLevelService extends IService<UserLevelDto, UserLevelCreateDto, UserLevelUpdateDto> {
+
+
 }

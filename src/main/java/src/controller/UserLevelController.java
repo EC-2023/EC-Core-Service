@@ -43,7 +43,6 @@ public class UserLevelController {
                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return userLevelService.findAllPagination(request, limit, skip);
     }
-
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
@@ -52,6 +51,7 @@ public class UserLevelController {
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    // Optional
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserLevelDto> update(@PathVariable UUID id, UserLevelUpdateDto userlevel) {
