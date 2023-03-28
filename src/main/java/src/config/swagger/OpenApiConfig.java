@@ -6,9 +6,13 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 @Configuration
@@ -36,6 +40,8 @@ public class OpenApiConfig {
                         .description(apiDescription)
                         .version(apiVersion)
                         .contact(new Contact().name(apiContactName).email(apiContactEmail).url(apiContactUrl))
-                );
+                ).tags(new ArrayList(Arrays.asList(
+                        new Tag().name("User authentication").description("APIs for user authentication")
+                )));
     }
 }

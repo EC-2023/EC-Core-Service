@@ -1,22 +1,23 @@
 package src.controller.auth;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import src.config.auth.JwtTokenUtil;
 import src.config.annotation.ApiPrefixController;
+import src.config.auth.JwtTokenUtil;
 import src.model.User;
 import src.repository.IUserRepository;
 import src.service.User.Dtos.UserProfileDto;
 
 @RestController
 @ApiPrefixController("/auth")
+@Tag(name = "User authentication")
 public class AuthController {
 
     @Autowired

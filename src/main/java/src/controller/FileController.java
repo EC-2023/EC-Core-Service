@@ -5,11 +5,13 @@ import com.cloudinary.utils.ObjectUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import src.config.annotation.ApiPrefixController;
 import src.config.dto.SuccessResponseDto;
 import src.config.exception.NotFoundException;
 
@@ -20,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,14 +32,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@ApiPrefixController("files")
+//@ApiPrefixController("files")
 public class FileController {
     @Autowired
     private Cloudinary cloudinary;
-    @Autowired
-    private ResourceLoader resourceLoader;
+
     @Async
-    @PostMapping(value = "/cloud/upload", consumes = "multipart/form-data")
+    @PostMapping(value = "/api/v1/files/cloud/upload", consumes = "multipart/form-data")
     public CompletableFuture<SuccessResponseDto<String>> uploadFileCloud(@RequestPart("file") MultipartFile file) throws IOException {
         // Kiểm tra nếu file là ảnh
         boolean isImage = file.getContentType().startsWith("image/");
@@ -77,7 +79,7 @@ public class FileController {
     }
 
     @Async
-    @DeleteMapping("/cloud/{publicId}")
+    @DeleteMapping("/api/v1/files/cloud/{publicId}")
     public CompletableFuture<SuccessResponseDto<String>> deleteFileCloud(@PathVariable String publicId) {
         try {
             if (publicId == null || publicId.trim() == "")
@@ -90,7 +92,7 @@ public class FileController {
     }
 
     @Async
-    @PostMapping(value = "/local/upload", consumes = "multipart/form-data")
+    @PostMapping(value = "/api/v1/files/local/upload", consumes = "multipart/form-data")
     public CompletableFuture<SuccessResponseDto<String>> uploadFileLocal(HttpServletRequest request, @RequestPart("file") MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
         String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
@@ -134,7 +136,7 @@ public class FileController {
     }
 
     @Async
-    @DeleteMapping("/local/{publicId}")
+    @DeleteMapping("/api/v1/files/local/{publicId}")
     public CompletableFuture<SuccessResponseDto<String>> deleteFileLocal(@PathVariable String fileName) {
         try {
             if (fileName == null || fileName.trim() == "")
@@ -150,15 +152,21 @@ public class FileController {
         }
     }
 
-//    @Async
-//    @GetMapping("/uploads/{filename:.+}")
-//    @ResponseBody
-//    public CompletableFuture<ResponseEntity<Resource>> getFile(@PathVariable String filename) {
-//        Resource fileResource = resourceLoader.getResource("classpath:/static/uploads/1680013060663-5d61e208-3bd9-48a8-ae2e-b2f47d17687d.ico");
-//
-//        return CompletableFuture.completedFuture(ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.name() + "\"")
-//                .body(file));
-//    }
+    @GetMapping(value = "/uploads/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        Path filePath = Paths.get("uploads", filename);
+        Resource resource;
+        try {
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
+
 
 }
