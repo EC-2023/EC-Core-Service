@@ -16,5 +16,7 @@ public class UserLevelDto extends UserLevelUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
+    @JsonProperty(value = "isDeleted", required = true)
+    public Boolean isDeleted ;
 }
 

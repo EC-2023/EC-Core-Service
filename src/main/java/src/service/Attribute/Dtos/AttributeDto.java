@@ -4,10 +4,9 @@ package src.service.Attribute.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
 import java.sql.Date;
 import java.util.UUID;
-
-import lombok.Data;
 
 @Data
 public class AttributeDto extends AttributeUpdateDto {
@@ -15,7 +14,7 @@ public class AttributeDto extends AttributeUpdateDto {
     public UUID Id;
     @JsonProperty(value = "createAt", required = true)
     public Date createAt ;
-    @JsonProperty(value = "createAt", required = true)
+    @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
     @JsonProperty(value = "categoryId", required = true)
     public UUID categoryId;

@@ -160,7 +160,6 @@ public class ${name}Service {
 }
 
 `
-
 tempController = (name) => `
 package src.controller;
 
@@ -255,13 +254,41 @@ const createService = (templateFileName) =>
     });
 
 
+const tempIService = (name) => `
+package src.service.${name};
 
+import src.service.IService;
+import src.service.${name}.Dtos.${name}CreateDto;
+import src.service.${name}.Dtos.${name}Dto;
+import src.service.${name}.Dtos.${name}UpdateDto;
+
+public interface I${name}Service extends IService<${name}Dto, ${name}CreateDto, ${name}UpdateDto, FindManyArgs> {
+}
+    `
 
 
 // // create file in repository
 // createFile("repository", "I###Repository.java", tempRepository)
 // // create file in dto
 // create file in service
-createService("###Service.java")
+// createService("###Service.java")
 // createFile("controller", "###Controller.java", tempController)
+
+const createFileI = (dir, templateFileName, template) =>
+    fs.readdir('./model', function (err, files) {
+        if (err) {
+            console.log('Error getting directory information:', err);
+        } else {
+            files.forEach(function (file) {
+                const name = file.split('.')[0]
+                const fileName = templateFileName.replace("###", name)
+                fs.writeFile(`./${dir}/${name}/${fileName}`, template(name), function (err) {
+                    if (err) throw err;
+                    console.log(`File ${fileName} created successfully.`);
+                });
+            });
+        }
+    });
+
+createFileI("service", "I###Service.java", tempIService)
 
