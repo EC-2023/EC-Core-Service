@@ -64,4 +64,6 @@ public class UserLevelController {
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return userLevelService.remove(id);
     }
+
+
 }

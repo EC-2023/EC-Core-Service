@@ -13,6 +13,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.exception.UnauthorizedException;
 import src.service.User.UserService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @Aspect
 @Component
 @Order(1)
@@ -22,7 +25,7 @@ public class AuthenticateAspect {
     @Autowired
     private UserService userDetailsService;
     @Before("@annotation(src.config.annotation.Authenticate)")
-    public void authenticate(JoinPoint joinPoint) throws UnauthorizedException {
+    public void authenticate(JoinPoint joinPoint) throws UnauthorizedException, NoSuchAlgorithmException, InvalidKeySpecException {
         String token = getTokenFromRequest();
         if (token == null) {
             throw new UnauthorizedException("Unauthorized");
