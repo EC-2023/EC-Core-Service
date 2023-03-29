@@ -72,6 +72,13 @@ spring:
                     sharedCache:
                         mode: ALL
         show-sql: true
+#    datasource:
+#      username: root
+#      url: jdbc:mysql://localhost:3306/testspring
+#      password: A12.2312334g
+#      mvc:
+#        pathmatch:
+#          matching-strategy: ant_path_matcher
     main:
         allow-bean-definition-overriding: true
 #    web:
