@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import src.config.annotation.ApiPrefixController;
 import src.config.auth.JwtTokenUtil;
+import src.config.exception.BadRequestException;
 import src.model.User;
 import src.repository.IUserRepository;
 import src.service.User.Dtos.UserProfileDto;
@@ -47,8 +48,10 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshAuthenticationToken(@RequestBody @Valid RefreshTokenInput refreshTokenRequest) throws Exception {
         final String refreshToken = refreshTokenRequest.getRefreshToken();
-
         // Check if the refresh token is valid and not expired
+        String username = jwtUtil.checkRefreshToken(refreshToken);
+        if (username == null)
+            throw new BadRequestException("Not Type Refresh Token");
         final User userDetails = userRepository.findByEmail(jwtUtil.getUsernameFromToken(refreshToken));
         if (jwtUtil.validateToken(refreshToken, userDetails)) {
             final String accessToken = jwtUtil.generateAccessToken(userDetails);
