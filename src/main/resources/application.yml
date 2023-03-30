@@ -81,6 +81,10 @@ spring:
 #          matching-strategy: ant_path_matcher
     main:
         allow-bean-definition-overriding: true
-#    web:
-#      resources:
-#        static-locations: "file:./uploads/"
+resilience4j:
+  rate-limiter:
+    instances:
+      limitPerHour:
+        limitForPeriod: 1000
+        limitRefreshPeriod: 3600s
+

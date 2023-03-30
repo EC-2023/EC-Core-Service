@@ -2,6 +2,8 @@ package src.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import io.github.resilience4j.ratelimiter.RateLimiterConfig;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +13,12 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.HandlerTypePredicate;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.auth.RateLimiterInterceptor;
 import src.config.middleware.GlobalApiLoggerInterceptor;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 
 @Configuration
@@ -37,6 +38,8 @@ public class AppConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(globalApiLoggerInterceptor);
+        registry.addInterceptor(rateLimiterInterceptor(rateLimiterRegistry()));
+
     }
 
     @Override
@@ -49,6 +52,7 @@ public class AppConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:./uploads/");
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -58,6 +62,7 @@ public class AppConfig implements WebMvcConfigurer {
     public ModelMapper getModelMapper() {
         return new ModelMapper();
     }
+
     @Bean
     public Cloudinary cloudinaryConfig() {
         return new Cloudinary(ObjectUtils.asMap(
@@ -66,6 +71,7 @@ public class AppConfig implements WebMvcConfigurer {
                 "api_secret", apiSecret
         ));
     }
+
     //AsyncConfig
     @Bean(name = "asyncTaskExecutor")
     public Executor getAsyncExecutor() {
@@ -78,4 +84,26 @@ public class AppConfig implements WebMvcConfigurer {
         return executor;
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedHeaders("*");
+    }
+
+    @Bean
+    public RateLimiterRegistry rateLimiterRegistry() {
+        RateLimiterConfig config = RateLimiterConfig.custom()
+                .limitForPeriod(1000)
+                .limitRefreshPeriod(Duration.ofHours(1))
+                .timeoutDuration(Duration.ofMillis(25))
+                .build();
+        return RateLimiterRegistry.of(config);
+    }
+
+    @Bean
+    public RateLimiterInterceptor rateLimiterInterceptor(RateLimiterRegistry rateLimiterRegistry) {
+        return new RateLimiterInterceptor(rateLimiterRegistry);
+    }
 }

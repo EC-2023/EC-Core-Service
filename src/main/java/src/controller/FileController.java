@@ -80,7 +80,7 @@ public class FileController {
         try {
             if (publicId == null || publicId.trim() == "")
                 throw new NotFoundException("Not found publicId");
-            Map<?, ?> publicIdresult = cloudinary.api().deleteResources(Arrays.asList(publicId), ObjectUtils.emptyMap());
+             cloudinary.api().deleteResources(Arrays.asList(publicId), ObjectUtils.emptyMap());
             return CompletableFuture.completedFuture(new SuccessResponseDto<String>("success"));
         } catch (Exception e) {
             throw new RuntimeException(e);
