@@ -20,7 +20,6 @@ import src.config.middleware.GlobalApiLoggerInterceptor;
 
 import java.time.Duration;
 import java.util.concurrent.Executor;
-
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
     @Value("${cloudinary.cloud-name}")
@@ -106,4 +105,6 @@ public class AppConfig implements WebMvcConfigurer {
     public RateLimiterInterceptor rateLimiterInterceptor(RateLimiterRegistry rateLimiterRegistry) {
         return new RateLimiterInterceptor(rateLimiterRegistry);
     }
+
+
 }

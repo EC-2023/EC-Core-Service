@@ -57,6 +57,8 @@ jwt:
 
 spring:
     datasource:
+        hikari:
+          max-lifetime: 1800000
         driver-claPss-name: org.postgresql.Driver
         password: q2U8MtjgrJzN
         url: jdbc:postgresql://ep-solitary-cell-554297.ap-southeast-1.aws.neon.tech/neondb
