@@ -31,7 +31,7 @@ public class UserLevelController {
     }
 
     @GetMapping()
-//    @Tag(name = "userlevels", description = "Operations related to userlevels")
+//   @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserLevelDto>> findAll() {
         return userLevelService.getAll();
@@ -54,7 +54,7 @@ public class UserLevelController {
     // Optional
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<UserLevelDto> update(@PathVariable UUID id, UserLevelUpdateDto userlevel) {
+    public CompletableFuture<UserLevelDto> update(@PathVariable UUID id, UserLevelUpdateDto userlevel) throws NoSuchFieldException, IllegalAccessException {
         return userLevelService.update(id, userlevel);
     }
 

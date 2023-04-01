@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class UserLevelCreateDto {
     @JsonProperty(value = "name", required = true)
-    private String name;
+    public String name;
     @JsonProperty(value = "minPoint", required = true, defaultValue = "0")
-    private int minPoint;
+    public int minPoint;
     @JsonProperty(value = "discount", required = true, defaultValue = "0")
-    private Double discount;
+    public Double discount;
 }

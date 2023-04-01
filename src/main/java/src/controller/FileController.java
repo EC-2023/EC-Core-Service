@@ -69,7 +69,7 @@ public class FileController {
         } else {
             // Trường hợp file không phải là ảnh, upload file thẳng lên Cloudinary
             Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-            String fileUrl = (String) uploadResult.get("url");
+            String fileUrl = ((String) uploadResult.get("url")).replace("http", "https");
             return CompletableFuture.completedFuture(new SuccessResponseDto<String>(fileUrl));
         }
     }
@@ -80,7 +80,7 @@ public class FileController {
         try {
             if (publicId == null || publicId.trim() == "")
                 throw new NotFoundException("Not found publicId");
-             cloudinary.api().deleteResources(Arrays.asList(publicId), ObjectUtils.emptyMap());
+            cloudinary.api().deleteResources(Arrays.asList(publicId), ObjectUtils.emptyMap());
             return CompletableFuture.completedFuture(new SuccessResponseDto<String>("success"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -162,7 +162,6 @@ public class FileController {
 //                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
 //                .body(resource);
 //    }
-
 
 
 }

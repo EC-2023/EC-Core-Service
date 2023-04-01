@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,7 @@ import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.MapperUtils;
 import src.model.UserLevel;
 import src.repository.IUserLevelRepository;
 import src.service.UserLevel.Dtos.UserLevelCreateDto;
@@ -54,12 +54,12 @@ public class UserLevelService implements IUserLevelService {
         UserLevel userlevel = userLevelRepository.save(toDto.map(input, UserLevel.class));
         return CompletableFuture.completedFuture(toDto.map(userlevel, UserLevelDto.class));
     }
-
-    public CompletableFuture<UserLevelDto> update(UUID id, UserLevelUpdateDto userlevel) {
+    @Async
+    public CompletableFuture<UserLevelDto> update(UUID id, UserLevelUpdateDto userlevel) throws NoSuchFieldException, IllegalAccessException {
         UserLevel existingUserLevel = userLevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
             throw new NotFoundException("Unable to find user level!");
-        BeanUtils.copyProperties(userlevel, existingUserLevel);
+        MapperUtils.toDto(userlevel, existingUserLevel);
         return CompletableFuture.completedFuture(toDto.map(userLevelRepository.save(existingUserLevel), UserLevelDto.class));
     }
 
@@ -81,5 +81,6 @@ public class UserLevelService implements IUserLevelService {
         userLevelRepository.save(existingUserLevel);
         return CompletableFuture.completedFuture(null);
     }
+
 }
 

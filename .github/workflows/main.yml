@@ -11,8 +11,8 @@ jobs:
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           branch: "main"
-          heroku_api_key: "95725347-4959-4454-ae92-37abf2b437ef"
+          heroku_api_key:  ${{ secrets.API_KEY }}
           heroku_app_name: "ec-api"
-          heroku_email: "lulueve3@gmail.com"
+          heroku_email:  ${{ secrets.EMAIL }}
           args: --skip-database-initialization
 
