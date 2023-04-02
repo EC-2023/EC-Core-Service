@@ -11,6 +11,7 @@ import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
+import src.service.Orders.IOrdersService;
 import src.service.Orders.OrdersService;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/orderss")
 public class OrdersController {
     @Autowired
-    private OrdersService ordersService;
+    private IOrdersService ordersService;
 
 
     @GetMapping( "/{id}")

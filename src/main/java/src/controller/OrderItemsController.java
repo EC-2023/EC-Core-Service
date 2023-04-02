@@ -10,6 +10,7 @@ import src.config.dto.PagedResultDto;
 import src.service.OrderItems.Dtos.OrderItemsCreateDto;
 import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.OrderItems.Dtos.OrderItemsUpdateDto;
+import src.service.OrderItems.IOrderItemsService;
 import src.service.OrderItems.OrderItemsService;
 import src.service.Product.Dtos.ProductDto;
 
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/orderitemss")
 public class OrderItemsController {
     @Autowired
-    private OrderItemsService orderitemsService;
+    private IOrderItemsService orderitemsService;
 
 
     @GetMapping( "/{id}")

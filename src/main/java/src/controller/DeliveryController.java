@@ -11,6 +11,7 @@ import src.service.Delivery.Dtos.DeliveryCreateDto;
 import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Delivery.Dtos.DeliveryUpdateDto;
 import src.service.Delivery.DeliveryService;
+import src.service.Delivery.IDeliveryService;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/deliverys")
 public class DeliveryController {
     @Autowired
-    private DeliveryService deliveryService;
+    private IDeliveryService deliveryService;
 
 
     @GetMapping( "/{id}")

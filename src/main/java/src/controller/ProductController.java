@@ -11,6 +11,7 @@ import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Product.Dtos.ProductCreateDto;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
+import src.service.Product.IProductService;
 import src.service.Product.ProductService;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/products")
 public class ProductController {
     @Autowired
-    private ProductService productService;
+    private IProductService productService;
 
 
     @GetMapping( "/{id}")

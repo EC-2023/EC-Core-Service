@@ -11,6 +11,7 @@ import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.StoreLevel.Dtos.StoreLevelCreateDto;
 import src.service.StoreLevel.Dtos.StoreLevelDto;
 import src.service.StoreLevel.Dtos.StoreLevelUpdateDto;
+import src.service.StoreLevel.IStoreLevelService;
 import src.service.StoreLevel.StoreLevelService;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/storelevels")
 public class StoreLevelController {
     @Autowired
-    private StoreLevelService storelevelService;
+    private IStoreLevelService storelevelService;
 
 
     @GetMapping( "/{id}")

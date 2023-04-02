@@ -11,6 +11,7 @@ import src.service.Cart.Dtos.CartCreateDto;
 import src.service.Cart.Dtos.CartDto;
 import src.service.Cart.Dtos.CartUpdateDto;
 import src.service.Cart.CartService;
+import src.service.Cart.ICartService;
 import src.service.Product.Dtos.ProductDto;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/carts")
 public class CartController {
     @Autowired
-    private CartService cartService;
+    private ICartService cartService;
 
 
     @GetMapping( "/{id}")

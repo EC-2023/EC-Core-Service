@@ -13,6 +13,7 @@ import src.service.CartItems.Dtos.CartItemsCreateDto;
 import src.service.CartItems.Dtos.CartItemsDto;
 import src.service.CartItems.Dtos.CartItemsUpdateDto;
 import src.service.CartItems.CartItemsService;
+import src.service.CartItems.ICartItemsService;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/cartitemss")
 public class CartItemsController {
     @Autowired
-    private CartItemsService cartitemsService;
+    private ICartItemsService cartitemsService;
 
 
     @GetMapping( "/{id}")

@@ -11,6 +11,7 @@ import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.ProductImg.Dtos.ProductImgCreateDto;
 import src.service.ProductImg.Dtos.ProductImgDto;
 import src.service.ProductImg.Dtos.ProductImgUpdateDto;
+import src.service.ProductImg.IProductImgService;
 import src.service.ProductImg.ProductImgService;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/productimgs")
 public class ProductImgController {
     @Autowired
-    private ProductImgService productimgService;
+    private IProductImgService productimgService;
 
 
     @GetMapping( "/{id}")
