@@ -6,7 +6,7 @@ public class MapperUtils<T, D> {
     public static <T, D> void toDto(T src, D des ) throws IllegalAccessException, NoSuchFieldException {
         Field[] fields = src.getClass().getSuperclass().getDeclaredFields();
         for (Field field : fields) {
-            if (field.get(src) != null) {
+            if (field.get(src) != null && !field.getName().contains("id")) {
                 Field sd = des.getClass().getDeclaredField(field.getName());
                 sd.setAccessible(true);
                 sd.set(des, field.get(src));

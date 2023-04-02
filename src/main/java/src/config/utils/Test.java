@@ -2,9 +2,15 @@ package src.config.utils;
 
 import lombok.Data;
 
-public class Test {
-    public static void main(String[] args) {
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+public class Test {
+    public static void main(String[] args) throws IOException {
+        Path uploadPath = Paths.get("../uploads");
+
+        System.out.println(uploadPath.toAbsolutePath());
 
     }
 
