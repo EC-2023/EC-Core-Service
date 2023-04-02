@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class ProductService {
+public class ProductService implements IProductService {
     @Autowired
     private IProductRepository productRepository;
     @Autowired

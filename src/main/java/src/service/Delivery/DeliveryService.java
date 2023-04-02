@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class DeliveryService {
+public class DeliveryService implements IDeliveryService {
     @Autowired
     private IDeliveryRepository deliveryRepository;
     @Autowired
