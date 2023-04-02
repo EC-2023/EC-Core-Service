@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.ProductImg.Dtos.ProductImgCreateDto;
 import src.service.ProductImg.Dtos.ProductImgDto;
 import src.service.ProductImg.Dtos.ProductImgUpdateDto;
@@ -33,6 +36,13 @@ public class ProductImgController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<ProductImgDto>> findAll() {
        return productimgService.getAll();
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<ProductImgDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit ,
+                                                                            @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                            @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return productimgService.findAllPagination(request, limit, skip);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

@@ -2,15 +2,23 @@
 
 package src.service.ProductImg;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
+import src.config.utils.ApiQuery;
+import src.model.ProductImg;
 import src.model.ProductImg;
 import src.repository.IProductImgRepository;
+import src.service.ProductImg.Dtos.ProductImgDto;
 import src.service.ProductImg.Dtos.ProductImgCreateDto;
 import src.service.ProductImg.Dtos.ProductImgDto;
 import src.service.ProductImg.Dtos.ProductImgUpdateDto;
@@ -24,11 +32,14 @@ import java.util.stream.Collectors;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class ProductImgService {
+public class ProductImgService implements IProductImgService {
     @Autowired
     private IProductImgRepository productimgRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Async
     public CompletableFuture<List<ProductImgDto>> getAll() {
@@ -44,6 +55,14 @@ public class ProductImgService {
     }
 
     @Async
+    public CompletableFuture<PagedResultDto<ProductImgDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<ProductImg> features = new ApiQuery<>(request, em, ProductImg.class);
+        long total = productimgRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, ProductImgDto.class)).toList()));
+    }
+
+    @Async
     public CompletableFuture<ProductImgDto> create(ProductImgCreateDto input) {
         ProductImg productimg = productimgRepository.save(toDto.map(input, ProductImg.class));
         return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(productimg), ProductImgDto.class));
@@ -55,6 +74,7 @@ public class ProductImgService {
         if (existingProductImg == null)
             throw new NotFoundException("Unable to find product image!");
         BeanUtils.copyProperties(productimg, existingProductImg);
+        existingProductImg.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(productimgRepository.save(existingProductImg), ProductImgDto.class));
     }
 
@@ -64,6 +84,7 @@ public class ProductImgService {
         if (existingProductImg == null)
             throw new NotFoundException("Unable to find product image!");
         existingProductImg.setIsDeleted(true);
+        existingProductImg.setUpdateAt(new Date(new java.util.Date().getTime()));
         productimgRepository.save(toDto.map(existingProductImg, ProductImg.class));
         return CompletableFuture.completedFuture(null);
     }
