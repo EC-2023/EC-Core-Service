@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
@@ -33,6 +36,13 @@ public class OrdersController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<OrdersDto>> findAll() {
        return ordersService.getAll();
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<OrdersDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit ,
+                                                                              @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return ordersService.findAllPagination(request, limit, skip);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
