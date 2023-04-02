@@ -2,13 +2,18 @@
 
 package src.service.CartItems;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
+import src.config.utils.ApiQuery;
 import src.model.CartItems;
 import src.repository.ICartItemsRepository;
 import src.service.CartItems.Dtos.CartItemsCreateDto;
@@ -21,14 +26,16 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class CartItemsService {
+public class CartItemsService implements ICartItemsService {
     @Autowired
     private ICartItemsRepository cartitemsRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Async
     public CompletableFuture<List<CartItemsDto>> getAll() {
@@ -44,6 +51,14 @@ public class CartItemsService {
     }
 
     @Async
+    public CompletableFuture<PagedResultDto<CartItemsDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<CartItems> features = new ApiQuery<>(request, em, CartItems.class);
+        long total = cartitemsRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CartItemsDto.class)).toList()));
+    }
+    
+    @Async
     public CompletableFuture<CartItemsDto> create(CartItemsCreateDto input) {
         CartItems cartitems = cartitemsRepository.save(toDto.map(input, CartItems.class));
         return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.save(cartitems), CartItemsDto.class));
@@ -55,6 +70,7 @@ public class CartItemsService {
         if (existingCartItems == null)
             throw new NotFoundException("Unable to find cart items!");
         BeanUtils.copyProperties(cartitems, existingCartItems);
+        existingCartItems.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.save(existingCartItems), CartItemsDto.class));
     }
 
@@ -64,6 +80,7 @@ public class CartItemsService {
         if (existingCartItems == null)
             throw new NotFoundException("Unable to find cart items!");
         existingCartItems.setIsDeleted(true);
+        existingCartItems.setUpdateAt(new Date(new java.util.Date().getTime()));
         cartitemsRepository.save(toDto.map(existingCartItems, CartItems.class));
         return CompletableFuture.completedFuture(null);
     }
