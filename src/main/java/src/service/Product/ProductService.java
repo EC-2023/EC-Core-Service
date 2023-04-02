@@ -75,7 +75,7 @@ public class ProductService {
             throw new NotFoundException("Unable to find product!");
         BeanUtils.copyProperties(product, existingProduct);
         existingProduct.setUpdateAt(new Date(new java.util.Date().getTime()));
-        return CompletableFuture.completedFuture(toDto.map(productRepository.save(toDto.map(product, Product.class)), ProductDto.class));
+        return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductDto.class));
     }
 
     @Async
