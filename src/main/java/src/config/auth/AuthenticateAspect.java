@@ -29,6 +29,7 @@ public class AuthenticateAspect {
         }
         String username = jwtTokenUtil.getUsernameFromToken(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
         if (jwtTokenUtil.validateToken(token, userDetails)) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
             request.setAttribute("user", userDetails);
