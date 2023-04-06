@@ -47,10 +47,10 @@ public class OrderItemsController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<OrderItemsDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit ,
-                                                                           @RequestParam(required = false, defaultValue = "0") Integer skip,
+    public CompletableFuture<PagedResultDto<OrderItemsDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page,
+                                                                           @RequestParam(required = false, defaultValue = "0") Integer size,
                                                                            @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return orderitemsService.findAllPagination(request, limit, skip);
+        return orderitemsService.findAllPagination(request, size, page * size);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

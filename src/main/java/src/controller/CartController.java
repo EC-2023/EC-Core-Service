@@ -40,10 +40,10 @@ public class CartController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit ,
-                                                                           @RequestParam(required = false, defaultValue = "0") Integer skip,
+    public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                           @RequestParam(required = false, defaultValue = "0") Integer size,
                                                                            @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return cartService.findAllPagination(request, limit, skip);
+        return cartService.findAllPagination(request, size, page * size);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
