@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -60,7 +61,9 @@ public class CartItemsService implements ICartItemsService {
     
     @Async
     public CompletableFuture<CartItemsDto> create(CartItemsCreateDto input) {
-        CartItems cartitems = cartitemsRepository.save(toDto.map(input, CartItems.class));
+        toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        CartItems cartitems = toDto.map(input, CartItems.class);
+
         return CompletableFuture.completedFuture(toDto.map(cartitemsRepository.save(cartitems), CartItemsDto.class));
     }
 
