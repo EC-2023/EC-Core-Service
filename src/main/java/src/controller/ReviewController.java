@@ -1,14 +1,15 @@
 
 package src.controller;
 
-import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
-import src.model.User;
-import src.service.Review.Dtos.ReviewCreateDto;
+import src.config.dto.PagedResultDto;
 import src.service.Review.Dtos.ReviewDto;
 import src.service.Review.Dtos.ReviewUpdateDto;
 import src.service.Review.ReviewService;
@@ -35,18 +36,16 @@ public class ReviewController {
 //    @Tag(name = "reviews", description = "Operations related to reviews")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<ReviewDto>> findAll() {
-       return reviewService.getAll();
+        return reviewService.getAll();
     }
+
     @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-//    @Tag(name = "reviews", description = "Operations related to reviews")
+//    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<ReviewDto> create(ServletRequest request, @RequestBody ReviewCreateDto input) {
-
-        User user = (User) request.getAttribute("user");
-     // map qua model
-        // twf model set user_id tuwf user.getId()
-        return reviewService.create(input);
+    public CompletableFuture<ReviewDto> create() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return reviewService.create(userId);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,6 +53,13 @@ public class ReviewController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<ReviewDto> update(@PathVariable UUID id, ReviewUpdateDto review) {
         return reviewService.update(id, review);
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<ReviewDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                          @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                          @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return reviewService.findAllPagination(request, size, page * size);
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

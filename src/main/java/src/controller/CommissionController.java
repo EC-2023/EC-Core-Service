@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+
 import src.service.Commission.CommissionService;
 import src.service.Commission.Dtos.CommissionCreateDto;
 import src.service.Commission.Dtos.CommissionDto;
@@ -35,6 +38,13 @@ public class CommissionController {
         return commissionService.getAll();
     }
 
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<CommissionDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                              @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return commissionService.findAllPagination(request, size, page * size);
+    }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "commissions", description = "Operations related to commissions")
 //    @Operation(summary = "Hello API")
@@ -56,14 +66,5 @@ public class CommissionController {
         return commissionService.remove(id);
     }
 
-    @GetMapping("/search/{name}")
-    public CompletableFuture<List<CommissionDto>> searchByName(@RequestParam String name) {
-        return commissionService.findByName(name);
-    }
 
-    // sắp xếp theo commission theo tên
-    @GetMapping("/sort-name")
-    public CompletableFuture<List<CommissionDto>> getAllSortedByName() {
-        return commissionService.getAllSortedByName();
-    }
 }

@@ -2,17 +2,28 @@
 
 package src.service.Review;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
+import src.config.utils.ApiQuery;
 import src.model.Review;
+
+
 import src.repository.IReviewRepository;
-import src.service.Review.Dtos.ReviewCreateDto;
+
 import src.service.Review.Dtos.ReviewDto;
 import src.service.Review.Dtos.ReviewUpdateDto;
 
+
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -25,6 +36,9 @@ public class ReviewService {
     private IReviewRepository reviewRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Async
     public CompletableFuture<List<ReviewDto>> getAll() {
@@ -40,25 +54,37 @@ public class ReviewService {
     }
 
     @Async
-    public CompletableFuture<ReviewDto> create(ReviewCreateDto input) {
-        Review review = reviewRepository.save(toDto.map(input, Review.class));
+    public CompletableFuture<ReviewDto> create(UUID userid) {
+        Review review = new Review();
+        review.setUserId(userid);
         return CompletableFuture.completedFuture(toDto.map(reviewRepository.save(review), ReviewDto.class));
     }
 
     @Async
-    public CompletableFuture<ReviewDto> update(UUID id, ReviewUpdateDto review) {
+    public CompletableFuture<ReviewDto> update(UUID id, ReviewUpdateDto reviews) {
         Review existingReview = reviewRepository.findById(id).orElse(null);
         if (existingReview == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
-        return CompletableFuture.completedFuture(toDto.map(reviewRepository.save(toDto.map(review, Review.class)), ReviewDto.class));
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find Review!");
+        BeanUtils.copyProperties(reviews, existingReview);
+        existingReview.setUpdateAt(new Date(new java.util.Date().getTime()));
+        return CompletableFuture.completedFuture(toDto.map(reviewRepository.save(existingReview), ReviewDto.class));
+    }
+
+    @Async
+    public CompletableFuture<PagedResultDto<ReviewDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<Review> features = new ApiQuery<>(request, em, Review.class);
+        long total = reviewRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, ReviewDto.class)).toList()));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Review existingReview = reviewRepository.findById(id).orElse(null);
         if (existingReview == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find Review!");
         existingReview.setIsDeleted(true);
+        existingReview.setUpdateAt(new Date(new java.util.Date().getTime()));
         reviewRepository.save(toDto.map(existingReview, Review.class));
         return CompletableFuture.completedFuture(null);
     }

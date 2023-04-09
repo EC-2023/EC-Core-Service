@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+
 import src.service.Category.CategoryService;
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
@@ -35,6 +38,13 @@ public class CategoryController {
         return categoryService.getAll();
     }
 
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<CategoryDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                            @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                            @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return categoryService.findAllPagination(request, size, page * size);
+    }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "categorys", description = "Operations related to categorys")
 //    @Operation(summary = "Hello API")
@@ -56,14 +66,10 @@ public class CategoryController {
         return categoryService.remove(id);
     }
 
-    @GetMapping("/search/{name}")
-    public CompletableFuture<List<CategoryDto>> searchByName(@RequestParam String name) {
-        return categoryService.findByName(name);
+    @GetMapping("/{id}/features")
+    public CompletableFuture<List<CategoryDto>> getCategoryFeatures(@PathVariable("id") UUID parentCategoryId) {
+        return categoryService.getCategoryFeatures(parentCategoryId);
     }
 
-    // sắp xếp theo Category theo tên
-    @GetMapping("/sort-name")
-    public CompletableFuture<List<CategoryDto>> getAllSortedByName() {
-        return categoryService.getAllSortedByName();
-    }
+
 }

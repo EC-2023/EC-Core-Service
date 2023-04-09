@@ -1,10 +1,13 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+import src.service.Attribute.Dtos.AttributeDto;
 import src.service.AttributeValue.AttributeValueService;
 import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
 import src.service.AttributeValue.Dtos.AttributeValueDto;
@@ -35,6 +38,12 @@ public class AttributeValueController {
         return attributevalueService.getAll();
     }
 
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<AttributeValueDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                                  @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                                  @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return attributevalueService.findAllPagination(request, size, page * size);
+    }
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "attributevalues", description = "Operations related to attributevalues")
 //    @Operation(summary = "Hello API")
@@ -56,14 +65,5 @@ public class AttributeValueController {
         return attributevalueService.remove(id);
     }
 
-    @GetMapping("/search/{name}")
-    public CompletableFuture<List<AttributeValueDto>> searchByName(@RequestParam String name) {
-        return attributevalueService.findByName(name);
-    }
 
-    // sắp xếp theo attribute theo tên
-    @GetMapping("/sort-name")
-    public CompletableFuture<List<AttributeValueDto>> getAllSortedByName() {
-        return attributevalueService.getAllSortedByName();
-    }
 }

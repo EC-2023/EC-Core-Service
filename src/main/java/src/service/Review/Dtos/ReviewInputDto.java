@@ -7,5 +7,8 @@ import lombok.Data;
 
 @Data
 public class ReviewInputDto {
-
+    @JsonProperty(value = "content", required = true)
+    private String content;
+    @JsonProperty(value = "rating", required = true)
+    private int rating;
 }

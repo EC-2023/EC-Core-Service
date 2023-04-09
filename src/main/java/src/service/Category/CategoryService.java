@@ -2,15 +2,23 @@
 
 package src.service.Category;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
+import src.config.utils.ApiQuery;
+
 import src.model.Category;
 import src.repository.ICategoryRepository;
+
 import src.service.Category.Dtos.CategoryCreateDto;
 import src.service.Category.Dtos.CategoryDto;
 import src.service.Category.Dtos.CategoryUpdateDto;
@@ -27,6 +35,9 @@ public class CategoryService {
     private ICategoryRepository categoryRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Async
     public CompletableFuture<List<CategoryDto>> getAll() {
@@ -53,46 +64,44 @@ public class CategoryService {
         if (existingCategory == null)
             throw new NotFoundException("Unable to find category!");
         BeanUtils.copyProperties(categorys, existingCategory);
+        existingCategory.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingCategory), CategoryDto.class));
+    }
+
+    @Async
+    public CompletableFuture<PagedResultDto<CategoryDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<Category> features = new ApiQuery<>(request, em, Category.class);
+        long total = categoryRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CategoryDto.class)).toList()));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Category existingCategory = categoryRepository.findById(id).orElse(null);
         if (existingCategory == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find category!");
         existingCategory.setIsDeleted(true);
+        existingCategory.setUpdateAt(new Date(new java.util.Date().getTime()));
         categoryRepository.save(toDto.map(existingCategory, Category.class));
         return CompletableFuture.completedFuture(null);
     }
 
-    // tìm kiếm Category theo name
     @Async
-    public CompletableFuture<List<CategoryDto>> findByName(String name) {
-        Collection<Object> categorys = categoryRepository.findByNameContainingIgnoreCase(name);
-        List<CategoryDto> categoryDtos = new ArrayList<>();
+    public CompletableFuture<List<CategoryDto>> getCategoryFeatures(UUID parentCategoryId) {
+        if (parentCategoryId == null) {
+            throw new IllegalArgumentException("Parent category ID cannot be null");
+        }
 
-        for (Object category : categorys) {
-            CategoryDto categoryDto = toDto.map(category, CategoryDto.class);
-            if (categoryDto.getName().equalsIgnoreCase(name)) {
-                categoryDtos.add(categoryDto);
-            }
+        List<Category> categories = categoryRepository.findAllByParentCategoryId(parentCategoryId);
+        if (categories == null) {
+            throw new NotFoundException("Unable to find categories with parent category ID " + parentCategoryId);
         }
-        if (categoryDtos.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find any categorys with name: " + name);
-        }
-        return CompletableFuture.completedFuture(categoryDtos);
+        return CompletableFuture.completedFuture(categories.stream().map(
+                x -> toDto.map(x, CategoryDto.class)
+        ).collect(Collectors.toList()));
     }
 
 
-    // sắp xếp category theo name
-    @Async
-    public CompletableFuture<List<CategoryDto>> getAllSortedByName() {
-        List<CategoryDto> categoryDtos = categoryRepository.findAll().stream()
-                .map(category -> toDto.map(category, CategoryDto.class))
-                .sorted(Comparator.comparing(CategoryDto::getName))
-                .collect(Collectors.toList());
-        return CompletableFuture.completedFuture(categoryDtos);
-    }
 }
 

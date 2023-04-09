@@ -16,5 +16,9 @@ public class ReviewDto extends ReviewUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
+   @JsonProperty(value = "isDeleted")
+   public Boolean isDeleted  = false;
+    @JsonProperty(value = "userId", required = true)
+    private UUID userId;
 }
 
