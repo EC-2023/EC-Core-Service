@@ -18,10 +18,10 @@ public class Review {
     @Column(name = "user_id", nullable = false)
     private UUID userId;
     @Basic
-    @Column(name = "product_id", nullable = true)
+    @Column(name = "product_id")
     private UUID productId;
     @Basic
-    @Column(name = "store_id", nullable = true)
+    @Column(name = "store_id")
     private UUID storeId;
     @Basic
     @Column(name = "content", nullable = false, length = 255)
@@ -30,14 +30,14 @@ public class Review {
     @Column(name = "rating", nullable = false)
     private int rating;
     @Basic
-    @Column(name = "is_deleted", nullable = true)
+    @Column(name = "is_deleted")
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createAt", nullable = false)
-    private Date createDate;
+    @Column(name = "createAt")
+    private Date createAt;
     @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateDate;
+    @Column(name = "updateAt")
+    private Date updateAt;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
     private User userByUserId;

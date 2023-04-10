@@ -10,22 +10,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.utils.ApiQuery;
 import src.model.Review;
-
-
 import src.repository.IReviewRepository;
-
 import src.service.Review.Dtos.ReviewDto;
 import src.service.Review.Dtos.ReviewUpdateDto;
 
-
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -69,7 +62,6 @@ public class ReviewService {
         if (existingReview == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find Review!");
         BeanUtils.copyProperties(reviews, existingReview);
-        existingReview.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(reviewRepository.save(existingReview), ReviewDto.class));
     }
 
@@ -87,7 +79,6 @@ public class ReviewService {
         if (existingReview == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find Review!");
         existingReview.setIsDeleted(true);
-        existingReview.setUpdateAt(new Date(new java.util.Date().getTime()));
         reviewRepository.save(toDto.map(existingReview, Review.class));
         return CompletableFuture.completedFuture(null);
     }

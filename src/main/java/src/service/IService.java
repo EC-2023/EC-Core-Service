@@ -14,7 +14,7 @@ public interface IService<T, D, E> {
 
     public CompletableFuture<T> create(D input);
 
-    public CompletableFuture<T> update(UUID id, E input) throws NoSuchFieldException, IllegalAccessException;
+    public CompletableFuture<T> update(UUID id, E input);
 
     public CompletableFuture<PagedResultDto<T>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip);
 
