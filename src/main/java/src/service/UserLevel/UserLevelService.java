@@ -55,7 +55,7 @@ public class UserLevelService implements IUserLevelService {
         return CompletableFuture.completedFuture(toDto.map(userlevel, UserLevelDto.class));
     }
     @Async
-    public CompletableFuture<UserLevelDto> update(UUID id, UserLevelUpdateDto userlevel) throws NoSuchFieldException, IllegalAccessException {
+    public CompletableFuture<UserLevelDto> update(UUID id, UserLevelUpdateDto userlevel)  {
         UserLevel existingUserLevel = userLevelRepository.findById(id).orElse(null);
         if (existingUserLevel == null)
             throw new NotFoundException("Unable to find user level!");
