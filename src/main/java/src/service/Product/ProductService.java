@@ -10,15 +10,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
-import src.model.Delivery;
 import src.model.Product;
 import src.repository.IProductRepository;
-import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Product.Dtos.ProductCreateDto;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
@@ -28,8 +25,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class ProductService implements IProductService {
@@ -44,7 +39,7 @@ public class ProductService implements IProductService {
     @Async
     public CompletableFuture<List<ProductDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<ProductDto>) productRepository.findAll().stream().map(
+                productRepository.findAll().stream().map(
                         x -> toDto.map(x, ProductDto.class)
                 ).collect(Collectors.toList()));
     }
@@ -88,5 +83,7 @@ public class ProductService implements IProductService {
         productRepository.save(toDto.map(existingProduct, Product.class));
         return CompletableFuture.completedFuture(null);
     }
+
+
 }
 

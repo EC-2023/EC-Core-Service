@@ -7,4 +7,10 @@ import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
 
 public interface IProductService extends IService<ProductDto, ProductCreateDto, ProductUpdateDto> {
+//
+//    public CompletableFuture<Void> getLatestProduct(HttpServletRequest request);
+//
+//    public CompletableFuture<Void> getSaleProduct(HttpServletRequest request);
+//
+//    public CompletableFuture<Void> getBestSellerProduct(HttpServletRequest request);
 }

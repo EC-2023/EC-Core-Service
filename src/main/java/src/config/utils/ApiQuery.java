@@ -5,8 +5,8 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,41 +33,34 @@ public class ApiQuery<T> {
 
     public ApiQuery<T> filter() {
         predicates.add(cb.equal(root.get("isDeleted"), false));
-        String queryString = null;
-        try {
-            queryString = URLDecoder.decode(req.getQueryString(),  "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+        String queryString;
+        queryString = URLDecoder.decode(req.getQueryString(), StandardCharsets.UTF_8);
         if (queryString != null) {
-            Pattern pattern = Pattern.compile("(?i)(\\w+)\\{\\{(lt|lte|gt|gte|search)\\}\\}=(.*?)(&|$)");
+            Pattern pattern = Pattern.compile("(?i)(\\w+)\\{\\{(lt|lte|gt|gte|neq|in|search)}}=(.*?)(&|$)");
             Matcher matcher = pattern.matcher(queryString);
             while (matcher.find()) {
                 switch (matcher.group(2)) {
-                    case "lt": {
-                        predicates.add(cb.lt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                        break;
+                    case "lt" -> predicates.add(cb.lt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "lte" -> predicates.add(cb.lessThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "gt" -> predicates.add(cb.gt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "gte" -> predicates.add(cb.greaterThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "search" -> predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3) + "%"));
+                    case "neq" -> {
+                        if (matcher.group(3).equals("null")) {
+                            predicates.add(cb.isNotNull(root.get(matcher.group(1))));
+                        } else {
+                            predicates.add(cb.notEqual(root.get(matcher.group(1)), matcher.group(3)));
+                        }
                     }
-                    case "lte": {
-                        predicates.add(cb.lessThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                        break;
-                    }
-                    case "gt": {
-                        predicates.add(cb.gt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                        break;
-                    }
-                    case "gte": {
-                        predicates.add(cb.greaterThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                        break;
-                    }
-                    case "search": {
-                        predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3)  + "%"));
-                        break;
+                    case "in" -> {
+                        String[] list = matcher.group(3).split("\\s*,\\s*");
+                        predicates.add(root.get(matcher.group(1)).in(list));
                     }
                 }
 
             }
         }
+
         if (predicates.size() > 0)
             cq.where(predicates.toArray(new Predicate[0]));
         return this;
@@ -82,9 +75,7 @@ public class ApiQuery<T> {
 
     public ApiQuery<T> orderBy() {
         if (req.getParameter("orderBy") != null) {
-            List<Order> orders = Arrays.stream(req.getParameter("orderBy").split("\\s*,\\s*")).toList().stream().map(x -> {
-                return !x.contains("-") ? cb.asc(root.get(x)) : cb.desc(root.get(x.substring(1)));
-            }).toList();
+            List<Order> orders = Arrays.stream(req.getParameter("orderBy").split("\\s*,\\s*")).toList().stream().map(x -> !x.contains("-") ? cb.asc(root.get(x)) : cb.desc(root.get(x.substring(1)))).toList();
             cq.orderBy(orders);
         }
         return this;
