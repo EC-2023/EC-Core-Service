@@ -87,5 +87,17 @@ public class CartItemsService implements ICartItemsService {
         cartitemsRepository.save(toDto.map(existingCartItems, CartItems.class));
         return CompletableFuture.completedFuture(null);
     }
+
+    @Async
+    public CompletableFuture<Boolean> removeByCartIdAndProductId(UUID cartId, UUID productId) {
+        CartItems cartItems = cartitemsRepository.findCartItemsByCartIdAndProductId(cartId, productId);
+
+        if (cartItems != null) {
+            cartitemsRepository.delete(cartItems);
+            return CompletableFuture.completedFuture(true);
+        } else {
+            throw new NotFoundException("Not found cart item by cartId: " + cartId + " and productId: " + productId);
+        }
+    }
 }
 
