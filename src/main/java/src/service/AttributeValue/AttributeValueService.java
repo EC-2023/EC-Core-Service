@@ -11,19 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.webjars.NotFoundException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.AttributeValue;
-import src.model.UserLevel;
 import src.repository.IAttributeValueRepository;
 import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
 import src.service.AttributeValue.Dtos.AttributeValueDto;
 import src.service.AttributeValue.Dtos.AttributeValueUpdateDto;
-import src.service.UserLevel.Dtos.UserLevelDto;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 

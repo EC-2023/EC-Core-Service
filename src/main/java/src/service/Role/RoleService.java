@@ -2,23 +2,16 @@
 
 package src.service.Role;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.webjars.NotFoundException;
-import src.config.dto.PagedResultDto;
-import src.config.dto.Pagination;
-import src.config.utils.ApiQuery;
+import src.config.exception.NotFoundException;
 import src.model.Role;
 import src.repository.IRoleRepository;
 import src.service.Role.Dtos.RoleDto;
-
 import src.service.Role.Dtos.RoleCreateDto;
 import src.service.Role.Dtos.RoleUpdateDto;
 
@@ -34,8 +27,6 @@ public class RoleService {
     private IRoleRepository roleRepository;
     @Autowired
     private ModelMapper toDto;
-    @PersistenceContext
-    EntityManager em;
 
     @Async
     public CompletableFuture<List<RoleDto>> getAll() {
@@ -62,28 +53,46 @@ public class RoleService {
         if (existingRole == null)
             throw new NotFoundException("Unable to find role!");
         BeanUtils.copyProperties(roles, existingRole);
-        existingRole.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(roleRepository.save(existingRole), RoleDto.class));
     }
 
     @Async
-    public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Role> features = new ApiQuery<>(request, em, Role.class);
-        long total = roleRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
-                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, RoleDto.class)).toList()));
-    }
-    @Async
     public CompletableFuture<Void> remove(UUID id) {
         Role existingRole = roleRepository.findById(id).orElse(null);
         if (existingRole == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find Role!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
         existingRole.setIsDeleted(true);
-        existingRole.setUpdateAt(new Date(new java.util.Date().getTime()));
         roleRepository.save(toDto.map(existingRole, Role.class));
         return CompletableFuture.completedFuture(null);
     }
 
+    // tìm kiếm Role theo name
+    @Async
+    public CompletableFuture<List<RoleDto>> findByName(String name) {
+        Collection<Object> roles = roleRepository.findByNameContainingIgnoreCase(name);
+        List<RoleDto> roleDtos = new ArrayList<>();
 
+        for (Object role : roles) {
+            RoleDto aoleDto = toDto.map(role, RoleDto.class);
+            if (aoleDto.getName().equalsIgnoreCase(name)) {
+                roleDtos.add(aoleDto);
+            }
+        }
+        if (roleDtos.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find any roles with name: " + name);
+        }
+        return CompletableFuture.completedFuture(roleDtos);
+    }
+
+
+    // sắp xếp Role theo name
+    @Async
+    public CompletableFuture<List<RoleDto>> getAllSortedByName() {
+        List<RoleDto> roleDtos = roleRepository.findAll().stream()
+                .map(role -> toDto.map(role, RoleDto.class))
+                .sorted(Comparator.comparing(RoleDto::getName))
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(roleDtos);
+    }
 }
 
