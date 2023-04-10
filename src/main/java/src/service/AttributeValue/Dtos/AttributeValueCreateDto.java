@@ -8,7 +8,6 @@ import java.util.UUID;
 public class AttributeValueCreateDto {
     @JsonProperty(value = "name", required = true)
     private String name;
-
     @JsonProperty(value = "attributeId", required = true)
     public UUID attributeId;
     @JsonProperty(value = "orderItemId", required = true)

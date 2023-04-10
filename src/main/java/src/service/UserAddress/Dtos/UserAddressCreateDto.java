@@ -12,7 +12,7 @@ public class UserAddressCreateDto {
     public String country;
     @JsonProperty(value = "district", required = true, defaultValue = "0")
     public String district;
-    @JsonProperty(value = "ameRecipient", required = true, defaultValue = "0")
+    @JsonProperty(value = "nameRecipient", required = true, defaultValue = "0")
     public String nameRecipient;
     @JsonProperty(value = "numberPhone", required = true, defaultValue = "0")
     public String numberPhone;
@@ -20,7 +20,6 @@ public class UserAddressCreateDto {
     public String ward;
     @JsonProperty(value = "zipcode", required = true, defaultValue = "0")
     public String zipcode;
-    @JsonProperty(value = "userId", required = true)
-    public UUID userId;
+
 
 }

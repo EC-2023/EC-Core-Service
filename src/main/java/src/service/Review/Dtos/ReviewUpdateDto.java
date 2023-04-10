@@ -6,8 +6,7 @@ import lombok.Data;
 
 @Data
 public class ReviewUpdateDto extends  ReviewCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted  = false;
+
 
 }
 

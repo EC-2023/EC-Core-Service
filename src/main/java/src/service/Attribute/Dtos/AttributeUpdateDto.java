@@ -6,8 +6,7 @@ import lombok.Data;
 
 @Data
 public class AttributeUpdateDto extends  AttributeCreateDto{
-    @JsonProperty(value = "isDeleted")
-    public Boolean isDeleted  = false;
+
 
 }
 

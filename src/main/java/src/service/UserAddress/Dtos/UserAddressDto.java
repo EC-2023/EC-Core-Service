@@ -19,6 +19,8 @@ public class UserAddressDto extends UserAddressUpdateDto {
     public Date createAt ;
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt ;
+    @JsonProperty(value = "userId", required = true)
+    public UUID userId;
 
 }
 

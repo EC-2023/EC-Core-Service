@@ -2,6 +2,9 @@
 
 package src.service.Commission;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
+import src.config.utils.ApiQuery;
 import src.model.Commission;
 import src.repository.ICommissionRepository;
 
@@ -28,6 +34,10 @@ public class CommissionService {
     private ICommissionRepository commissionRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
+
 
     @Async
     public CompletableFuture<List<CommissionDto>> getAll() {
@@ -54,45 +64,28 @@ public class CommissionService {
         if (existingCommission == null)
             throw new NotFoundException("Unable to find commission!");
         BeanUtils.copyProperties(commissions, existingCommission);
+        existingCommission.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(existingCommission), CommissionDto.class));
+    }
+
+    @Async
+    public CompletableFuture<PagedResultDto<CommissionDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<Commission> features = new ApiQuery<>(request, em, Commission.class);
+        long total = commissionRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CommissionDto.class)).toList()));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         Commission existingCommission = commissionRepository.findById(id).orElse(null);
         if (existingCommission == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find commission!");
         existingCommission.setIsDeleted(true);
+        existingCommission.setUpdateAt(new Date(new java.util.Date().getTime()));
         commissionRepository.save(toDto.map(existingCommission, Commission.class));
         return CompletableFuture.completedFuture(null);
     }
 
-    // tìm kiếm Commission theo name
-    @Async
-    public CompletableFuture<List<CommissionDto>> findByName(String name) {
-        Collection<Object> commissions = commissionRepository.findByNameContainingIgnoreCase(name);
-        List<CommissionDto> commissionDtos = new ArrayList<>();
-
-        for (Object commission : commissions) {
-            CommissionDto commissionDto = toDto.map(commission, CommissionDto.class);
-            if (commissionDto.getName().equalsIgnoreCase(name)) {
-                commissionDtos.add(commissionDto);
-            }
-        }
-        if (commissionDtos.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find any commissions with name: " + name);
-        }
-        return CompletableFuture.completedFuture(commissionDtos);
-    }
-
-    // sắp xếp Commission theo name
-    @Async
-    public CompletableFuture<List<CommissionDto>> getAllSortedByName() {
-        List<CommissionDto> commissionDtos = commissionRepository.findAll().stream()
-                .map(commission -> toDto.map(commission, CommissionDto.class))
-                .sorted(Comparator.comparing(CommissionDto::getName))
-                .collect(Collectors.toList());
-        return CompletableFuture.completedFuture(commissionDtos);
-    }
 }
 

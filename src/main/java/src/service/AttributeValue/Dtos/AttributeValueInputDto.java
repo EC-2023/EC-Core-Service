@@ -7,5 +7,6 @@ import lombok.Data;
 
 @Data
 public class AttributeValueInputDto {
-
+    @JsonProperty(value = "name", required = true)
+    private String name;
 }

@@ -1,14 +1,17 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
 import src.service.Attribute.AttributeService;
 import src.service.Attribute.Dtos.AttributeCreateDto;
 import src.service.Attribute.Dtos.AttributeDto;
 import src.service.Attribute.Dtos.AttributeUpdateDto;
+import src.service.UserLevel.Dtos.UserLevelDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,6 +38,13 @@ public class AttributeController {
         return attributeService.getAll();
     }
 
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<AttributeDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                             @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                             @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return attributeService.findAllPagination(request, size, page * size);
+    }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "attributes", description = "Operations related to attributes")
 //    @Operation(summary = "Hello API")
@@ -56,15 +66,6 @@ public class AttributeController {
         return attributeService.remove(id);
     }
 
-    @GetMapping("/search/{name}")
-    public CompletableFuture<List<AttributeDto>> searchByName(@RequestParam String name) {
-        return attributeService.findByName(name);
-    }
 
-    // sắp xếp theo attribute theo tên
-    @GetMapping("/sort-name")
-    public CompletableFuture<List<AttributeDto>> getAllSortedByName() {
-        return attributeService.getAllSortedByName();
-    }
 
 }

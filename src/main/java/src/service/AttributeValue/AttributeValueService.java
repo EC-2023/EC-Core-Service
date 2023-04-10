@@ -2,6 +2,9 @@
 
 package src.service.AttributeValue;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +12,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
+import src.config.dto.PagedResultDto;
+import src.config.dto.Pagination;
+import src.config.utils.ApiQuery;
 import src.model.AttributeValue;
+import src.model.UserLevel;
 import src.repository.IAttributeValueRepository;
 import src.service.AttributeValue.Dtos.AttributeValueCreateDto;
 import src.service.AttributeValue.Dtos.AttributeValueDto;
 import src.service.AttributeValue.Dtos.AttributeValueUpdateDto;
+import src.service.UserLevel.Dtos.UserLevelDto;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -27,6 +35,9 @@ public class AttributeValueService {
     private IAttributeValueRepository attributevalueRepository;
     @Autowired
     private ModelMapper toDto;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Async
     public CompletableFuture<List<AttributeValueDto>> getAll() {
@@ -43,7 +54,7 @@ public class AttributeValueService {
 
     @Async
     public CompletableFuture<AttributeValueDto> create(AttributeValueCreateDto input) {
-        AttributeValue attributevalue = attributevalueRepository.save(toDto.map(input, AttributeValue.class));
+        AttributeValue attributevalue = toDto.map(input, AttributeValue.class);
         return CompletableFuture.completedFuture(toDto.map(attributevalueRepository.save(attributevalue), AttributeValueDto.class));
     }
 
@@ -53,45 +64,28 @@ public class AttributeValueService {
         if (existingAttributeValue == null)
             throw new NotFoundException("Unable to find Attribute Value!");
         BeanUtils.copyProperties(attributevalues, existingAttributeValue);
+        existingAttributeValue.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(attributevalueRepository.save(existingAttributeValue), AttributeValueDto.class));
+    }
+    @Async
+    public CompletableFuture<PagedResultDto<AttributeValueDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        ApiQuery<AttributeValue> features = new ApiQuery<>(request, em, AttributeValue.class);
+        long total = attributevalueRepository.count();
+        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, AttributeValueDto.class)).toList()));
     }
 
     @Async
     public CompletableFuture<Void> remove(UUID id) {
         AttributeValue existingAttributeValue = attributevalueRepository.findById(id).orElse(null);
         if (existingAttributeValue == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find Attribute Value!");
         existingAttributeValue.setIsDeleted(true);
+        existingAttributeValue.setUpdateAt(new Date(new java.util.Date().getTime()));
         attributevalueRepository.save(toDto.map(existingAttributeValue, AttributeValue.class));
         return CompletableFuture.completedFuture(null);
     }
 
-    // tìm kiếm Attribute Value theo name
-    @Async
-    public CompletableFuture<List<AttributeValueDto>> findByName(String name) {
-        Collection<Object> attributevalues = attributevalueRepository.findByNameContainingIgnoreCase(name);
-        List<AttributeValueDto> attributevalueDtos = new ArrayList<>();
 
-        for (Object attributevalue : attributevalues) {
-            AttributeValueDto attributevalueDto = toDto.map(attributevalue, AttributeValueDto.class);
-            if (attributevalueDto.getName().equalsIgnoreCase(name)) {
-                attributevalueDtos.add(attributevalueDto);
-            }
-        }
-        if (attributevalueDtos.isEmpty()) {
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find any attributes with name: " + name);
-        }
-        return CompletableFuture.completedFuture(attributevalueDtos);
-    }
-
-    // sắp xếp Attribute Value theo name
-    @Async
-    public CompletableFuture<List<AttributeValueDto>> getAllSortedByName() {
-        List<AttributeValueDto> attributevalueDtos = attributevalueRepository.findAll().stream()
-                .map(attributevalue -> toDto.map(attributevalue, AttributeValueDto.class))
-                .sorted(Comparator.comparing(AttributeValueDto::getName))
-                .collect(Collectors.toList());
-        return CompletableFuture.completedFuture(attributevalueDtos);
-    }
 }
 

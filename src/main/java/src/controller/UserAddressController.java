@@ -1,12 +1,17 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
-import src.service.UserAddress.Dtos.UserAddressCreateDto;
+import src.config.annotation.Authenticate;
+import src.config.dto.PagedResultDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
+
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
 import src.service.UserAddress.UserAddressService;
 
@@ -35,11 +40,20 @@ public class UserAddressController {
         return useraddressService.getAll();
     }
 
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<UserAddressDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                               @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                               @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return useraddressService.findAllPagination(request, size, page * size);
+    }
+
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<UserAddressDto> create(@RequestBody UserAddressCreateDto input) {
-        return useraddressService.create(input);
+    public CompletableFuture<UserAddressDto> create() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return useraddressService.create(userId);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -56,27 +70,6 @@ public class UserAddressController {
         return useraddressService.remove(id);
     }
 
-    // tìm kiếm địa chỉ người dùng theo city
-    @GetMapping("/search/city/{city}")
-    public CompletableFuture<List<UserAddressDto>> searchByCity(@RequestParam String city) {
-        return useraddressService.findByCity(city);
-    }
 
-    // tìm kiếm địa chỉ người dùng theo country
-    @GetMapping("/search/country/{country}")
-    public CompletableFuture<List<UserAddressDto>> searchByCountry(@RequestParam String country) {
-        return useraddressService.findByCountry(country);
-    }
-
-    // sắp xếp theo User Address theo city
-    @GetMapping("/sort-city")
-    public CompletableFuture<List<UserAddressDto>> getAllSortedByCiTy() {
-        return useraddressService.getAllSortedByCiTy();
-    }
-    // sắp xếp theo User Address theo country
-    @GetMapping("/sort-country")
-    public CompletableFuture<List<UserAddressDto>> getAllSortedByCountry() {
-        return useraddressService.getAllSortedByCountry();
-    }
 
 }

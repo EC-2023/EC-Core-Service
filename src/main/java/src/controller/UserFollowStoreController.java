@@ -1,10 +1,16 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
+import src.config.dto.PagedResultDto;
+import src.service.UserFollowStore.Dtos.UserFollowStoreDto;
 import src.service.UserFollowStore.Dtos.UserFollowStoreCreateDto;
 import src.service.UserFollowStore.Dtos.UserFollowStoreDto;
 import src.service.UserFollowStore.Dtos.UserFollowStoreUpdateDto;
@@ -32,14 +38,24 @@ public class UserFollowStoreController {
 //    @Tag(name = "userfollowstores", description = "Operations related to userfollowstores")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserFollowStoreDto>> findAll() {
-       return userfollowstoreService.getAll();
+        return userfollowstoreService.getAll();
     }
 
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<UserFollowStoreDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
+                                                                                   @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                                   @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return userfollowstoreService.findAllPagination(request, size, page * size);
+    }
+
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "userfollowstores", description = "Operations related to userfollowstores")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<UserFollowStoreDto> create(@RequestBody UserFollowStoreCreateDto input) {
-        return userfollowstoreService.create(input);
+    public CompletableFuture<UserFollowStoreDto> create() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return userfollowstoreService.create(userId);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
