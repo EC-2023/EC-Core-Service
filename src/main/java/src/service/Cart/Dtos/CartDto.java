@@ -12,6 +12,8 @@ import java.util.UUID;
 public class CartDto extends CartUpdateDto {
    @JsonProperty(value = "Id", required = true)
    public UUID Id;
+   @JsonProperty(value="userId", required = true)
+   private UUID userId;
    @JsonProperty(value = "isDeleted")
    public Boolean isDeleted  = false;
    @JsonProperty(value = "createAt", required = true)

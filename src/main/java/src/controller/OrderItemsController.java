@@ -1,14 +1,18 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
 import src.service.OrderItems.Dtos.OrderItemsCreateDto;
 import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.OrderItems.Dtos.OrderItemsUpdateDto;
+import src.service.OrderItems.IOrderItemsService;
 import src.service.OrderItems.OrderItemsService;
+import src.service.Product.Dtos.ProductDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/orderitemss")
 public class OrderItemsController {
     @Autowired
-    private OrderItemsService orderitemsService;
+    private IOrderItemsService orderitemsService;
 
 
     @GetMapping( "/{id}")
@@ -40,6 +44,13 @@ public class OrderItemsController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<OrderItemsDto> create(@RequestBody OrderItemsCreateDto input) {
         return orderitemsService.create(input);
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<OrderItemsDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page,
+                                                                           @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                           @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return orderitemsService.findAllPagination(request, size, page * size);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,13 +1,17 @@
 
 package src.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
+import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.StoreLevel.Dtos.StoreLevelCreateDto;
 import src.service.StoreLevel.Dtos.StoreLevelDto;
 import src.service.StoreLevel.Dtos.StoreLevelUpdateDto;
+import src.service.StoreLevel.IStoreLevelService;
 import src.service.StoreLevel.StoreLevelService;
 
 import java.util.List;
@@ -18,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/storelevels")
 public class StoreLevelController {
     @Autowired
-    private StoreLevelService storelevelService;
+    private IStoreLevelService storelevelService;
 
 
     @GetMapping( "/{id}")
@@ -33,6 +37,13 @@ public class StoreLevelController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<StoreLevelDto>> findAll() {
        return storelevelService.getAll();
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<StoreLevelDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page,
+                                                                              @RequestParam(required = false, defaultValue = "0") Integer size,
+                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return storelevelService.findAllPagination(request, size, page * size);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
