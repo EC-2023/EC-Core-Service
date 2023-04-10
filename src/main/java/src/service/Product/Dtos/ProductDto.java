@@ -4,7 +4,9 @@ package src.service.Product.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import src.service.ProductImg.Dtos.ProductImgDto;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -19,6 +21,7 @@ public class ProductDto extends ProductUpdateDto {
    public Date updateAt ;
    @JsonProperty(value = "isDeleted")
    public Boolean isDeleted  = false;
-
+   @JsonProperty(value = "images")
+   private Collection<ProductImgDto>  productImgsByProductId;
 }
 
