@@ -39,8 +39,8 @@ public class CategoryController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<CategoryDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
-                                                                            @RequestParam(required = false, defaultValue = "0") Integer size,
+    public CompletableFuture<PagedResultDto<CategoryDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
+                                                                            @RequestParam(required = false, defaultValue = "10") Integer size,
                                                                             @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return categoryService.findAllPagination(request, size, page * size);
     }

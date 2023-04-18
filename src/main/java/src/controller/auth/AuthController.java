@@ -36,7 +36,7 @@ public class AuthController {
         if (user == null){
             throw new Exception("Cannot find user with email");
         }
-        if (!jwtUtil.comparePassword(loginRequest.getPassword(), user.getPassword())){
+        if (!JwtTokenUtil.comparePassword(loginRequest.getPassword(), user.getPassword())){
             throw new Exception("Password not correct");
         }
         final String accessToken = jwtUtil.generateAccessToken(user);

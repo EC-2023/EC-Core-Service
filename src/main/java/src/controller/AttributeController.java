@@ -39,8 +39,8 @@ public class AttributeController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<AttributeDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
-                                                                             @RequestParam(required = false, defaultValue = "0") Integer size,
+    public CompletableFuture<PagedResultDto<AttributeDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
+                                                                             @RequestParam(required = false, defaultValue = "10") Integer size,
                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return attributeService.findAllPagination(request, size, page * size);
     }

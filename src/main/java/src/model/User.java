@@ -54,7 +54,7 @@ public class User implements UserDetails {
     private String avatar;
     @Basic
     @Column(name = "point", nullable = false)
-    private int point;
+    private int point = 0;
     @Basic
     @Column(name = "e_wallet", nullable = false, precision = 0)
     private double eWallet;

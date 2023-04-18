@@ -66,9 +66,10 @@ public class UserLevelService implements IUserLevelService {
     //     first name pagination
     @Async
     public CompletableFuture<PagedResultDto<UserLevelDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<UserLevel> features = new ApiQuery<>(request, em, UserLevel.class);
         long total = userLevelRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<UserLevel> features = new ApiQuery<>(request, em, UserLevel.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, UserLevelDto.class)).toList()));
     }
 

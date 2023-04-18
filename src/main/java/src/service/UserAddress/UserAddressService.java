@@ -74,9 +74,10 @@ public class UserAddressService {
 
     @Async
     public CompletableFuture<PagedResultDto<UserAddressDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<UserAddress> features = new ApiQuery<>(request, em, UserAddress.class);
         long total = useraddressRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<UserAddress> features = new ApiQuery<>(request, em, UserAddress.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, UserAddressDto.class)).toList()));
     }
 

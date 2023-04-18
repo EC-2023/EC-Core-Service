@@ -67,9 +67,10 @@ public class ReviewService {
 
     @Async
     public CompletableFuture<PagedResultDto<ReviewDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Review> features = new ApiQuery<>(request, em, Review.class);
         long total = reviewRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<Review> features = new ApiQuery<>(request, em, Review.class,pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, ReviewDto.class)).toList()));
     }
 

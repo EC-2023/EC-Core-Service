@@ -13,14 +13,19 @@ import src.service.User.UserService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Objects;
 
 @Aspect
 @Component
 public class AuthenticateAspect {
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Autowired
-    private UserService userDetailsService;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserService userDetailsService;
+
+    public AuthenticateAspect(UserService userDetailsService, JwtTokenUtil jwtTokenUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
+
     @Before("@annotation(src.config.annotation.Authenticate)")
     public void authenticate() throws UnauthorizedException, NoSuchAlgorithmException, InvalidKeySpecException {
         String token = getTokenFromRequest();
@@ -39,7 +44,7 @@ public class AuthenticateAspect {
 
     private String getTokenFromRequest() {
         // Get token from request headers
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         final String requestTokenHeader = request.getHeader("Authorization");
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             return requestTokenHeader.substring(7);

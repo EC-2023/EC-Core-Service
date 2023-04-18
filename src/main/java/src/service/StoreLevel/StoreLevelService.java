@@ -56,9 +56,10 @@ public class StoreLevelService implements IStoreLevelService {
 
     @Async
     public CompletableFuture<PagedResultDto<StoreLevelDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<StoreLevel> features = new ApiQuery<>(request, em, StoreLevel.class);
         long total = storelevelRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<StoreLevel> features = new ApiQuery<>(request, em, StoreLevel.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, StoreLevelDto.class)).toList()));
     }
 

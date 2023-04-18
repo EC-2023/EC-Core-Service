@@ -39,8 +39,8 @@ public class RoleController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer page ,
-                                                                        @RequestParam(required = false, defaultValue = "0") Integer size,
+    public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
+                                                                        @RequestParam(required = false, defaultValue = "10") Integer size,
                                                                         @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return roleService.findAllPagination(request, size, page * size);
     }

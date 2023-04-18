@@ -65,9 +65,10 @@ public class RoleService {
 
     @Async
     public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Role> features = new ApiQuery<>(request, em, Role.class);
         long total = roleRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<Role> features = new ApiQuery<>(request, em, Role.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, RoleDto.class)).toList()));
     }
     @Async

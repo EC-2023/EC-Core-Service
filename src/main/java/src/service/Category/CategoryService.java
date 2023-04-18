@@ -70,9 +70,11 @@ public class CategoryService {
 
     @Async
     public CompletableFuture<PagedResultDto<CategoryDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Category> features = new ApiQuery<>(request, em, Category.class);
         long total = categoryRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                Pagination pagination = Pagination.create(total, skip, limit);
+
+        ApiQuery<Category> features = new ApiQuery<>(request, em, Category.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CategoryDto.class)).toList()));
     }
 

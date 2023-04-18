@@ -69,9 +69,10 @@ public class AttributeValueService {
     }
     @Async
     public CompletableFuture<PagedResultDto<AttributeValueDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<AttributeValue> features = new ApiQuery<>(request, em, AttributeValue.class);
         long total = attributevalueRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<AttributeValue> features = new ApiQuery<>(request, em, AttributeValue.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, AttributeValueDto.class)).toList()));
     }
 

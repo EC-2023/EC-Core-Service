@@ -53,12 +53,13 @@ public class CartItemsService implements ICartItemsService {
 
     @Async
     public CompletableFuture<PagedResultDto<CartItemsDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<CartItems> features = new ApiQuery<>(request, em, CartItems.class);
         long total = cartitemsRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<CartItems> features = new ApiQuery<>(request, em, CartItems.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CartItemsDto.class)).toList()));
     }
-    
+
     @Async
     public CompletableFuture<CartItemsDto> create(CartItemsCreateDto input) {
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);

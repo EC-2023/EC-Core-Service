@@ -10,15 +10,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.Orders;
-import src.model.Orders;
 import src.repository.IOrdersRepository;
-import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
@@ -28,8 +25,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class OrdersService implements IOrdersService {
@@ -56,9 +51,10 @@ public class OrdersService implements IOrdersService {
 
     @Async
     public CompletableFuture<PagedResultDto<OrdersDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class);
         long total = ordersRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, OrdersDto.class)).toList()));
     }
 

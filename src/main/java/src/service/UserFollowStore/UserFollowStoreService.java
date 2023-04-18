@@ -10,18 +10,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.utils.ApiQuery;
-import src.model.User;
 import src.model.UserFollowStore;
 import src.repository.IUserFollowStoreRepository;
-
 import src.service.UserFollowStore.Dtos.UserFollowStoreDto;
-import src.service.UserFollowStore.Dtos.UserFollowStoreCreateDto;
 import src.service.UserFollowStore.Dtos.UserFollowStoreUpdateDto;
 
 import java.util.Date;
@@ -29,6 +24,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -73,9 +69,10 @@ public class UserFollowStoreService {
 
     @Async
     public CompletableFuture<PagedResultDto<UserFollowStoreDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<UserFollowStore> features = new ApiQuery<>(request, em, UserFollowStore.class);
         long total = userfollowstoreRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<UserFollowStore> features = new ApiQuery<>(request, em, UserFollowStore.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, UserFollowStoreDto.class)).toList()));
     }
 

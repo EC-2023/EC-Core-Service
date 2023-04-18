@@ -15,7 +15,6 @@ import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.utils.ApiQuery;
 import src.model.UserFollowProduct;
-
 import src.repository.IUserFollowProductRepository;
 import src.service.UserFollowProduct.Dtos.UserFollowProductDto;
 import src.service.UserFollowProduct.Dtos.UserFollowProductUpdateDto;
@@ -70,9 +69,10 @@ public class UserFollowProductService {
 
     @Async
     public CompletableFuture<PagedResultDto<UserFollowProductDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<UserFollowProduct> features = new ApiQuery<>(request, em, UserFollowProduct.class);
         long total = userfollowproductRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<UserFollowProduct> features = new ApiQuery<>(request, em, UserFollowProduct.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, UserFollowProductDto.class)).toList()));
     }
 

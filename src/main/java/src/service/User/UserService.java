@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +20,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.auth.JwtTokenUtil;
+import src.model.Cart;
 import src.model.User;
+import src.repository.ICartRepository;
+import src.repository.IRoleRepository;
 import src.repository.IUserRepository;
 import src.service.User.Dtos.UserCreateDto;
 import src.service.User.Dtos.UserDto;
@@ -42,12 +44,21 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Slf4j
 public class UserService implements UserDetailsService {
     EntityManager em;
-    @Autowired
     private IUserRepository userRepository;
-    @Autowired
     private ModelMapper toDto;
-    @Autowired
     private JwtTokenUtil jwtUtil;
+    private ICartRepository cartRepository;
+    private IRoleRepository roleRepository;
+    UUID roleId;
+
+    @Autowired
+    public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, ICartRepository cartRepository, IRoleRepository roleRepository) {
+        this.userRepository = userRepository;
+        this.toDto = toDto;
+        this.jwtUtil = jwtUtil;
+        this.cartRepository = cartRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Async
     public CompletableFuture<List<UserDto>> getAll() {
@@ -56,39 +67,7 @@ public class UserService implements UserDetailsService {
                         x -> toDto.map(x, UserDto.class)
                 ).collect(Collectors.toList()));
     }
-    // first name pagination
-//    @Async
-//    public CompletableFuture<List<UserDto>> find(String name) {
-//        CriteriaBuilder cb = em.getCriteriaBuilder();
-//        CriteriaQuery<User> cq = cb.createQuery(User.class);
-//        List<Predicate> predicates = new ArrayList<>();
-//        Root<User> user = cq.from(User.class);
-//        if ("d" != null) {
-//            predicates.add(cb.equal(user.get("author"), "123"));
-//        }
-//        if (name != null) {
-//            predicates.add(cb.like(user.get("name"), "%" + name + "%"));
-//        }
-//        Expression<String> concatenatedFields = cb.concat(user.get("field1"), " ");
-//        concatenatedFields = cb.concat(concatenatedFields, user.get("field2"));
-//        concatenatedFields = cb.concat(concatenatedFields, " ");
-//        concatenatedFields = cb.concat(concatenatedFields, user.get("field3"));
-//
-//        predicates.add(cb.like(concatenatedFields, "%" + name + "%"));
-//        cq.where(predicates.toArray(new Predicate[0]));
-//        predicates.add(cb.);
-//        return em.createQuery(cq).getResultList();
-//
-//
-//        return CompletableFuture.completedFuture(
-//                (List<UserDto>) userRepository.findAll().stream().map(
-//                        x -> toDto.map(x, UserDto.class)
-//                ).collect(Collectors.toList()));
-//    }
 
-    static Specification<User> titleContains(String... title) {
-        return (user, cq, cb) -> cb.like(user.get("title"), "%" + title + "%");
-    }
     @Async
     public CompletableFuture<UserDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userRepository.findById(id), UserDto.class));
@@ -96,9 +75,13 @@ public class UserService implements UserDetailsService {
 
     @Async
     public CompletableFuture<UserDto> create(UserCreateDto input) {
+        roleId = roleRepository.findByName("User").orElse(null).getId();
         input.setHashedPassword(jwtUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
+        input.setRoleId(roleId);
         User user = userRepository.save(toDto.map(input, User.class));
+        // tao cart
+        cartRepository.save(new Cart(user.getId()));
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return CompletableFuture.completedFuture(toDto.map(user, UserDto.class));
     }

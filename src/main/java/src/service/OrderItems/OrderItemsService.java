@@ -56,9 +56,11 @@ public class OrderItemsService implements IOrderItemsService {
 
     @Async
     public CompletableFuture<PagedResultDto<OrderItemsDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<OrderItems> features = new ApiQuery<>(request, em, OrderItems.class);
         long total = orderitemsRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+              Pagination pagination = Pagination.create(total, skip, limit);
+
+        ApiQuery<OrderItems> features = new ApiQuery<>(request, em, OrderItems.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, OrderItemsDto.class)).toList()));
     }
 

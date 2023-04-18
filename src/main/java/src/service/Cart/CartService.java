@@ -85,9 +85,11 @@ public class CartService implements ICartService {
 
     @Async
     public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Cart> features = new ApiQuery<>(request, em, Cart.class);
         long total = cartRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+                Pagination pagination = Pagination.create(total, skip, limit);
+
+        ApiQuery<Cart> features = new ApiQuery<>(request, em, Cart.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CartDto.class)).toList()));
     }
 
@@ -98,8 +100,7 @@ public class CartService implements ICartService {
 
     @Async
     public CompletableFuture<CartDto> create(UUID userId) {
-        Cart cart = new Cart();
-        cart.setUserId(userId);
+        Cart cart = new Cart(userId);
         return CompletableFuture.completedFuture(toDto.map(cartRepository.save(cart), CartDto.class));
     }
 

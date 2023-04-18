@@ -21,7 +21,7 @@ public class Cart {
     private UUID userId;
     @Basic
     @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
     private Date createAt= new Date(new java.util.Date().getTime());
@@ -39,5 +39,8 @@ public class Cart {
             total += (i.getQuantity() * i.getProductByProductId().getPrice());
         }
         return total;
+    }
+    public Cart(UUID userId) {
+        this.userId = userId;
     }
 }

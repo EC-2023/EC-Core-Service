@@ -52,9 +52,10 @@ public class DeliveryService implements IDeliveryService {
 
     @Async
     public CompletableFuture<PagedResultDto<DeliveryDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<Delivery> features = new ApiQuery<>(request, em, Delivery.class);
         long total = deliveryRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+              Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<Delivery> features = new ApiQuery<>(request, em, Delivery.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, DeliveryDto.class)).toList()));
     }
 

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.servlet.http.HttpServletRequest;
+import src.config.dto.Pagination;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -21,14 +22,15 @@ public class ApiQuery<T> {
     EntityManager em;
     List<Predicate> predicates = new ArrayList<>();
     private TypedQuery<T> query = null;
+    Pagination pagination;
 
-
-    public ApiQuery(HttpServletRequest req, EntityManager em, Class<T> entityType) {
+    public ApiQuery(HttpServletRequest req, EntityManager em, Class<T> entityType, Pagination pagination) {
         this.em = em;
         this.cb = em.getCriteriaBuilder();
         this.cq = cb.createQuery(entityType);
         this.req = req;
         this.root = cq.from(entityType);
+        this.pagination = pagination;
     }
 
     public ApiQuery<T> filter() {
@@ -67,9 +69,8 @@ public class ApiQuery<T> {
     }
 
     public ApiQuery<T> paginate() {
-        int skip = req.getParameter("skip") != null ? Integer.parseInt(req.getParameter("skip")) : 0;
-        int limit = req.getParameter("limit") != null ? Integer.parseInt(req.getParameter("limit")) : 10;
-        this.query = em.createQuery(cq).setFirstResult(skip).setMaxResults((skip + 1) * limit);
+
+        this.query = em.createQuery(cq).setFirstResult(pagination.getSkip()).setMaxResults((pagination.getSkip() + 1) * pagination.getLimit());
         return this;
     }
 

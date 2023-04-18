@@ -56,9 +56,10 @@ public class ProductImgService implements IProductImgService {
 
     @Async
     public CompletableFuture<PagedResultDto<ProductImgDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        ApiQuery<ProductImg> features = new ApiQuery<>(request, em, ProductImg.class);
         long total = productimgRepository.count();
-        return CompletableFuture.completedFuture(PagedResultDto.create(Pagination.create(total, skip, limit),
+        Pagination pagination = Pagination.create(total, skip, limit);
+        ApiQuery<ProductImg> features = new ApiQuery<>(request, em, ProductImg.class, pagination);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, ProductImgDto.class)).toList()));
     }
 
