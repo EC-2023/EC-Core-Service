@@ -22,15 +22,17 @@ import org.springframework.web.server.ResponseStatusException;
 import src.config.auth.JwtTokenUtil;
 import src.config.dto.PagedResultDto;
 import src.config.exception.NotFoundException;
+import src.config.utils.MapperUtils;
 import src.model.Cart;
 import src.model.User;
 import src.model.UserLevel;
-import src.model.UserLevelRepository;
 import src.repository.ICartRepository;
 import src.repository.IRoleRepository;
+import src.repository.IUserLevelRepository;
 import src.repository.IUserRepository;
 import src.service.User.Dtos.UserCreateDto;
 import src.service.User.Dtos.UserDto;
+import src.service.User.Dtos.UserProfileDto;
 import src.service.User.Dtos.UserUpdateDto;
 
 import java.util.ArrayList;
@@ -47,16 +49,16 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Transactional
 @Slf4j
 public class UserService implements UserDetailsService, IUserService {
-    private final UserLevelRepository userLevelRepository;
+    private final IUserLevelRepository userLevelRepository;
     EntityManager em;
     private IUserRepository userRepository;
     private ModelMapper toDto;
     private ICartRepository cartRepository;
     private IRoleRepository roleRepository;
-    UUID roleId;
+    UUID roleId = null;
 
     @Autowired
-    public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, UserLevelRepository userLevelRepository, ICartRepository cartRepository, IRoleRepository roleRepository) {
+    public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, IUserLevelRepository userLevelRepository, ICartRepository cartRepository, IRoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.toDto = toDto;
         this.userLevelRepository = userLevelRepository;
@@ -79,7 +81,8 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Async
     public CompletableFuture<UserDto> create(UserCreateDto input) {
-        roleId = roleRepository.findByName("User").orElse(null).getId();
+        if (roleId == null)
+            roleId = roleRepository.findByName("User").orElse(null).getId();
         input.setHashedPassword(JwtTokenUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
         input.setRoleId(roleId);
@@ -94,7 +97,7 @@ public class UserService implements UserDetailsService, IUserService {
     public CompletableFuture<UserDto> update(UUID id, UserUpdateDto user) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find User!");
         return CompletableFuture.completedFuture(toDto.map(userRepository.save(toDto.map(user, User.class)), UserDto.class));
     }
 
@@ -108,7 +111,7 @@ public class UserService implements UserDetailsService, IUserService {
     public CompletableFuture<Void> remove(UUID id) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find user level!");
+            throw new ResponseStatusException(NOT_FOUND, "Unable to find User!");
         existingUser.setIsDeleted(true);
         userRepository.save(toDto.map(existingUser, User.class));
         return CompletableFuture.completedFuture(null);
@@ -130,7 +133,7 @@ public class UserService implements UserDetailsService, IUserService {
 
     @Override
     public double getDiscountFromUserLevel(UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find user level!"));
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
         List<UserLevel> userLevels = userLevelRepository.findAll();
         double discount = 0;
         for (UserLevel userLevel : userLevels) {
@@ -141,6 +144,21 @@ public class UserService implements UserDetailsService, IUserService {
             }
         }
         return discount;
+    }
+
+    @Override
+    public CompletableFuture<UserProfileDto> getMyProfile(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User"));
+        UserProfileDto userProfileDto = toDto.map(user, UserProfileDto.class);
+        return CompletableFuture.completedFuture(userProfileDto);
+    }
+
+    @Override
+    public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Unable to find User!"));
+        MapperUtils.toDto(input, existingUser);
+        userRepository.save(existingUser);
+        return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));
     }
 }
 

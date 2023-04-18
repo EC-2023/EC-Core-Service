@@ -21,6 +21,8 @@ public class UserDto extends UserUpdateDto {
     @JsonProperty(value = "roleByRoleId")
     @JsonSerialize
     private RoleDto roleByRoleId;
+    @JsonProperty(value = "isDeleted")
+    public Boolean isDeleted  = false;
     @Override
     public String getHashedPassword(){
         return null;

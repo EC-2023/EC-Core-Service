@@ -13,4 +13,5 @@ import java.util.concurrent.CompletableFuture;
 public interface IUserAddressService extends IService<UserAddressDto, UserAddressCreateDto, UserAddressUpdateDto> {
     CompletableFuture<List<UserAddressDto>> getMyAddresses(UUID id);
     CompletableFuture<UserAddressDto> addMyAddress(UUID id, UserAddressCreateDto input);
+    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id,UUID userId, UserAddressUpdateDto input);
 }

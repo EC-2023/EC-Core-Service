@@ -77,12 +77,20 @@ public class UserAddressController {
         return useraddressService.getMyAddresses(userId);
     }
 
-    @PostMapping(value = "my-address/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/my-address/create", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
     public CompletableFuture<UserAddressDto> addMyAddress(@RequestBody UserAddressCreateDto input) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return useraddressService.addMyAddress(userId, input);
+    }
+
+    @PatchMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
+//    @Operation(summary = "Hello API")
+    public CompletableFuture<UserAddressDto> updateMyAddress(@PathVariable UUID id, UserAddressUpdateDto useraddress) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return useraddressService.updateMyAddress(id,userId, useraddress);
     }
 
 }

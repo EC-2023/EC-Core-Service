@@ -13,6 +13,7 @@ import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.MapperUtils;
 import src.model.UserAddress;
 import src.repository.IUserAddressRepository;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
@@ -108,6 +109,17 @@ public class UserAddressService implements IUserAddressService {
         userAddress.setUserId(id);
         useraddRepository.save(userAddress);
         return CompletableFuture.completedFuture(toDto.map(userAddress, UserAddressDto.class));
+    }
+
+    @Async
+    @Override
+    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id,UUID userId, UserAddressUpdateDto input) {
+        UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
+        if (existingUserAddress.getUserByUserId().getId() != userId)
+            throw new NotFoundException("You cannot have permission to do that!");
+        MapperUtils.toDto(input, existingUserAddress);
+        existingUserAddress.setUpdateAt(new Date(new java.util.Date().getTime()));
+        return CompletableFuture.completedFuture(toDto.map(useraddRepository.save(existingUserAddress), UserAddressDto.class));
     }
 }
 

@@ -16,8 +16,7 @@ import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.*;
-import src.repository.IOrderItemsRepository;
-import src.repository.IOrdersRepository;
+import src.repository.*;
 import src.service.Delivery.IDeliveryService;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
@@ -37,19 +36,19 @@ public class OrdersService implements IOrdersService {
     private final ModelMapper toDto;
     @PersistenceContext
     EntityManager em;
-    private final UserRepository userRepository;
-    private final StoreRepository storeRepository;
+    private final IUserRepository userRepository;
+    private final IStoreRepository storeRepository;
     private final IDeliveryService deliveryService;
-    private final CartItemsRepository cartItemsRepository;
+    private final ICartItemsRepository cartItemsRepository;
     private final IUserService userService;
     private final IOrderItemsRepository orderItemsRepository;
-    private final ProductRepository productRepository;
+    private final IProductRepository productRepository;
 
     public OrdersService(ModelMapper toDto, IOrdersRepository ordersRepository,
-                         UserRepository userRepository,
-                         StoreRepository storeRepository, IDeliveryService deliveryService,
-                         CartItemsRepository cartItemsRepository, IUserService userService, IOrderItemsRepository orderItemsRepository,
-                         ProductRepository productRepository) {
+                         IUserRepository userRepository,
+                         IStoreRepository storeRepository, IDeliveryService deliveryService,
+                         ICartItemsRepository cartItemsRepository, IUserService userService, IOrderItemsRepository orderItemsRepository,
+                         IProductRepository productRepository) {
         this.toDto = toDto;
         this.ordersRepository = ordersRepository;
         this.userRepository = userRepository;
@@ -146,7 +145,7 @@ public class OrdersService implements IOrdersService {
             Product prod = productRepository.findById(cartItems.getProductId()).orElseThrow(() -> new NotFoundException("Not found product"));
             if (cartItems.getQuantity() > cartItems.getProductByProductId().getQuantity())
                 throw new BadRequestException("Quantity product is not enough");
-            double discount = userService.getDiscountFromUserLevel(user.getId());
+            double discount = user.getUserLevelByUserLevelId().getDiscount();
             total += (new Date(new java.util.Date().getTime())).compareTo(cartItems.getProductByProductId().getDateValidPromote()) < 0 ? cartItems.getQuantity() * cartItems.getProductByProductId().getPromotionalPrice() : cartItems.getQuantity() * cartItems.getProductByProductId().getPrice();
             double amountFromUser = total - total * discount + priceDelivery;
             double amountToGd = store.getStoreLevel().getDiscount() * (total - total * discount);
