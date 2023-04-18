@@ -39,7 +39,7 @@ public class ReviewService {
     @Async
     public CompletableFuture<List<ReviewDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<ReviewDto>) reviewRepository.findAll().stream().map(
+                reviewRepository.findAll().stream().map(
                         x -> toDto.map(x, ReviewDto.class)
                 ).collect(Collectors.toList()));
     }

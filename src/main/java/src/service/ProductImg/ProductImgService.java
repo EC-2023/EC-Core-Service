@@ -44,7 +44,7 @@ public class ProductImgService implements IProductImgService {
     @Async
     public CompletableFuture<List<ProductImgDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<ProductImgDto>) productimgRepository.findAll().stream().map(
+                productimgRepository.findAll().stream().map(
                         x -> toDto.map(x, ProductImgDto.class)
                 ).collect(Collectors.toList()));
     }

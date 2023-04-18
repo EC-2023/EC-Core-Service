@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -62,7 +63,7 @@ public class FileController {
                 fileData = newImageBytes.toByteArray();
             }
             // Upload file lên Cloudinary
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(fileData, ObjectUtils.emptyMap());
+            Map uploadResult = cloudinary.uploader().upload(fileData, ObjectUtils.emptyMap());
             // Trả về URL của file đã upload
             String fileUrl = (String) uploadResult.get("url");
             return CompletableFuture.completedFuture(new SuccessResponseDto<String>(fileUrl));
@@ -80,7 +81,7 @@ public class FileController {
         try {
             if (publicId == null || publicId.trim() == "")
                 throw new NotFoundException("Not found publicId");
-            cloudinary.api().deleteResources(Arrays.asList(publicId), ObjectUtils.emptyMap());
+            cloudinary.api().deleteResources(List.of(publicId), ObjectUtils.emptyMap());
             return CompletableFuture.completedFuture(new SuccessResponseDto<String>("success"));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -133,11 +134,11 @@ public class FileController {
 
     @Async
     @DeleteMapping("/local/{publicId}")
-    public CompletableFuture<SuccessResponseDto<String>> deleteFileLocal(@PathVariable String fileName) {
+    public CompletableFuture<SuccessResponseDto<String>> deleteFileLocal(@PathVariable String publicId) {
         try {
-            if (fileName == null || fileName.trim() == "")
+            if (publicId == null || publicId.trim().equals(""))
                 throw new NotFoundException("Not found publicId");
-            File file = new File(System.getProperty("user.dir"), "uploads/" + fileName);
+            File file = new File(System.getProperty("user.dir"), "uploads/" + publicId);
             if (file.delete()) {
                 return CompletableFuture.completedFuture(new SuccessResponseDto<String>("success"));
             } else {
@@ -147,21 +148,6 @@ public class FileController {
             throw new RuntimeException(e);
         }
     }
-
-//    @GetMapping(value = "/uploads/{filename:.+}")
-//    @ResponseBody
-//    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-//        Path filePath = Paths.get("uploads", filename);
-//        Resource resource;
-//        try {
-//            resource = new UrlResource(filePath.toUri());
-//        } catch (MalformedURLException e) {
-//            throw new RuntimeException("Error: " + e.getMessage());
-//        }
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-//                .body(resource);
-//    }
 
 
 }

@@ -45,7 +45,7 @@ public class UserAddressService {
     @Async
     public CompletableFuture<List<UserAddressDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<UserAddressDto>) useraddressRepository.findAll().stream().map(
+                useraddressRepository.findAll().stream().map(
                         x -> toDto.map(x, UserAddressDto.class)
                 ).collect(Collectors.toList()));
     }

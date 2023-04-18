@@ -41,7 +41,7 @@ public class CommissionService {
     @Async
     public CompletableFuture<List<CommissionDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<CommissionDto>) commissionRepository.findAll().stream().map(
+                commissionRepository.findAll().stream().map(
                         x -> toDto.map(x, CommissionDto.class)
                 ).collect(Collectors.toList()));
     }

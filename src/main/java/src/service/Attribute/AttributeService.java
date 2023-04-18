@@ -40,7 +40,7 @@ public class AttributeService {
     @Async
     public CompletableFuture<List<AttributeDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<AttributeDto>) attributeRepository.findAll().stream().map(
+                attributeRepository.findAll().stream().map(
                         x -> toDto.map(x, AttributeDto.class)
                 ).collect(Collectors.toList()));
     }

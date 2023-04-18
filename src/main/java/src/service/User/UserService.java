@@ -46,7 +46,6 @@ public class UserService implements UserDetailsService {
     EntityManager em;
     private IUserRepository userRepository;
     private ModelMapper toDto;
-    private JwtTokenUtil jwtUtil;
     private ICartRepository cartRepository;
     private IRoleRepository roleRepository;
     UUID roleId;
@@ -55,7 +54,6 @@ public class UserService implements UserDetailsService {
     public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, ICartRepository cartRepository, IRoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.toDto = toDto;
-        this.jwtUtil = jwtUtil;
         this.cartRepository = cartRepository;
         this.roleRepository = roleRepository;
     }
@@ -63,7 +61,7 @@ public class UserService implements UserDetailsService {
     @Async
     public CompletableFuture<List<UserDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<UserDto>) userRepository.findAll().stream().map(
+                userRepository.findAll().stream().map(
                         x -> toDto.map(x, UserDto.class)
                 ).collect(Collectors.toList()));
     }
@@ -76,7 +74,7 @@ public class UserService implements UserDetailsService {
     @Async
     public CompletableFuture<UserDto> create(UserCreateDto input) {
         roleId = roleRepository.findByName("User").orElse(null).getId();
-        input.setHashedPassword(jwtUtil.hashPassword(input.getHashedPassword()));
+        input.setHashedPassword(JwtTokenUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
         input.setRoleId(roleId);
         User user = userRepository.save(toDto.map(input, User.class));

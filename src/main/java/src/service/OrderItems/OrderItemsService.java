@@ -44,7 +44,7 @@ public class OrderItemsService implements IOrderItemsService {
     @Async
     public CompletableFuture<List<OrderItemsDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<OrderItemsDto>) orderitemsRepository.findAll().stream().map(
+                orderitemsRepository.findAll().stream().map(
                         x -> toDto.map(x, OrderItemsDto.class)
                 ).collect(Collectors.toList()));
     }

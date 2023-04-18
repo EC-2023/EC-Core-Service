@@ -38,7 +38,7 @@ public class RoleService {
     @Async
     public CompletableFuture<List<RoleDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<RoleDto>) roleRepository.findAll().stream().map(
+                roleRepository.findAll().stream().map(
                         x -> toDto.map(x, RoleDto.class)
                 ).collect(Collectors.toList()));
     }

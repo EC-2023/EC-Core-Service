@@ -39,7 +39,7 @@ public class UserLevelService implements IUserLevelService {
     public CompletableFuture<List<UserLevelDto>> getAll() {
         // search theo teen phaan trang
         return CompletableFuture.completedFuture(
-                (List<UserLevelDto>) userLevelRepository.findAll().stream().map(
+                userLevelRepository.findAll().stream().map(
                         x -> toDto.map(x, UserLevelDto.class)
                 ).collect(Collectors.toList()));
     }

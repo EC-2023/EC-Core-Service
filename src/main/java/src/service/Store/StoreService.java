@@ -29,7 +29,7 @@ public class StoreService {
     @Async
     public CompletableFuture<List<StoreDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<StoreDto>) storeRepository.findAll().stream().map(
+                storeRepository.findAll().stream().map(
                         x -> toDto.map(x, StoreDto.class)
                 ).collect(Collectors.toList()));
     }

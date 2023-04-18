@@ -42,7 +42,7 @@ public class CategoryService {
     @Async
     public CompletableFuture<List<CategoryDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<CategoryDto>) categoryRepository.findAll().stream().map(
+                categoryRepository.findAll().stream().map(
                         x -> toDto.map(x, CategoryDto.class)
                 ).collect(Collectors.toList()));
     }

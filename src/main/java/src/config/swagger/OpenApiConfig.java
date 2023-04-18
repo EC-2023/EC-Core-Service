@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 @Configuration
@@ -40,7 +41,7 @@ public class OpenApiConfig {
                         .description(apiDescription)
                         .version(apiVersion)
                         .contact(new Contact().name(apiContactName).email(apiContactEmail).url(apiContactUrl))
-                ).tags(new ArrayList(Arrays.asList(
+                ).tags(new ArrayList(Collections.singletonList(
                         new Tag().name("User authentication").description("APIs for user authentication")
                 )));
     }

@@ -41,7 +41,7 @@ public class CartItemsService implements ICartItemsService {
     @Async
     public CompletableFuture<List<CartItemsDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<CartItemsDto>) cartitemsRepository.findAll().stream().map(
+                cartitemsRepository.findAll().stream().map(
                         x -> toDto.map(x, CartItemsDto.class)
                 ).collect(Collectors.toList()));
     }

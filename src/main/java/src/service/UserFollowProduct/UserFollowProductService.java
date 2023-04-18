@@ -40,7 +40,7 @@ public class UserFollowProductService {
     @Async
     public CompletableFuture<List<UserFollowProductDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<UserFollowProductDto>) userfollowproductRepository.findAll().stream().map(
+                userfollowproductRepository.findAll().stream().map(
                         x -> toDto.map(x, UserFollowProductDto.class)
                 ).collect(Collectors.toList()));
     }

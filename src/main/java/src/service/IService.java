@@ -8,15 +8,15 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface IService<T, D, E> {
-    public CompletableFuture<List<T>> getAll();
+    CompletableFuture<List<T>> getAll();
 
-    public CompletableFuture<T> getOne(UUID id);
+    CompletableFuture<T> getOne(UUID id);
 
-    public CompletableFuture<T> create(D input);
+    CompletableFuture<T> create(D input);
 
-    public CompletableFuture<T> update(UUID id, E input);
+    CompletableFuture<T> update(UUID id, E input);
 
-    public CompletableFuture<PagedResultDto<T>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip);
+    CompletableFuture<PagedResultDto<T>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip);
 
-    public CompletableFuture<Void> remove(UUID id);
+    CompletableFuture<Void> remove(UUID id);
 }

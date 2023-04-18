@@ -44,7 +44,7 @@ public class StoreLevelService implements IStoreLevelService {
     @Async
     public CompletableFuture<List<StoreLevelDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<StoreLevelDto>) storelevelRepository.findAll().stream().map(
+                storelevelRepository.findAll().stream().map(
                         x -> toDto.map(x, StoreLevelDto.class)
                 ).collect(Collectors.toList()));
     }

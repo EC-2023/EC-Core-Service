@@ -33,6 +33,11 @@ public class Cart {
     private User userByUserId;
     @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.LAZY)
     private Collection<CartItems> cartItemsByCartId;
+
+    public Cart() {
+
+    }
+
     public double getTotalPrice() {
         double total = 0;
         for (CartItems i : this.cartItemsByCartId) {

@@ -18,16 +18,14 @@ public class CustomOpenApiResponseInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (handler instanceof HandlerMethod) {
-            HandlerMethod handlerMethod = (HandlerMethod) handler;
+        if (handler instanceof HandlerMethod handlerMethod) {
             Method method = handlerMethod.getMethod();
             // Check if the method has the CustomOpenApiResponse annotation
             OpenApiResponse annotation = method.getAnnotation(OpenApiResponse.class);
             if (annotation != null) {
                 // Get the response type and check if it is a ResponseEntity
                 Type returnType = method.getGenericReturnType();
-                if (returnType instanceof ParameterizedType) {
-                    ParameterizedType parameterizedType = (ParameterizedType) returnType;
+                if (returnType instanceof ParameterizedType parameterizedType) {
                     Type rawType = parameterizedType.getRawType();
                     if (rawType.equals(ResponseEntity.class)) {
                         // Get the response body and apply the SuccessResponseDto to it

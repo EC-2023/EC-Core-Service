@@ -40,7 +40,7 @@ public class DeliveryService implements IDeliveryService {
     @Async
     public CompletableFuture<List<DeliveryDto>> getAll() {
         return CompletableFuture.completedFuture(
-                (List<DeliveryDto>) deliveryRepository.findAll().stream().map(
+                deliveryRepository.findAll().stream().map(
                         x -> toDto.map(x, DeliveryDto.class)
                 ).collect(Collectors.toList()));
     }

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MetadataService {
-    private ThreadLocal<String> metadata = new ThreadLocal<>();
+    private final ThreadLocal<String> metadata = new ThreadLocal<>();
 
     public void setMetadata(String metadataValue) {
         metadata.set(metadataValue);
