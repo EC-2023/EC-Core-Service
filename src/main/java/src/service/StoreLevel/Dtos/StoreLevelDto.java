@@ -14,8 +14,6 @@ public class StoreLevelDto extends StoreLevelUpdateDto {
    public UUID Id;
    @JsonProperty(value = "isDeleted")
    public Boolean isDeleted  = false;
-   @JsonProperty(value = "minPoint", required = true)
-   public  int minPoint;
    @JsonProperty(value = "createAt", required = true)
    public Date createAt ;
    @JsonProperty(value = "updateAt", required = true)

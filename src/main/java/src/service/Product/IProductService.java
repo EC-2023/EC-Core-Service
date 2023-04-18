@@ -6,6 +6,7 @@ import src.service.Product.Dtos.ProductCreateDto;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
 
+@SuppressWarnings({"ALL", "CommentedOutCode"})
 public interface IProductService extends IService<ProductDto, ProductCreateDto, ProductUpdateDto> {
 //
 //    public CompletableFuture<Void> getLatestProduct(HttpServletRequest request);

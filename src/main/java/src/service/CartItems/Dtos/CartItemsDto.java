@@ -4,6 +4,7 @@ package src.service.CartItems.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import src.service.Product.Dtos.ProductDto;
 
 import java.util.Date;
 import java.util.UUID;
@@ -18,5 +19,7 @@ public class CartItemsDto extends CartItemsUpdateDto {
    public Date createAt ;
    @JsonProperty(value = "updateAt", required = true)
    public Date updateAt ;
+   @JsonProperty(value = "product")
+   private ProductDto productByProductId;
 }
 

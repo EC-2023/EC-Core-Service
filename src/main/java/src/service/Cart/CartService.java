@@ -9,34 +9,27 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.Cart;
-import src.model.Cart;
-import src.model.User;
 import src.repository.ICartRepository;
 import src.service.Cart.Dtos.CartCreateDto;
 import src.service.Cart.Dtos.CartDto;
 import src.service.Cart.Dtos.CartUpdateDto;
-import src.service.Cart.Dtos.CartDto;
-import src.service.CartItems.CartItemsService;
 import src.service.CartItems.Dtos.CartItemsCreateDto;
 import src.service.CartItems.Dtos.CartItemsDto;
 import src.service.CartItems.ICartItemsService;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class CartService implements ICartService {
@@ -51,6 +44,7 @@ public class CartService implements ICartService {
     EntityManager em;
 
     @Async
+    @Override
     public CompletableFuture<List<CartDto>> getAll() {
         return CompletableFuture.completedFuture(
                 cartRepository.findAll().stream().map(
@@ -59,6 +53,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<CartDto> getOne(UUID id) {
         Optional<Cart> cartOptional = cartRepository.findById(id);
 
@@ -70,6 +65,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<CartDto> getOneByUserId(UUID userId) {
 
         List<Cart> carts = cartRepository.findCartsByUserId(userId);
@@ -84,6 +80,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
         long total = cartRepository.count();
                 Pagination pagination = Pagination.create(total, skip, limit);
@@ -94,17 +91,20 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<CartDto> create(CartCreateDto input) {
         return null;
     }
 
     @Async
+    @Override
     public CompletableFuture<CartDto> create(UUID userId) {
         Cart cart = new Cart(userId);
         return CompletableFuture.completedFuture(toDto.map(cartRepository.save(cart), CartDto.class));
     }
 
     @Async
+    @Override
     public CompletableFuture<CartDto> update(UUID id, CartUpdateDto cart) {
         Cart existingCart = cartRepository.findById(id).orElse(null);
         if (existingCart == null)
@@ -115,6 +115,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<Void> remove(UUID id) {
         Cart existingCart = cartRepository.findById(id).orElse(null);
         if (existingCart == null)
@@ -126,6 +127,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public  CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto cartItemsCreateDto, UUID userId) {
 
         CartDto cartDto = null;
@@ -155,6 +157,7 @@ public class CartService implements ICartService {
     }
 
     @Async
+    @Override
     public CompletableFuture<Boolean> removeFromCart(UUID productId, UUID userId) {
 
         CartDto cartDto = null;

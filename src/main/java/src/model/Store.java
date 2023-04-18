@@ -10,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "store")
 @Data
+
 public class Store {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -28,8 +29,11 @@ public class Store {
     @Column(name = "bio", nullable = false, length = 255)
     private String bio;
     @Basic
+    @Column(name = "address", nullable = false, length = 255)
+    private String address;
+    @Basic
     @Column(name = "isActive", nullable = false)
-    private boolean isActive = true;
+    private boolean isActive = false;
     @Basic
     @Column(name = "avatar", nullable = true, length = 255)
     private String avatar;

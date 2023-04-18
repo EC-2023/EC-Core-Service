@@ -20,8 +20,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.auth.JwtTokenUtil;
+import src.config.dto.PagedResultDto;
+import src.config.exception.NotFoundException;
 import src.model.Cart;
 import src.model.User;
+import src.model.UserLevel;
+import src.model.UserLevelRepository;
 import src.repository.ICartRepository;
 import src.repository.IRoleRepository;
 import src.repository.IUserRepository;
@@ -42,7 +46,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService, IUserService {
+    private final UserLevelRepository userLevelRepository;
     EntityManager em;
     private IUserRepository userRepository;
     private ModelMapper toDto;
@@ -51,9 +56,10 @@ public class UserService implements UserDetailsService {
     UUID roleId;
 
     @Autowired
-    public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, ICartRepository cartRepository, IRoleRepository roleRepository) {
+    public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, UserLevelRepository userLevelRepository, ICartRepository cartRepository, IRoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.toDto = toDto;
+        this.userLevelRepository = userLevelRepository;
         this.cartRepository = cartRepository;
         this.roleRepository = roleRepository;
     }
@@ -92,7 +98,13 @@ public class UserService implements UserDetailsService {
         return CompletableFuture.completedFuture(toDto.map(userRepository.save(toDto.map(user, User.class)), UserDto.class));
     }
 
+    @Override
+    public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
+        return null;
+    }
+
     @Async
+
     public CompletableFuture<Void> remove(UUID id) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)
@@ -114,6 +126,21 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(user.getRoleByRoleId().getName()));
             return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
         }
+    }
+
+    @Override
+    public double getDiscountFromUserLevel(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find user level!"));
+        List<UserLevel> userLevels = userLevelRepository.findAll();
+        double discount = 0;
+        for (UserLevel userLevel : userLevels) {
+            if (userLevel.getMinPoint() <= user.getPoint()) {
+                discount = userLevel.getDiscount();
+            } else {
+                return discount;
+            }
+        }
+        return discount;
     }
 }
 

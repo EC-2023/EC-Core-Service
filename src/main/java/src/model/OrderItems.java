@@ -2,10 +2,11 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -22,9 +23,9 @@ public class OrderItems {
     @Basic
     @Column(name = "quantity", nullable = false)
     private int quantity;
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Orders order;
+    @Basic
+    @Column(name = "order_id", nullable = false)
+    private UUID orderId;
     @Basic
     @Column(name = "createAt", nullable = false)
     private Date createAt = new Date(new java.util.Date().getTime());
@@ -40,7 +41,18 @@ public class OrderItems {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
     private Product productByProductId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false, insertable = false, updatable = false)
+    private Orders orderByOrderId;
     @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.LAZY)
     private Collection<AttributeValue> attributesValueByOrderItemId;
+
+    public OrderItems() {
+    }
+    public OrderItems(UUID productId, int quantity, UUID orderId) {
+        this.productId = productId;
+        this.quantity = quantity;
+        this.orderId = orderId;
+    }
 
 }

@@ -6,7 +6,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
@@ -28,12 +27,15 @@ import java.util.stream.Collectors;
 @Service
 public class UserLevelService implements IUserLevelService {
     // @Inject
-    @Autowired
-    private IUserLevelRepository userLevelRepository;
-    @Autowired
-    private ModelMapper toDto;
+    private final IUserLevelRepository userLevelRepository;
+    private final ModelMapper toDto;
     @PersistenceContext
     EntityManager em;
+
+    public UserLevelService(IUserLevelRepository userLevelRepository, ModelMapper toDto) {
+        this.userLevelRepository = userLevelRepository;
+        this.toDto = toDto;
+    }
 
     @Async
     public CompletableFuture<List<UserLevelDto>> getAll() {

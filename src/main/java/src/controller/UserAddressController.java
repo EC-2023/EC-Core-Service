@@ -10,10 +10,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
+import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
-
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
-import src.service.UserAddress.UserAddressService;
+import src.service.UserAddress.IUserAddressService;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,10 +23,10 @@ import java.util.concurrent.CompletableFuture;
 @ApiPrefixController(value = "/useraddresss")
 public class UserAddressController {
     @Autowired
-    private UserAddressService useraddressService;
+    private IUserAddressService useraddressService;
 
 
-    @GetMapping( "/{id}")
+    @GetMapping("/{id}")
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserAddressDto> findOneById(@PathVariable UUID id) {
@@ -41,7 +41,7 @@ public class UserAddressController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<UserAddressDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
+    public CompletableFuture<PagedResultDto<UserAddressDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
                                                                                @RequestParam(required = false, defaultValue = "10") Integer size,
                                                                                @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return useraddressService.findAllPagination(request, size, page * size);
@@ -52,8 +52,7 @@ public class UserAddressController {
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserAddressDto> create() {
-        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return useraddressService.create(userId);
+       return null;
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -70,6 +69,20 @@ public class UserAddressController {
         return useraddressService.remove(id);
     }
 
+    @GetMapping(value = "/my-address", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
+//    @Operation(summary = "Remove")
+    public CompletableFuture<List<UserAddressDto>> getMyAddresses() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return useraddressService.getMyAddresses(userId);
+    }
 
+    @PostMapping(value = "my-address/create", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
+//    @Operation(summary = "Remove")
+    public CompletableFuture<UserAddressDto> addMyAddress(@RequestBody UserAddressCreateDto input) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return useraddressService.addMyAddress(userId, input);
+    }
 
 }

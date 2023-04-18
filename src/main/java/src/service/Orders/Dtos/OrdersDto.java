@@ -4,7 +4,11 @@ package src.service.Orders.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import src.model.Delivery;
+import src.model.OrderItems;
+import src.model.Store;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,5 +22,11 @@ public class OrdersDto extends OrdersUpdateDto {
    public Date createAt ;
    @JsonProperty(value = "updateAt", required = true)
    public Date updateAt ;
+   @JsonProperty(value = "delivery")
+   public Delivery deliveryByDeliveryId;
+   @JsonProperty(value = "orderItems")
+   public Collection<OrderItems> item;
+   @JsonProperty(value = "store")
+   public Store storeByStoreId;
 }
 

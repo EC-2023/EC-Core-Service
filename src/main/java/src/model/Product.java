@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -47,23 +46,26 @@ public class Product {
     private double rating;
     @Basic
     @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted= false;
+    private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
+    private Date createAt = new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
+    private Date updateAt = new Date(new java.util.Date().getTime());
+    @Basic
+    @Column(name = "dateValidPromote", nullable = true)
+    private Date dateValidPromote = new Date(new java.util.Date().getTime());
     @Basic
     @Column(name = "category_id", nullable = true)
     private UUID categoryId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
     private Collection<CartItems> cartItemsByProductId;
-    @OneToMany(mappedBy = "attributesByProductId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "attributesByProductId", fetch = FetchType.EAGER)
     private Collection<Attribute> attributesByProductId;
-    @OneToMany(mappedBy = "attributesValueByProductId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "attributesValueByProductId", fetch = FetchType.EAGER)
     private Collection<AttributeValue> attributesValueByProductId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
     private Collection<OrderItems> orderItemsByProductId;
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
@@ -73,7 +75,7 @@ public class Product {
     private Store storeByStoreId;
     @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Collection<ProductImg> productImgsByProductId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
     private Collection<Review> reviewsByProductId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<UserFollowProduct> userFollowProductsByProductId;

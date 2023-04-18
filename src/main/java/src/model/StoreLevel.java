@@ -2,6 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +23,9 @@ public class StoreLevel {
     @Basic
     @Column(name = "minPoint", nullable = false)
     private int minPoint;
+    @Basic
+    @Column(name = "discount", precision = 0)
+    private Double discount;
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;

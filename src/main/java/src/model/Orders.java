@@ -2,10 +2,11 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -64,6 +65,21 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "delivery_id", referencedColumnName = "delivery_id", nullable = false, insertable = false, updatable = false)
     private Delivery deliveryByDeliveryId;
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "orderByOrderId", fetch = FetchType.EAGER)
     private Collection<OrderItems> item;
+    public Orders(UUID userId,UUID storeId, UUID deliveryId, String address, String phone, int status, boolean isPaidBefore, double amountFromUser, double amountToStore, double amountToGd){
+        this.userId = userId;
+        this.storeId = storeId;
+        this.deliveryId = deliveryId;
+        this.address = address;
+        this.phone = phone;
+        this.status = status;
+        this.isPaidBefore = isPaidBefore;
+        this.amountFromUser = amountFromUser;
+        this.amountToStore = amountToStore;
+        this.amountToGd = amountToGd;
+    }
+    public Orders(){
+
+    }
 }

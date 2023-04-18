@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class ProductUpdateDto extends  ProductCreateDto{
+    @JsonProperty(value = "sold", required = true)
+    private int sold;
 
 }
 
