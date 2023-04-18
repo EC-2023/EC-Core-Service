@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import src.model.UserAddress;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -13,6 +14,8 @@ public interface IUserAddressRepository extends JpaRepository<UserAddress, UUID>
     Collection<Object> findByCountryContainingIgnoreCase(String country);
 
     Collection<Object> findByCityContainingIgnoreCase(String city);
+
+    List<UserAddress> findByUserId(UUID userId);
 }
 
     

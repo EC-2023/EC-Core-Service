@@ -26,6 +26,8 @@ public class UserAddressController {
     private UserAddressService useraddressService;
 
 
+
+
     @GetMapping( "/{id}")
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
@@ -68,6 +70,11 @@ public class UserAddressController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return useraddressService.remove(id);
+    }
+
+    @GetMapping("/{userId}/addresses")
+    public CompletableFuture<List<UserAddressDto>> getMy(@PathVariable UUID userId) {
+        return useraddressService.getMyAddress(userId);
     }
 
 

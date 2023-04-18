@@ -91,6 +91,18 @@ public class UserAddressService {
         return CompletableFuture.completedFuture(null);
     }
 
+    @Async
+    public CompletableFuture<List<UserAddressDto>> getMyAddress(UUID userId) {
+        List<UserAddress> addresses = useraddressRepository.findByUserId(userId);
+        if (addresses.isEmpty()) {
+            throw new NotFoundException("No address found for user with id " + userId);
+        }
+        return CompletableFuture.completedFuture(
+                addresses.stream().map(address -> toDto.map(address, UserAddressDto.class))
+                        .collect(Collectors.toList()));
+    }
+
+
 
 
 
