@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class UserLevelCreateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "name")
     public String name;
-    @JsonProperty(value = "minPoint", required = true, defaultValue = "0")
+    @JsonProperty(value = "minPoint")
     public int minPoint ;
-    @JsonProperty(value = "discount", required = true)
+    @JsonProperty(value = "discount")
     public Double discount;
 }

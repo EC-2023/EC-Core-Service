@@ -24,7 +24,7 @@ public class MapperUtils<T, D> {
     }
     private static Class<?> getRootSuperclass(Class<?> cls) {
         Class<?> superClass = cls.getSuperclass();
-        while (superClass.getSuperclass() != null) {
+        while (superClass.getSuperclass() != null && !superClass.getSuperclass().equals(Object.class)) {
             superClass = superClass.getSuperclass();
         }
         return superClass;

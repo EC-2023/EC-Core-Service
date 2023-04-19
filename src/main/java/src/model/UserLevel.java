@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Collection;
 import java.util.Date;
@@ -30,12 +31,18 @@ public class UserLevel {
     @Basic
     @Column(name = "createAt", updatable = false)
     private Date createAt = new Date(new java.util.Date().getTime());
-    @Basic
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "userLevelByUserLevelId")
     private Collection<User> usersByUserLevelId;
-
+    // middleware
+//    @PreUpdate
+//    protected void onUpdate() {
+//        updateAt = new Date(new java.util.Date().getTime());
+//    }
     public UserLevel(UUID id, String name, int minPoint, Double discount) {
         Id = id;
         this.name = name;

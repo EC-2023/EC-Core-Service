@@ -68,7 +68,7 @@ public class UserAddressController {
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return useraddressService.remove(id);
     }
-
+    @Authenticate
     @GetMapping(value = "/my-address", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
@@ -76,7 +76,7 @@ public class UserAddressController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return useraddressService.getMyAddresses(userId);
     }
-
+    @Authenticate
     @PostMapping(value = "/my-address/create", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
@@ -85,6 +85,7 @@ public class UserAddressController {
         return useraddressService.addMyAddress(userId, input);
     }
 
+    @Authenticate
     @PatchMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")

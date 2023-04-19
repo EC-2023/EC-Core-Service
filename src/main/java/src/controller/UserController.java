@@ -2,12 +2,15 @@
 package src.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
 import src.service.User.Dtos.UserCreateDto;
 import src.service.User.Dtos.UserDto;
+import src.service.User.Dtos.UserProfileDto;
 import src.service.User.Dtos.UserUpdateDto;
 import src.service.User.UserService;
 
@@ -54,10 +57,28 @@ public class UserController {
         return userService.update(id, user);
     }
 
+
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return userService.remove(id);
+    }
+
+    @Authenticate
+    @GetMapping(value = "my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<UserProfileDto> getMyProfile(){
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+
+        return userService.getMyProfile(userId);
+    }
+
+    @Authenticate
+
+    @PatchMapping(value = "my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<UserProfileDto> updateMyProfile(@RequestBody UserUpdateDto input){
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+
+        return userService.updateMyProfile(userId, input);
     }
 }

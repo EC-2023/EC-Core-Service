@@ -2,8 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Collection;
 import java.util.Date;
@@ -53,9 +52,10 @@ public class Orders {
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
     private Date createAt= new Date(new java.util.Date().getTime());
-    @Basic
-    @Column(name = "updateAt", nullable = true)
-    private Date updateAt= new Date(new java.util.Date().getTime());
+   @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updateAt")
+    private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByUserId;

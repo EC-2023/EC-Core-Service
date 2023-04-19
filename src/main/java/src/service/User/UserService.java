@@ -147,6 +147,7 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
+    @Async
     public CompletableFuture<UserProfileDto> getMyProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User"));
         UserProfileDto userProfileDto = toDto.map(user, UserProfileDto.class);
@@ -154,6 +155,7 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Override
+    @Async
     public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Unable to find User!"));
         MapperUtils.toDto(input, existingUser);

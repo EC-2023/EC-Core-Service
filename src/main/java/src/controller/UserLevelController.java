@@ -38,11 +38,12 @@ public class UserLevelController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<UserLevelDto>> findAllPagination(HttpServletRequest request,@RequestParam(required = false, defaultValue = "10") Integer limit ,
+    public CompletableFuture<PagedResultDto<UserLevelDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                              @RequestParam(required = false, defaultValue = "0") Integer skip,
                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return userLevelService.findAllPagination(request, limit, skip);
     }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "userlevels", description = "Operations related to userlevels")
 //    @Operation(summary = "Hello API")
@@ -51,10 +52,7 @@ public class UserLevelController {
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    // Optional
-//    @Tag(name = "userlevels", description = "Operations related to userlevels")
-//    @Operation(summary = "Hello API")
-    public CompletableFuture<UserLevelDto> update(@PathVariable UUID id, UserLevelUpdateDto userlevel) throws NoSuchFieldException, IllegalAccessException {
+    public CompletableFuture<UserLevelDto> update(@PathVariable UUID id, @RequestBody UserLevelUpdateDto userlevel) throws NoSuchFieldException, IllegalAccessException {
         return userLevelService.update(id, userlevel);
     }
 

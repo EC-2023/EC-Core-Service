@@ -28,9 +28,9 @@ public class UserDto extends UserUpdateDto {
         return null;
     }
 
-    @Override
-    public String getIdCard(){
-        return null;
-    }
+//    @Override
+//    public String getIdCard(){
+//        return null;
+//    }
 }
 

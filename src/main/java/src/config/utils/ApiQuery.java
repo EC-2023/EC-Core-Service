@@ -43,9 +43,11 @@ public class ApiQuery<T> {
             while (matcher.find()) {
                 switch (matcher.group(2)) {
                     case "lt" -> predicates.add(cb.lt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                    case "lte" -> predicates.add(cb.lessThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "lte" ->
+                            predicates.add(cb.lessThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
                     case "gt" -> predicates.add(cb.gt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                    case "gte" -> predicates.add(cb.greaterThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
+                    case "gte" ->
+                            predicates.add(cb.greaterThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
                     case "search" -> predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3) + "%"));
                     case "neq" -> {
                         if (matcher.group(3).equals("null")) {
@@ -69,8 +71,7 @@ public class ApiQuery<T> {
     }
 
     public ApiQuery<T> paginate() {
-
-        this.query = em.createQuery(cq).setFirstResult(pagination.getSkip()).setMaxResults((pagination.getSkip() + 1) * pagination.getLimit());
+        this.query = em.createQuery(cq).setFirstResult(pagination.getSkip()).setMaxResults(pagination.getLimit());
         return this;
     }
 
