@@ -84,7 +84,12 @@ public class UserAddressController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return useraddressService.addMyAddress(userId, input);
     }
-
+    @Authenticate
+    @GetMapping(value = "/my-address", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<List<UserAddressDto>> getMyAddresses(UUID id){
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return useraddressService.getMyAddresses(userId);
+    }
     @Authenticate
     @PatchMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
