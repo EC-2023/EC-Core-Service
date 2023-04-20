@@ -2,6 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Collection;
@@ -11,8 +13,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "category")
 @Data
-//@DynamicUpdate
-//@DynamicInsert
+@DynamicUpdate
+@DynamicInsert
 public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -45,6 +47,6 @@ public class Category {
     private Collection<Attribute> attributesByCategoryId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_category_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "parent_category_id",insertable = false, updatable = false)
     private Category parentCategory;
 }

@@ -80,7 +80,12 @@ public class CategoryService implements ICategoryService {
 //        BeanUtils.copyProperties(categories, existingCategory);
         toDto(categories, existingCategory);
         existingCategory.setUpdateAt(new Date(new java.util.Date().getTime()));
-        return CompletableFuture.completedFuture(toDto.map(categoryRepository.save(existingCategory), CategoryDto.class));
+        existingCategory =  categoryRepository.save(existingCategory);
+        CategoryDto a = toDto.map(existingCategory, CategoryDto.class);
+        if (existingCategory.getAttributesByCategoryId() != null){
+            a.setParentCate(toDto.map(categoryRepository.findById(existingCategory.getParentCategoryId()).orElse(null), ParentCategory.class));
+        }
+        return CompletableFuture.completedFuture(a);
     }
 
     @Async
