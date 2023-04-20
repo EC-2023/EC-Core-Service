@@ -6,9 +6,10 @@ import java.util.UUID;
 
 @Data
 public class CategoryCreateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "name")
     private String name;
-
-    @JsonProperty(value = "parentCategoryId", required = true)
+    @JsonProperty(value = "parentCategoryId")
     public UUID parentCategoryId;
+    @JsonProperty(value = "image")
+    public String image;
 }

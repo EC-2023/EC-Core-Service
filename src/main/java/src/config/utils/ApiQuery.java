@@ -79,7 +79,12 @@ public class ApiQuery<T> {
 
     public ApiQuery<T> orderBy() {
         if (req.getParameter("orderBy") != null) {
-            List<Order> orders = Arrays.stream(req.getParameter("orderBy").split("\\s*,\\s*")).toList().stream().map(x -> !x.contains("-") ? cb.asc(root.get(x)) : cb.desc(root.get(x.substring(1)))).toList();
+            List<Order> orders = Arrays.stream(
+                        req.getParameter("orderBy")
+                                .split("\\s*,\\s*"))
+                    .toList()
+                    .stream()
+                    .map(x -> !x.contains("-") ? cb.asc(root.get(x)) : cb.desc(root.get(x.substring(1)))).toList();
             cq.orderBy(orders);
         }
         return this;

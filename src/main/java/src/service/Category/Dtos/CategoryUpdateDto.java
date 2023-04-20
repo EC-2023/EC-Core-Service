@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class CategoryUpdateDto extends  CategoryCreateDto{
-
-
+    @JsonProperty(value = "isDeleted")
+    private Boolean isDeleted ;
 }
 

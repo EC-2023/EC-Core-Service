@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class CommissionUpdateDto extends  CommissionCreateDto{
-
-
+    @JsonProperty(value = "isDeleted")
+    public Boolean isDeleted;
 }
 

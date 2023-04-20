@@ -4,11 +4,10 @@ import lombok.Data;
 
 @Data
 public class CommissionCreateDto {
-    @JsonProperty(value = "name", required = true)
+    @JsonProperty(value = "name")
     private String name;
-    @JsonProperty(value = "cost", required = true, defaultValue = "0")
+    @JsonProperty(value = "cost", defaultValue = "0")
     private Double cost;
-    @JsonProperty(value = "description", required = true, defaultValue = "0")
+    @JsonProperty(value = "description", defaultValue = "0")
     private String description;
-
 }

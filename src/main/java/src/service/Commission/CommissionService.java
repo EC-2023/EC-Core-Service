@@ -6,36 +6,36 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import src.config.exception.NotFoundException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.MapperUtils;
 import src.model.Commission;
 import src.repository.ICommissionRepository;
 import src.service.Commission.Dtos.CommissionCreateDto;
 import src.service.Commission.Dtos.CommissionDto;
 import src.service.Commission.Dtos.CommissionUpdateDto;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @Service
-public class CommissionService {
-    @Autowired
-    private ICommissionRepository commissionRepository;
-    @Autowired
-    private ModelMapper toDto;
-
+public class CommissionService implements ICommissionService {
+    private final ICommissionRepository commissionRepository;
+    private final ModelMapper toDto;
     @PersistenceContext
     EntityManager em;
+
+    public CommissionService(ICommissionRepository commissionRepository, ModelMapper toDto) {
+        this.commissionRepository = commissionRepository;
+        this.toDto = toDto;
+    }
 
 
     @Async
@@ -62,7 +62,8 @@ public class CommissionService {
         Commission existingCommission = commissionRepository.findById(id).orElse(null);
         if (existingCommission == null)
             throw new NotFoundException("Unable to find commission!");
-        BeanUtils.copyProperties(commissions, existingCommission);
+//        BeanUtils.copyProperties(commissions, existingCommission);
+        MapperUtils.toDto(commissions, existingCommission);
         existingCommission.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(commissionRepository.save(existingCommission), CommissionDto.class));
     }
@@ -72,6 +73,7 @@ public class CommissionService {
         long total = commissionRepository.count();
         Pagination pagination = Pagination.create(total, skip, limit);
         ApiQuery<Commission> features = new ApiQuery<>(request, em, Commission.class, pagination);
+        pagination.setTotal(features.filter().orderBy().exec().size());
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, CommissionDto.class)).toList()));
     }
@@ -80,9 +82,8 @@ public class CommissionService {
     public CompletableFuture<Void> remove(UUID id) {
         Commission existingCommission = commissionRepository.findById(id).orElse(null);
         if (existingCommission == null)
-            throw new ResponseStatusException(NOT_FOUND, "Unable to find commission!");
+            throw new NotFoundException("Unable to find commission!");
         existingCommission.setIsDeleted(true);
-        existingCommission.setUpdateAt(new Date(new java.util.Date().getTime()));
         commissionRepository.save(toDto.map(existingCommission, Commission.class));
         return CompletableFuture.completedFuture(null);
     }

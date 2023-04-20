@@ -1,7 +1,6 @@
 package src.config.utils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 
 public class MapperUtils<T, D> {
     public static <T, D> void toDto(T src, D des) {
@@ -17,26 +16,11 @@ public class MapperUtils<T, D> {
 
     private static <T, D> void mapFields(T src, D des, Field[] fields) throws NoSuchFieldException, IllegalAccessException {
         for (Field field : fields) {
-            String fieldName = field.getName();
-            if (!fieldName.contains("id")) {
-                field.setAccessible(true);
-                Object fieldValue = field.get(src);
-                if (fieldValue != null) {
-                    // Tìm phương thức getter tương ứng với trường hiện tại
-                    try {
-                        String getterMethodName = "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                        Method getterMethod = src.getClass().getMethod(getterMethodName);
-                        fieldValue = getterMethod.invoke(src);
-                        // Tìm phương thức setter tương ứng với trường hiện tại
-                        String setterMethodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                        Method setterMethod = des.getClass().getMethod(setterMethodName, field.getType());
-                        // Gọi phương thức setter trên đối tượng đích
-                        setterMethod.invoke(des, fieldValue);
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-
-                }
+            field.setAccessible(true);
+            if (field.get(src) != null && !field.getName().contains("id")) {
+                Field desField = des.getClass().getDeclaredField(field.getName());
+                desField.setAccessible(true);
+                desField.set(des, field.get(src));
             }
         }
     }

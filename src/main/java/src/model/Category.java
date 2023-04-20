@@ -11,6 +11,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "category")
 @Data
+//@DynamicUpdate
+//@DynamicInsert
 public class Category {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -30,13 +32,19 @@ public class Category {
     private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-   @UpdateTimestamp
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
+
     @OneToMany(mappedBy = "categoryByCategoryId")
     private Collection<Product> productsByCategoryId;
+
     @OneToMany(mappedBy = "attributesByCategoryId")
     private Collection<Attribute> attributesByCategoryId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_category_id", nullable = false, insertable = false, updatable = false)
+    private Category parentCategory;
 }
