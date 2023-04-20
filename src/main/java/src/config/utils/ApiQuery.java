@@ -34,7 +34,9 @@ public class ApiQuery<T> {
     }
 
     public ApiQuery<T> filter() {
-        predicates.add(cb.equal(root.get("isDeleted"), false));
+        // tamj thoi lay ra het sau kiem tra la admin thi moi lay ra het
+//        req.getAttribute("user")
+//        predicates.add(cb.equal(root.get("isDeleted"), false));
         String queryString;
         queryString = URLDecoder.decode(req.getQueryString(), StandardCharsets.UTF_8);
         if (queryString != null) {
@@ -48,7 +50,7 @@ public class ApiQuery<T> {
                     case "gt" -> predicates.add(cb.gt(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
                     case "gte" ->
                             predicates.add(cb.greaterThanOrEqualTo(root.get(matcher.group(1)), Integer.parseInt(matcher.group(3))));
-                    case "search" -> predicates.add(cb.like(root.get(matcher.group(1)), "%" + matcher.group(3) + "%"));
+                    case "search" -> predicates.add(cb.like(cb.lower(root.get(matcher.group(1))), "%" + matcher.group(3).toLowerCase() + "%"));
                     case "neq" -> {
                         if (matcher.group(3).equals("null")) {
                             predicates.add(cb.isNotNull(root.get(matcher.group(1))));
@@ -84,7 +86,6 @@ public class ApiQuery<T> {
     }
 
     public List<T> exec() {
-
         if (this.query == null)
             return em.createQuery(cq).getResultList();
         else

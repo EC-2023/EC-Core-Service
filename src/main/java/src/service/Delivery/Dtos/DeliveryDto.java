@@ -17,8 +17,5 @@ public class DeliveryDto extends DeliveryUpdateDto {
    public Date createAt ;
    @JsonProperty(value = "updateAt", required = true)
    public Date updateAt ;
-   @JsonProperty(value = "isDeleted")
-   public Boolean isDeleted  = false;
-
 }
 

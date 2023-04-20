@@ -10,7 +10,6 @@ import src.config.dto.PagedResultDto;
 import src.service.Delivery.Dtos.DeliveryCreateDto;
 import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Delivery.Dtos.DeliveryUpdateDto;
-import src.service.Delivery.DeliveryService;
 import src.service.Delivery.IDeliveryService;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@ApiPrefixController(value = "/deliverys")
+@ApiPrefixController(value = "/deliveries")
 public class DeliveryController {
     @Autowired
     private IDeliveryService deliveryService;
@@ -55,7 +54,7 @@ public class DeliveryController {
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "deliverys", description = "Operations related to deliverys")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<DeliveryDto> update(@PathVariable UUID id, DeliveryUpdateDto delivery) {
+    public CompletableFuture<DeliveryDto> update(@PathVariable UUID id,@RequestBody DeliveryUpdateDto delivery) {
         return deliveryService.update(id, delivery);
     }
 

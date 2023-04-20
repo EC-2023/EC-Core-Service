@@ -6,13 +6,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.MapperUtils;
 import src.model.CartItems;
 import src.model.Delivery;
 import src.repository.IDeliveryRepository;
@@ -58,6 +58,7 @@ public class DeliveryService implements IDeliveryService {
         long total = deliveryRepository.count();
         Pagination pagination = Pagination.create(total, skip, limit);
         ApiQuery<Delivery> features = new ApiQuery<>(request, em, Delivery.class, pagination);
+        pagination.setTotal(features.filter().orderBy().exec().size());
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, DeliveryDto.class)).toList()));
     }
@@ -70,10 +71,12 @@ public class DeliveryService implements IDeliveryService {
 
     @Async
     public CompletableFuture<DeliveryDto> update(UUID id, DeliveryUpdateDto delivery) {
+
         Delivery existingDelivery = deliveryRepository.findById(id).orElse(null);
         if (existingDelivery == null)
             throw new NotFoundException("Unable to find delivery!");
-        BeanUtils.copyProperties(delivery, existingDelivery);
+//        BeanUtils.copyProperties(delivery, existingDelivery);
+        MapperUtils.toDto(delivery, existingDelivery);
         existingDelivery.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(deliveryRepository.save(existingDelivery), DeliveryDto.class));
     }
@@ -84,7 +87,6 @@ public class DeliveryService implements IDeliveryService {
         if (existingDelivery == null)
             throw new NotFoundException("Unable to find delivery!");
         existingDelivery.setIsDeleted(true);
-        existingDelivery.setUpdateAt(new Date(new java.util.Date().getTime()));
         deliveryRepository.save(existingDelivery);
         return CompletableFuture.completedFuture(null);
     }
