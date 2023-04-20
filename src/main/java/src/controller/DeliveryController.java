@@ -38,10 +38,10 @@ public class DeliveryController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<DeliveryDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                             @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<DeliveryDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                             @RequestParam(required = false, defaultValue = "0") Integer skip,
                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return deliveryService.findAllPagination(request, size, page * size);
+        return deliveryService.findAllPagination(request, limit, skip);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

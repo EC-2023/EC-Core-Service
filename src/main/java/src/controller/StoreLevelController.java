@@ -7,12 +7,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
 import src.config.dto.PagedResultDto;
-import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.StoreLevel.Dtos.StoreLevelCreateDto;
 import src.service.StoreLevel.Dtos.StoreLevelDto;
 import src.service.StoreLevel.Dtos.StoreLevelUpdateDto;
 import src.service.StoreLevel.IStoreLevelService;
-import src.service.StoreLevel.StoreLevelService;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,10 +38,10 @@ public class StoreLevelController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<StoreLevelDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                              @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<StoreLevelDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                               @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return storelevelService.findAllPagination(request, size, page * size);
+        return storelevelService.findAllPagination(request, limit, skip);
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
