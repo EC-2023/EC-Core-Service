@@ -13,6 +13,6 @@ public class PayLoadOrder {
     int option;
     UUID storeId;
     UUID deliveryId;
-     String address;
-     String phone;
+    String address;
+    String phone;
 }

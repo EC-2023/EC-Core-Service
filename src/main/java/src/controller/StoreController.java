@@ -1,14 +1,15 @@
 
 package src.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.dto.PagedResultDto;
 import src.service.Store.Dtos.StoreCreateDto;
 import src.service.Store.Dtos.StoreDto;
 import src.service.Store.Dtos.StoreUpdateDto;
-import src.service.Store.StoreService;
+import src.service.Store.IStoreService;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,8 +18,11 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @ApiPrefixController(value = "/stores")
 public class StoreController {
-    @Autowired
-    private StoreService storeService;
+    private final IStoreService storeService;
+
+    public StoreController(IStoreService storeService) {
+        this.storeService = storeService;
+    }
 
 
     @GetMapping( "/{id}")
@@ -54,5 +58,12 @@ public class StoreController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return storeService.remove(id);
+    }
+
+    @GetMapping("/pagination")
+    public CompletableFuture<PagedResultDto<StoreDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                                               @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                                               @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return storeService.findAllPagination(request, size, page * size);
     }
 }

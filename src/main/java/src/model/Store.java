@@ -70,16 +70,16 @@ public class Store {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ownId", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByOwnId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "store_level_id")
     private StoreLevel storeLevel;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne()
     @JoinColumn(name = "commissionId", referencedColumnName = "commissionId", nullable = false, insertable = false, updatable = false)
     private Commission commissionByCommissionId;
     @OneToMany(mappedBy = "storeByStoreEmpId")
     private Collection<User> usersByStoreId;
-    @OneToMany(mappedBy = "storeByStoreId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "storeByStoreId")
     private Collection<UserFollowStore> userFollowStoresByStoreId;
-    @OneToMany(mappedBy = "storeByStoreId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "storeByStoreId")
     private Collection<Product> productsByStoreId;
 }

@@ -70,8 +70,7 @@ public class CommissionService implements ICommissionService {
 
     @Async
     public CompletableFuture<PagedResultDto<CommissionDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        long total = commissionRepository.count();
-        Pagination pagination = Pagination.create(total, skip, limit);
+        Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Commission> features = new ApiQuery<>(request, em, Commission.class, pagination);
         pagination.setTotal(features.filter().orderBy().exec().size());
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
