@@ -121,5 +121,14 @@ public class UserAddressService implements IUserAddressService {
         existingUserAddress.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(useraddRepository.save(existingUserAddress), UserAddressDto.class));
     }
+    @Async
+    @Override
+    public CompletableFuture<UserAddressDto> deleteMyAddress(UUID id, UUID userId){
+        UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
+        if (existingUserAddress.getUserByUserId().getId() != userId)
+            throw new NotFoundException("You cannot have permission to do that!");
+        useraddRepository.deleteById(id);
+        return CompletableFuture.completedFuture(null);
+    }
 }
 

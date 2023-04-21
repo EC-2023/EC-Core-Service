@@ -2,13 +2,13 @@
 package src.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
+import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
@@ -22,81 +22,102 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @ApiPrefixController(value = "/useraddresss")
 public class UserAddressController {
-    @Autowired
-    private IUserAddressService useraddressService;
+    private final IUserAddressService userAddressService;
+
+    public UserAddressController(IUserAddressService userAddressService) {
+        this.userAddressService = userAddressService;
+    }
 
 
+    @Authenticate
+    @RequiresAuthorization("ADMIN")
     @GetMapping("/{id}")
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserAddressDto> findOneById(@PathVariable UUID id) {
-        return useraddressService.getOne(id);
+        return userAddressService.getOne(id);
     }
 
-    @GetMapping()
+
+    @Authenticate
+    @RequiresAuthorization("ADMIN")
+    @GetMapping
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserAddressDto>> findAll() {
-        return useraddressService.getAll();
+        return userAddressService.getAll();
     }
 
     @GetMapping("/pagination")
     public CompletableFuture<PagedResultDto<UserAddressDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
                                                                                @RequestParam(required = false, defaultValue = "10") Integer size,
                                                                                @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return useraddressService.findAllPagination(request, size, page * size);
+        return userAddressService.findAllPagination(request, size, page * size);
     }
 
     @Authenticate
+    @RequiresAuthorization("ADMIN")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserAddressDto> create() {
-       return null;
+        return null;
     }
-
+    @Authenticate
+    @RequiresAuthorization("ADMIN")
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserAddressDto> update(@PathVariable UUID id, UserAddressUpdateDto useraddress) {
-        return useraddressService.update(id, useraddress);
+        return userAddressService.update(id, useraddress);
     }
-
+    @Authenticate
+    @RequiresAuthorization("ADMIN")
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
-        return useraddressService.remove(id);
+        return userAddressService.remove(id);
     }
+
     @Authenticate
     @GetMapping(value = "/my-address", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
     public CompletableFuture<List<UserAddressDto>> getMyAddresses() {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return useraddressService.getMyAddresses(userId);
+        return userAddressService.getMyAddresses(userId);
     }
+
     @Authenticate
     @PostMapping(value = "/my-address/create", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")
     public CompletableFuture<UserAddressDto> addMyAddress(@RequestBody UserAddressCreateDto input) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return useraddressService.addMyAddress(userId, input);
+        return userAddressService.addMyAddress(userId, input);
     }
-//    @Authenticate
+
+    //    @Authenticate
 //    @GetMapping(value = "/my-address", produces = MediaType.APPLICATION_JSON_VALUE)
 //    public CompletableFuture<List<UserAddressDto>> getMyAddresses(UUID id){
 //        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-//        return useraddressService.getMyAddresses(userId);
+//        return userAddressService.getMyAddresses(userId);
 //    }
     @Authenticate
     @PatchMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<UserAddressDto> updateMyAddress(@PathVariable UUID id, UserAddressUpdateDto useraddress) {
+    public CompletableFuture<UserAddressDto> updateMyAddress(@PathVariable UUID id, @RequestBody UserAddressUpdateDto useraddress) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return useraddressService.updateMyAddress(id,userId, useraddress);
+        return userAddressService.updateMyAddress(id, userId, useraddress);
+    }
+
+    @Authenticate
+    @DeleteMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<UserAddressDto> deleteMyAddress(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return userAddressService.deleteMyAddress(id, userId);
     }
 
 }
