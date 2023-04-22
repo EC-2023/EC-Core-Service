@@ -114,17 +114,18 @@ public class UserAddressService implements IUserAddressService {
 
     @Async
     @Override
-    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id,UUID userId, UserAddressUpdateDto input) {
+    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id, UUID userId, UserAddressUpdateDto input) {
         UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
-        if (existingUserAddress.getUserByUserId().getId() != userId)
+        if (!existingUserAddress.getUserId().equals(userId))
             throw new NotFoundException("You cannot have permission to do that!");
         MapperUtils.toDto(input, existingUserAddress);
         existingUserAddress.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(useraddRepository.save(existingUserAddress), UserAddressDto.class));
     }
+
     @Async
     @Override
-    public CompletableFuture<UserAddressDto> deleteMyAddress(UUID id, UUID userId){
+    public CompletableFuture<UserAddressDto> deleteMyAddress(UUID id, UUID userId) {
         UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
         if (!existingUserAddress.getUserId().equals(userId))
             throw new BadRequestException("You cannot have permission to do that!");

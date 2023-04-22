@@ -2,9 +2,8 @@ package src.config.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.core.annotation.Order;
+import org.aspectj.lang.annotation.Before;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,9 +14,8 @@ import src.config.exception.ForbiddenException;
 
 @Aspect
 @Component
-@Order(2)
 public class AuthorizationAspect {
-    @After("@annotation(requiresAuthorization)")
+    @Before("@annotation(requiresAuthorization)")
     public void checkAuthorization(JoinPoint joinPoint, RequiresAuthorization requiresAuthorization) {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         UserDetails user = (UserDetails) request.getAttribute("user");

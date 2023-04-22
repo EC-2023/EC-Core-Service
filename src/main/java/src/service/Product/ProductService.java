@@ -104,7 +104,7 @@ public class ProductService implements IProductService {
     public CompletableFuture<ProductDto> updateQuantity(UUID userId, UUID productId, int quantity) {
         Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
         Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Unable to find product!"));
-        if (product.getStoreId() != store.getId())
+        if (product.getStoreId().equals(store.getId()))
             throw new NotFoundException("Product not belong to store!");
         product.setQuantity(quantity);
         product.setUpdateAt(new Date(new java.util.Date().getTime()));
@@ -119,7 +119,7 @@ public class ProductService implements IProductService {
         if (store == null && !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
             throw new NotFoundException("Unable to find store!");
         }
-        if (store != null && product.getStoreId() != store.getId())
+        if (store != null && !product.getStoreId().equals(store.getId()))
             throw new NotFoundException("Product not belong to store!");
         product.setIsDeleted(status);
         product.setUpdateAt(new Date(new java.util.Date().getTime()));
@@ -134,7 +134,7 @@ public class ProductService implements IProductService {
         if (store == null && !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
             throw new NotFoundException("Unable to find store!");
         }
-        if (store != null && product.getStoreId() != store.getId())
+        if (store != null && !product.getStoreId().equals(store.getId()))
             throw new NotFoundException("Product not belong to store!");
         product.setActive(status);
         product.setUpdateAt(new Date(new java.util.Date().getTime()));
