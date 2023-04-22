@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Data
-public class ProductCreateDto {
+public class ProductCreatePayload {
     @JsonProperty(value = "name", required = true)
     private String name;
     @JsonProperty(value = "price", required = true)
@@ -20,12 +21,14 @@ public class ProductCreateDto {
     private int quantity;
     @JsonProperty(value = "video", required = true)
     private String video;
-    @JsonProperty(value = "storeId", required = true)
-    private UUID storeId;
-    @JsonProperty(value = "rating", required = true)
-    private double rating;
     @JsonProperty(value = "categoryId", required = true)
     private UUID categoryId;
     @JsonProperty(value = "dateValidPromote")
     private Date dateValidPromote;
+    @JsonProperty(value = "iamges")
+    private List<String> iamges;
+    @JsonProperty(value = "attributes")
+    private List<AttributePayload> attributes;
 }
+
+

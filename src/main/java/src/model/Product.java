@@ -59,7 +59,7 @@ public class Product {
     @Basic
     @Column(name = "category_id", nullable = true)
     private UUID categoryId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "productByProductId")
     private Collection<CartItems> cartItemsByProductId;
     @OneToMany(mappedBy = "attributesByProductId", fetch = FetchType.EAGER)
     private Collection<Attribute> attributesByProductId;

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "product_img",  catalog = "")
+@Table(name = "product_img", catalog = "")
 @Data
 public class ProductImg {
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,13 +28,21 @@ public class ProductImg {
     private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-   @UpdateTimestamp
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable=false, updatable=false)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
     private Product productByProductId;
 
+    public ProductImg () {
+    }
+
+    public ProductImg (UUID productId, String fileName, String location) {
+        this.productId = productId;
+        this.fileName = fileName;
+        this.location = location;
+    }
 }

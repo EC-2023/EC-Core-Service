@@ -24,8 +24,8 @@ public class Attribute {
     private Boolean isDeleted;
     @Basic
     @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-   @UpdateTimestamp
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
@@ -44,4 +44,13 @@ public class Attribute {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false, insertable = false, updatable = false)
     private Category attributesByCategoryId;
 
+    public Attribute() {
+    }
+
+    public Attribute(UUID productId, String name) {
+        this.product_id = productId;
+        this.name = name;
+    }
 }
+
+

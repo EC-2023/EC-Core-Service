@@ -15,16 +15,12 @@ import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.Constant;
-import src.model.Product;
-import src.model.Store;
-import src.model.User;
-import src.repository.IProductRepository;
-import src.repository.IStoreRepository;
-import src.repository.IUserRepository;
-import src.service.Product.Dtos.ProductCreateDto;
-import src.service.Product.Dtos.ProductDto;
-import src.service.Product.Dtos.ProductUpdateDto;
+import src.model.*;
+import src.repository.*;
+import src.service.Product.Dtos.*;
+import src.service.ProductImg.IProductImgService;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -38,14 +34,23 @@ public class ProductService implements IProductService {
 
     private final IStoreRepository storeRepository;
     private final IUserRepository userRepository;
+    private final IAttributeRepository attributeRepository;
+    private final IAttributeValueRepository attributeValueRepository;
+    private final IProductImgService productImgService;
     @PersistenceContext
     EntityManager em;
+    private final IProductImgRepository iProductImgRepository;
 
-    public ProductService(IProductRepository productRepository, ModelMapper toDto, IStoreRepository storeRepository, IUserRepository userRepository) {
+    public ProductService(IProductRepository productRepository, ModelMapper toDto, IStoreRepository storeRepository, IUserRepository userRepository, IAttributeRepository attributeRepository, IAttributeValueRepository attributeValueRepository, IProductImgService productImgService,
+                          IProductImgRepository iProductImgRepository) {
         this.productRepository = productRepository;
         this.toDto = toDto;
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
+        this.attributeRepository = attributeRepository;
+        this.attributeValueRepository = attributeValueRepository;
+        this.productImgService = productImgService;
+        this.iProductImgRepository = iProductImgRepository;
     }
 
     @Async
@@ -73,7 +78,36 @@ public class ProductService implements IProductService {
 
     @Async
     public CompletableFuture<ProductDto> create(ProductCreateDto input) {
-        Product product = productRepository.save(toDto.map(input, Product.class));
+        return null;
+    }
+
+    @Async
+    public CompletableFuture<ProductDto> create(UUID userId, ProductCreatePayload input) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
+        Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        Product product = toDto.map(input, Product.class);
+        product = productRepository.save(product);
+        // them tat ca attribute
+        if (input.getAttributes().size() > 0) {
+            for (AttributePayload attribute : input.getAttributes()) {
+                List<AttributeValue> attributeValues = new ArrayList<>();
+                attributeRepository.save(new Attribute(product.getId(), attribute.getName()));
+                for (String value : attribute.getValues()) {
+                    attributeValues.add(new AttributeValue(product.getId(), value));
+                }
+                if (attributeValues.size() > 0)
+                    attributeValueRepository.saveAll(attributeValues);
+            }
+        }
+        // them tat ca anh
+        List<ProductImg> productImgs = new ArrayList<>();
+        if (input.getIamges().size() > 0) {
+            for (String img : input.getIamges()) {
+                productImgs.add(new ProductImg(product.getId(), img, img));
+            }
+            iProductImgRepository.saveAll(productImgs);
+        }
+        product = productRepository.findById(product.getId()).orElseThrow(() -> new NotFoundException("Unable to find product!"));
         return CompletableFuture.completedFuture(toDto.map(productRepository.save(product), ProductDto.class));
     }
 

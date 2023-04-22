@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
 import src.service.Product.Dtos.ProductCreateDto;
 import src.service.Product.Dtos.ProductDto;
@@ -69,20 +70,21 @@ public class ProductController {
     }
 
 
+    @Authenticate
     @PatchMapping(value = "/{id}/update-quantity", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateQuantity(@PathVariable("id") UUID productId,
                                                         @RequestParam int quantity) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return productService.updateQuantity(userId, productId, quantity);
     }
-
+    @Authenticate
     @PatchMapping(value = "/{id}/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateStatusProduct(@PathVariable("id") UUID productId,
                                                              @RequestParam boolean status) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return productService.updateStatusProduct(userId, productId, status);
     }
-
+    @Authenticate
     @PatchMapping(value = "/{id}/update-active", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateActiveProduct(@PathVariable("id") UUID productId,
                                                              @RequestParam boolean status) {

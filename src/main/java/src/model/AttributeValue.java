@@ -56,5 +56,12 @@ public class AttributeValue {
     @ManyToOne
     @JoinColumn(name = "order_item_id", referencedColumnName = "id", nullable = true, insertable = false, updatable = false)
     private OrderItems attributesValueByOrderItemId;
+    public AttributeValue() {
+    }
+
+    public AttributeValue(UUID attribute_id, String name) {
+        this.attribute_id = attribute_id;
+        this.name = name;
+    }
 
 }
