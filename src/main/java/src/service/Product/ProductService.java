@@ -8,15 +8,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.Constant;
 import src.model.Product;
+import src.model.Store;
+import src.model.User;
 import src.repository.IProductRepository;
+import src.repository.IStoreRepository;
+import src.repository.IUserRepository;
 import src.service.Product.Dtos.ProductCreateDto;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
@@ -29,13 +33,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService implements IProductService {
-    @Autowired
-    private IProductRepository productRepository;
-    @Autowired
-    private ModelMapper toDto;
+    private final IProductRepository productRepository;
+    private final ModelMapper toDto;
 
+    private final IStoreRepository storeRepository;
+    private final IUserRepository userRepository;
     @PersistenceContext
     EntityManager em;
+
+    public ProductService(IProductRepository productRepository, ModelMapper toDto, IStoreRepository storeRepository, IUserRepository userRepository) {
+        this.productRepository = productRepository;
+        this.toDto = toDto;
+        this.storeRepository = storeRepository;
+        this.userRepository = userRepository;
+    }
 
     @Async
     public CompletableFuture<List<ProductDto>> getAll() {
@@ -77,6 +88,7 @@ public class ProductService implements IProductService {
     }
 
     @Async
+    @Override
     public CompletableFuture<Void> remove(UUID id) {
         Product existingProduct = productRepository.findById(id).orElse(null);
         if (existingProduct == null)
@@ -87,6 +99,47 @@ public class ProductService implements IProductService {
         return CompletableFuture.completedFuture(null);
     }
 
+    @Async
+    @Override
+    public CompletableFuture<ProductDto> updateQuantity(UUID userId, UUID productId, int quantity) {
+        Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Unable to find product!"));
+        if (product.getStoreId() != store.getId())
+            throw new NotFoundException("Product not belong to store!");
+        product.setQuantity(quantity);
+        product.setUpdateAt(new Date(new java.util.Date().getTime()));
+        product = productRepository.save(product);
+        return CompletableFuture.completedFuture(toDto.map(product, ProductDto.class));
+    }
 
+    public CompletableFuture<ProductDto> updateStatusProduct(UUID userId, UUID productId, boolean status) {
+        Store store = storeRepository.findByUserId(userId).orElse(null);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Unable to find product!"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
+        if (store == null && !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            throw new NotFoundException("Unable to find store!");
+        }
+        if (store != null && product.getStoreId() != store.getId())
+            throw new NotFoundException("Product not belong to store!");
+        product.setIsDeleted(status);
+        product.setUpdateAt(new Date(new java.util.Date().getTime()));
+        product = productRepository.save(product);
+        return CompletableFuture.completedFuture(toDto.map(product, ProductDto.class));
+    }
+
+    public CompletableFuture<ProductDto> updateActiveProduct(UUID userId, UUID productId, boolean status) {
+        Store store = storeRepository.findByUserId(userId).orElse(null);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Unable to find product!"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
+        if (store == null && !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            throw new NotFoundException("Unable to find store!");
+        }
+        if (store != null && product.getStoreId() != store.getId())
+            throw new NotFoundException("Product not belong to store!");
+        product.setActive(status);
+        product.setUpdateAt(new Date(new java.util.Date().getTime()));
+        product = productRepository.save(product);
+        return CompletableFuture.completedFuture(toDto.map(product, ProductDto.class));
+    }
 }
 

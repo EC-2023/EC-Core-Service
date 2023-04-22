@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
@@ -125,8 +126,8 @@ public class UserAddressService implements IUserAddressService {
     @Override
     public CompletableFuture<UserAddressDto> deleteMyAddress(UUID id, UUID userId){
         UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
-        if (existingUserAddress.getUserByUserId().getId() != userId)
-            throw new NotFoundException("You cannot have permission to do that!");
+        if (!existingUserAddress.getUserId().equals(userId))
+            throw new BadRequestException("You cannot have permission to do that!");
         useraddRepository.deleteById(id);
         return CompletableFuture.completedFuture(null);
     }

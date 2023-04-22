@@ -74,6 +74,7 @@ public class StoreService implements IStoreService{
     }
 
     @Async
+    @Override
     public CompletableFuture<Void> remove(UUID id) {
         Store existingStore = storeRepository.findById(id).orElse(null);
         if (existingStore == null)
@@ -82,7 +83,6 @@ public class StoreService implements IStoreService{
         storeRepository.save(toDto.map(existingStore, Store.class));
         return CompletableFuture.completedFuture(null);
     }
-
 
 }
 
