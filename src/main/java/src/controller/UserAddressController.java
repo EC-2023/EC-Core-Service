@@ -20,7 +20,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@ApiPrefixController(value = "/useraddresss")
+@ApiPrefixController(value = "/user-addresses")
 public class UserAddressController {
     private final IUserAddressService userAddressService;
 
