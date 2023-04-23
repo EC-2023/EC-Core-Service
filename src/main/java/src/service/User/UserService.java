@@ -106,7 +106,9 @@ public class UserService implements UserDetailsService, IUserService {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)
             throw new ResponseStatusException(NOT_FOUND, "Unable to find User!");
-        return CompletableFuture.completedFuture(toDto.map(userRepository.save(toDto.map(user, User.class)), UserDto.class));
+        MapperUtils.toDto(user, existingUser);
+        userRepository.save(existingUser);
+        return CompletableFuture.completedFuture(null);
     }
 
     @Async
