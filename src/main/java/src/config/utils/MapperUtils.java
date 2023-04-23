@@ -6,12 +6,10 @@ public class MapperUtils<T, D> {
     public static <T, D> void toDto(T src, D des) {
         try {
             mapFields(src, des, src.getClass().getDeclaredFields());
-            // Map fields from the root superclass
             Class<?> rootSuperclass = getRootSuperclass(src.getClass());
             mapFields(src, des, rootSuperclass.getDeclaredFields());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
-
         }
     }
 
