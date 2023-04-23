@@ -69,20 +69,23 @@ public class UserService implements UserDetailsService, IUserService {
         this.roleRepository = roleRepository;
     }
 
-    @Async    @Override
+    @Async
+    @Override
     public CompletableFuture<List<UserDto>> getAll() {
         return CompletableFuture.completedFuture(
                 userRepository.findAll().stream().map(
                         x -> toDto.map(x, UserDto.class)
                 ).collect(Collectors.toList()));
     }
+
     @Async
     @Override
     public CompletableFuture<UserDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userRepository.findById(id), UserDto.class));
     }
 
-    @Async    @Override
+    @Async
+    @Override
     public CompletableFuture<UserDto> create(UserCreateDto input) {
         if (roleId == null)
             roleId = roleRepository.findByName("User").orElse(null).getId();
@@ -104,6 +107,7 @@ public class UserService implements UserDetailsService, IUserService {
             throw new ResponseStatusException(NOT_FOUND, "Unable to find User!");
         return CompletableFuture.completedFuture(toDto.map(userRepository.save(toDto.map(user, User.class)), UserDto.class));
     }
+
     @Async
     @Override
     public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
@@ -166,7 +170,7 @@ public class UserService implements UserDetailsService, IUserService {
     public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
         MapperUtils.toDto(input, existingUser);
-        userRepository.save(existingUser);
+        existingUser = userRepository.save(existingUser);
         return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));
     }
 }
