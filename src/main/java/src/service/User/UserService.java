@@ -7,6 +7,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
+import src.config.utils.NullAwareBeanUtilsBean;
 import src.model.User;
 import src.model.UserLevel;
 import src.repository.ICartRepository;
@@ -37,6 +39,7 @@ import src.service.User.Dtos.UserDto;
 import src.service.User.Dtos.UserProfileDto;
 import src.service.User.Dtos.UserUpdateDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -169,9 +172,11 @@ public class UserService implements UserDetailsService, IUserService {
     }
 
     @Transactional
-    public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
+    public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) throws InvocationTargetException, IllegalAccessException {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
-        MapperUtils.toDto(input, existingUser);
+        BeanUtilsBean nullAwareBeanUtilsBean = NullAwareBeanUtilsBean.getInstance();
+        nullAwareBeanUtilsBean.copyProperties(existingUser, input);
+//        MapperUtils.toDto(input, existingUser);
         userRepository.saveAndFlush(existingUser);
 //        existingUser = userRepository.saveAndFlush(existingUser);
         return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));

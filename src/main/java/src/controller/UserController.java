@@ -15,6 +15,7 @@ import src.service.User.Dtos.UserProfileDto;
 import src.service.User.Dtos.UserUpdateDto;
 import src.service.User.IUserService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -84,7 +85,7 @@ public class UserController {
 
     @Authenticate
     @PatchMapping(value = "my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<UserProfileDto> updateMyProfile(@RequestBody UserUpdateDto input){
+    public CompletableFuture<UserProfileDto> updateMyProfile(@RequestBody UserUpdateDto input) throws InvocationTargetException, IllegalAccessException {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return userService.updateMyProfile(userId, input);
     }

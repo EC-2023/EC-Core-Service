@@ -7,6 +7,7 @@ import src.service.User.Dtos.UserDto;
 import src.service.User.Dtos.UserProfileDto;
 import src.service.User.Dtos.UserUpdateDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -15,5 +16,5 @@ public interface IUserService extends IService<UserDto, UserCreateDto, UserUpdat
     public double getDiscountFromUserLevel(UUID id);
 
     public CompletableFuture<UserProfileDto> getMyProfile(UUID id);
-    public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input);
+    public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) throws InvocationTargetException, IllegalAccessException;
 }
