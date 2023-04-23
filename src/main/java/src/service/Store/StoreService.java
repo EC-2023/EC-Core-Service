@@ -63,11 +63,15 @@ public class StoreService implements IStoreService {
         return CompletableFuture.completedFuture(toDto.map(storeRepository.findById(id), StoreDto.class));
     }
 
+    public CompletableFuture<StoreDto> create(StoreCreateDto input){
+        return null;
+    }
     @Async
-    public CompletableFuture<StoreDto> create(StoreCreateDto input) {
+    public CompletableFuture<StoreDto> create(StoreCreateDto input, UUID userId) {
         Store store = toDto.map(input, Store.class);
         store.setStoreLevelId(storeLevelRepository.findMinStoreLevel().getId());
         store.setCommissionId(commissionRepository.findMinCommission().getId());
+        store.setOwnId(userId);
         return CompletableFuture.completedFuture(toDto.map(storeRepository.save(store), StoreDto.class));
     }
 

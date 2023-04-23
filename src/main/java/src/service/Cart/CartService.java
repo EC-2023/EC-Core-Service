@@ -76,6 +76,14 @@ public class CartService implements ICartService {
         return CompletableFuture.completedFuture(toDto.map(cartOptional.get(), CartDto.class));
     }
 
+
+    @Async
+    @Override
+    public CompletableFuture<List<CartDto>> getMyCarts(UUID userId) {
+        List<Cart> carts = cartRepository.findCartsByUserId(userId);
+        return CompletableFuture.completedFuture(carts.stream().map( x -> toDto.map(x, CartDto.class)).toList());
+    }
+
     @Async
     @Override
     public CompletableFuture<CartDto> getOneByUserId(UUID userId) {

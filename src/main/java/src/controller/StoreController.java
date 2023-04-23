@@ -4,6 +4,8 @@ package src.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.annotation.RequiresAuthorization;
@@ -42,11 +44,14 @@ public class StoreController {
         return storeService.getAll();
     }
 
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "stores", description = "Operations related to stores")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<StoreDto> create(@RequestBody StoreCreateDto input) {
-        return storeService.create(input);
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+
+        return storeService.create(input, userId);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

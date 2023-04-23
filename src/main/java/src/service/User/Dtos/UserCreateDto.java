@@ -6,19 +6,19 @@ import lombok.Data;
 @Data
 public class UserCreateDto {
     @JsonProperty(value = "firstName")
-    private String firstName;
+    public String firstName;
     @JsonProperty(value = "lastName")
-    private String lastName;
+    public String lastName;
     @JsonProperty(value = "middleName")
-    private String middleName;
+    public String middleName;
     @JsonProperty(value = "phoneNumber")
-    private String phoneNumber;
+    public String phoneNumber;
     @JsonProperty(value = "idCard")
-    private String idCard;
+    public String idCard;
     @JsonProperty(value = "email")
-    private String email;
+    public String email;
     @JsonProperty(value = "hashedPassword")
-    private String hashedPassword;
+    public String hashedPassword;
     @JsonProperty(value = "avatar")
-    private String avatar;
+    public String avatar;
 }

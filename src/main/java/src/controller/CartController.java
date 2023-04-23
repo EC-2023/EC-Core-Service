@@ -28,7 +28,7 @@ public class CartController {
     private ICartService cartService;
 
 
-    @GetMapping( "/{id}")
+    @GetMapping("/{id}")
 //    @Tag(name = "carts", description = "Operations related to carts")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<CartDto> findOneById(@PathVariable UUID id) {
@@ -39,13 +39,13 @@ public class CartController {
 //    @Tag(name = "carts", description = "Operations related to carts")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<CartDto>> findAll() {
-       return cartService.getAll();
+        return cartService.getAll();
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
-                                                                           @RequestParam(required = false, defaultValue = "10") Integer size,
-                                                                           @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+    public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                                        @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                                        @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return cartService.findAllPagination(request, size, page * size);
     }
 
@@ -73,10 +73,17 @@ public class CartController {
     }
 
     @Authenticate
-    @PostMapping(value = "/add",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<CartItemsDto> addToCart(@RequestBody CartItemsCreateDto input) throws ExecutionException, InterruptedException {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return cartService.addToCart(input, userId);
+    }
+
+    @Authenticate
+    @PostMapping(value = "/my-carts", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<List<CartDto>> getMyCarts() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return cartService.getMyCarts(userId);
     }
 
 //    @Authenticate

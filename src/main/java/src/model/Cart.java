@@ -43,13 +43,11 @@ public class Cart {
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
     @Where(clause = "isDeleted = false")
     private Store storeByStoreId;
-    @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.EAGER)
+    @Where(clause = "isDeleted = false")
     private Collection<CartItems> cartItemsByCartId;
-
     public Cart() {
-
     }
-
     public double getTotalPrice() {
         double total = 0;
         for (CartItems i : this.cartItemsByCartId) {
