@@ -9,13 +9,14 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "attribute_value")
+//@DynamicUpdate
+//@DynamicInsert
 @Data
 public class AttributeValue {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "attribute_value_id", nullable = false)
     private UUID Id;
-
     @Basic
     @Column(name = "name", nullable = true)
     private String name;
@@ -26,9 +27,9 @@ public class AttributeValue {
 
     @Basic
     @Column(name = "createAt", nullable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
+    private Date createAt = new Date(new java.util.Date().getTime());
 
-   @UpdateTimestamp
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
@@ -45,6 +46,15 @@ public class AttributeValue {
     @Column(name = "order_item_id", nullable = true)
     private UUID orderItem_id;
 
+    @Basic
+    @Column(name = "cart_item_id", nullable = true)
+    private UUID cartItem_id;
+
+
+    @ManyToOne
+    @JoinColumn(name = "cart_item_id", referencedColumnName = "id", nullable = true, insertable = false, updatable = false)
+    private CartItems cartItemsByCartItemId;
+
     @ManyToOne
     @JoinColumn(name = "attribute_id", referencedColumnName = "attribute_id", nullable = true, insertable = false, updatable = false)
     private Attribute attributeByAttributeId;
@@ -56,12 +66,17 @@ public class AttributeValue {
     @ManyToOne
     @JoinColumn(name = "order_item_id", referencedColumnName = "id", nullable = true, insertable = false, updatable = false)
     private OrderItems attributesValueByOrderItemId;
+
     public AttributeValue() {
     }
 
-    public AttributeValue(UUID attribute_id, String name) {
+    public AttributeValue(UUID attribute_id, UUID cartItemId, UUID product_id, UUID orderItem_id, String name) {
         this.attribute_id = attribute_id;
+        this.cartItem_id = cartItemId;
+        this.product_id = product_id;
+        this.orderItem_id = orderItem_id;
         this.name = name;
     }
+
 
 }

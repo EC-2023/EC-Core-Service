@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -10,6 +11,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "cart")
+//@DynamicInsert
+//@DynamicUpdate
 @Data
 public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,6 +22,9 @@ public class Cart {
     @Basic
     @Column(name = "user_id", nullable = false)
     private UUID userId;
+    @Basic
+    @Column(name = "store_id", nullable = false)
+    private UUID storeId;
     @Basic
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted = false;
@@ -31,7 +37,12 @@ public class Cart {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "isDeleted = false")
     private User userByUserId;
+    @ManyToOne
+    @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "isDeleted = false")
+    private Store storeByStoreId;
     @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.LAZY)
     private Collection<CartItems> cartItemsByCartId;
 
@@ -48,5 +59,10 @@ public class Cart {
     }
     public Cart(UUID userId) {
         this.userId = userId;
+    }
+
+    public Cart(UUID userId, UUID storeId) {
+        this.userId = userId;
+        this.storeId = storeId;
     }
 }

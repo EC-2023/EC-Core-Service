@@ -10,14 +10,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
-import src.service.Cart.Dtos.CartCreateDto;
 import src.service.Cart.Dtos.CartDto;
 import src.service.Cart.Dtos.CartUpdateDto;
-import src.service.Cart.CartService;
 import src.service.Cart.ICartService;
 import src.service.CartItems.Dtos.CartItemsCreateDto;
 import src.service.CartItems.Dtos.CartItemsDto;
-import src.service.Product.Dtos.ProductDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -82,10 +79,10 @@ public class CartController {
         return cartService.addToCart(input, userId);
     }
 
-    @Authenticate
-    @DeleteMapping(value = "/remove/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<Boolean> removeFromCart(@PathVariable UUID productId) {
-        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return cartService.removeFromCart(productId, userId);
-    }
+//    @Authenticate
+//    @DeleteMapping(value = "/remove/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public CompletableFuture<Boolean> removeFromCart(@PathVariable UUID productId) {
+//        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+//        return cartService.removeFromCart(productId, userId);
+//    }
 }

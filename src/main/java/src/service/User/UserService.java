@@ -26,7 +26,6 @@ import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
-import src.model.Cart;
 import src.model.User;
 import src.model.UserLevel;
 import src.repository.ICartRepository;
@@ -93,12 +92,12 @@ public class UserService implements UserDetailsService, IUserService {
         user.setRoleId(roleId);
         userRepository.save(user);
         // tao cart
-        cartRepository.save(new Cart(user.getId()));
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return CompletableFuture.completedFuture(toDto.map(user, UserDto.class));
     }
 
-    @Async    @Override
+    @Async
+    @Override
     public CompletableFuture<UserDto> update(UUID id, UserUpdateDto user) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser == null)

@@ -93,7 +93,7 @@ public class ProductService implements IProductService {
                 List<AttributeValue> attributeValues = new ArrayList<>();
                 Attribute attribute1 = attributeRepository.save(new Attribute(product.getId(), attribute.getName()));
                 for (String value : attribute.getValues()) {
-                    attributeValues.add(new AttributeValue(attribute1.getId(), value));
+                    attributeValues.add(new AttributeValue(attribute1.getId(), null, null, null, value));
                 }
                 if (attributeValues.size() > 0)
                     attributeValueRepository.saveAll(attributeValues);

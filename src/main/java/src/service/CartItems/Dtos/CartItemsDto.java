@@ -13,6 +13,8 @@ import java.util.UUID;
 public class CartItemsDto extends CartItemsUpdateDto {
    @JsonProperty(value = "Id", required = true)
    public UUID Id;
+   @JsonProperty(value = "cartId")
+   private UUID cartId;
    @JsonProperty(value = "isDeleted")
    public Boolean isDeleted  = false;
    @JsonProperty(value = "createAt", required = true)

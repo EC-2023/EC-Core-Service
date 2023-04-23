@@ -11,6 +11,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ICartItemsService extends IService<CartItemsDto, CartItemsCreateDto, CartItemsUpdateDto> {
 
-    CompletableFuture<Boolean> removeByCartIdAndProductId(UUID cartId, UUID productId);
+    CompletableFuture<Boolean> removeCartItem(UUID cartId, UUID productId);
 
 }

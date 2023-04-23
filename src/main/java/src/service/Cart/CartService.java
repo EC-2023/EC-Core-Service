@@ -7,15 +7,20 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.model.AttributeValue;
 import src.model.Cart;
+import src.model.CartItems;
+import src.model.Product;
+import src.repository.IAttributeValueRepository;
+import src.repository.ICartItemsRepository;
 import src.repository.ICartRepository;
+import src.repository.IProductRepository;
 import src.service.Cart.Dtos.CartCreateDto;
 import src.service.Cart.Dtos.CartDto;
 import src.service.Cart.Dtos.CartUpdateDto;
@@ -23,25 +28,32 @@ import src.service.CartItems.Dtos.CartItemsCreateDto;
 import src.service.CartItems.Dtos.CartItemsDto;
 import src.service.CartItems.ICartItemsService;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 public class CartService implements ICartService {
-    @Autowired
-    private ICartRepository cartRepository;
-    @Autowired
-    private ModelMapper toDto;
-    @Autowired
-    ICartItemsService cartItemsService;
+    private final ICartRepository cartRepository;
 
+    private final ICartItemsRepository cartItemsRepository;
+    private final ModelMapper toDto;
+    final
+    ICartItemsService cartItemsService;
+    final
+    IProductRepository productRepository;
+    private final IAttributeValueRepository attributeValueRepository;
     @PersistenceContext
     EntityManager em;
+
+    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository) {
+        this.cartRepository = cartRepository;
+        this.cartItemsRepository = cartItemsRepository;
+        this.toDto = toDto;
+        this.cartItemsService = cartItemsService;
+        this.productRepository = productRepository;
+        this.attributeValueRepository = attributeValueRepository;
+    }
 
     @Async
     @Override
@@ -83,7 +95,7 @@ public class CartService implements ICartService {
     @Override
     public CompletableFuture<PagedResultDto<CartDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
         long total = cartRepository.count();
-                Pagination pagination = Pagination.create(total, skip, limit);
+        Pagination pagination = Pagination.create(total, skip, limit);
 
         ApiQuery<Cart> features = new ApiQuery<>(request, em, Cart.class, pagination);
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
@@ -128,51 +140,45 @@ public class CartService implements ICartService {
 
     @Async
     @Override
-    public  CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto cartItemsCreateDto, UUID userId) {
+    public CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto cartItemsCreateDto, UUID userId) {
 
-        CartDto cartDto = null;
-
-        try {
-            cartDto = getOneByUserId(userId).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        Product product = productRepository.findById(cartItemsCreateDto.getProductId()).orElseThrow(() -> new NotFoundException("Not found product"));
+        Cart cart = cartRepository.findCartsByUserIdAndStoreId(userId, product.getStoreId());
+        if (cart == null) {
+            cart = new Cart(userId, product.getStoreId());
+            cart = cartRepository.save(cart);
+            throw new NotFoundException("Not found cart");
         }
-
-        if (cartDto == null || cartDto.isDeleted == null || cartDto.isDeleted) {
-            try {
-                cartDto = create(userId).get();
-            } catch (InterruptedException | ExecutionException e) {
-                cartDto = null;
-                e.printStackTrace();
+        CartItems cartItems = toDto.map(cartItemsCreateDto, CartItems.class);
+        cartItems.setCartId(cart.getId());
+        cartItems = cartItemsRepository.save(cartItems);
+        if (cartItemsCreateDto.getAttributesValues().size() > 0) {
+            List<AttributeValue> attributeValues = new ArrayList<>();
+            for (String attributeValue : cartItemsCreateDto.getAttributesValues()) {
+                attributeValues.add(new AttributeValue(null, cartItems.getId(), null, null, attributeValue));
             }
+            attributeValueRepository.saveAll(attributeValues);
         }
-
-        if (cartDto != null) {
-            cartItemsCreateDto.setCartId(cartDto.getId());
-
-            return cartItemsService.create(cartItemsCreateDto);
-        }
-
-        return CompletableFuture.completedFuture(null);
+        return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
     }
 
     @Async
     @Override
     public CompletableFuture<Boolean> removeFromCart(UUID productId, UUID userId) {
 
-        CartDto cartDto = null;
-
-        try {
-            cartDto = getOneByUserId(userId).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        if (cartDto != null) {
-            return cartItemsService.removeByCartIdAndProductId(cartDto.getId(), productId);
-        }
-
-        return CompletableFuture.completedFuture(false);
+//        CartDto cartDto = null;
+//        try {
+//            cartDto = getOneByUserId(userId).get();
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (cartDto != null) {
+//            return cartItemsService.removeByCartIdAndProductId(cartDto.getId(), productId);
+//        }
+//
+//        return CompletableFuture.completedFuture(false);
+        return null;
     }
 
 }

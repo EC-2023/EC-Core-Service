@@ -14,10 +14,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public interface ICartService extends IService<CartDto, CartCreateDto, CartUpdateDto> {
-
     CompletableFuture<CartDto> getOneByUserId(UUID userId);
     CompletableFuture<CartDto> create(UUID userId) ;
     CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto input, UUID userId) throws ExecutionException, InterruptedException;
     CompletableFuture<Boolean> removeFromCart(UUID productId, UUID userId);
-
 }
