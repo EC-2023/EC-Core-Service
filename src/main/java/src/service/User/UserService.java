@@ -25,6 +25,7 @@ import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.MapperUtils;
 import src.model.User;
 import src.model.UserLevel;
 import src.repository.ICartRepository;
@@ -168,8 +169,8 @@ public class UserService implements UserDetailsService, IUserService {
     @Async
     public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
-//        MapperUtils.toDto(input, existingUser);
-        existingUser.setFirstName(input.getFirstName());
+       MapperUtils.toDto(input, existingUser);
+//        existingUser.setFirstName(input.getFirstName());
         existingUser = userRepository.save(existingUser);
         return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));
     }

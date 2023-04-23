@@ -11,6 +11,7 @@ public class MapperUtils<T, D> {
             mapFields(src, des, rootSuperclass.getDeclaredFields());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
+
         }
     }
 
