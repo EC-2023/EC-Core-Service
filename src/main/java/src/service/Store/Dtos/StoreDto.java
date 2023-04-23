@@ -4,7 +4,6 @@ package src.service.Store.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import src.service.User.Dtos.UserDto;
 
 import java.util.Date;
 import java.util.UUID;
@@ -33,7 +32,7 @@ public class StoreDto extends StoreUpdateDto {
    private int totalProduct;
    @JsonProperty(value = "totalUserFollow")
    private int totalUserFollow;
-   @JsonProperty(value = "userByOwnId")
-   private UserDto userByOwnId;
+    //   @JsonProperty(value = "userByOwnId")
+    //   private UserDto userByOwnId;
 }
 

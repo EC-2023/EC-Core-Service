@@ -39,13 +39,13 @@ public class Category {
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "categoryByCategoryId")
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private Collection<Product> productsByCategoryId;
     @OneToMany(mappedBy = "attributesByCategoryId")
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private Collection<Attribute> attributesByCategoryId;
     @ManyToOne(fetch = FetchType.EAGER)
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     @JoinColumn(name = "parent_category_id",insertable = false, updatable = false)
     private Category parentCategory;
 }

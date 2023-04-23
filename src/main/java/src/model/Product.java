@@ -2,7 +2,6 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -62,13 +61,15 @@ public class Product {
     private UUID categoryId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<CartItems> cartItemsByProductId;
-    @OneToMany(mappedBy = "attributesByProductId", fetch = FetchType.EAGER)
-    @Where(clause = "isDeleted = false")
+
+    @OneToMany(mappedBy = "attributesByProductId")
+  //  @Where(clause = "isDeleted = false")
     private Collection<Attribute> attributesByProductId;
-    @OneToMany(mappedBy = "attributesValueByProductId", fetch = FetchType.EAGER)
-    @Where(clause = "isDeleted = false")
+
+    @OneToMany(mappedBy = "attributesValueByProductId")
+   //  @Where(clause = "isDeleted = false")
     private Collection<AttributeValue> attributesValueByProductId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "productByProductId")
     private Collection<OrderItems> orderItemsByProductId;
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
@@ -76,9 +77,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
     private Store storeByStoreId;
-    @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Collection<ProductImg> productImgsByProductId;
+
     @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
+    private Collection<ProductImg> productImgsByProductId;
+    @OneToMany(mappedBy = "productByProductId")
     private Collection<Review> reviewsByProductId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<UserFollowProduct> userFollowProductsByProductId;

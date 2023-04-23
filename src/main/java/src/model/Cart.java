@@ -37,14 +37,14 @@ public class Cart {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private User userByUserId;
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private Store storeByStoreId;
     @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.EAGER)
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private Collection<CartItems> cartItemsByCartId;
     public Cart() {
     }

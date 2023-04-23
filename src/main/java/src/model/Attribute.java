@@ -3,7 +3,6 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -37,7 +36,7 @@ public class Attribute {
     @Column(name = "category_id", nullable = true)
     private UUID category_id;
     @OneToMany(mappedBy = "attributeByAttributeId", fetch = FetchType.EAGER)
-    @Where(clause = "isDeleted = false")
+   //  @Where(clause = "isDeleted = false")
     private Collection<AttributeValue> attributeValueByAttribute;
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
