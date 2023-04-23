@@ -10,7 +10,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
-import src.service.Product.Dtos.ProductCreateDto;
+import src.service.Product.Dtos.ProductCreatePayload;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
 import src.service.Product.IProductService;
@@ -48,11 +48,14 @@ public class ProductController {
         return productService.findAllPagination(request, size, page * size);
     }
 
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "products", description = "Operations related to products")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<ProductDto> create(@RequestBody ProductCreateDto input) {
-        return productService.create(input);
+    public CompletableFuture<ProductDto> create(@RequestBody ProductCreatePayload input) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+
+        return productService.create(userId, input);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -77,6 +80,7 @@ public class ProductController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return productService.updateQuantity(userId, productId, quantity);
     }
+
     @Authenticate
     @PatchMapping(value = "/{id}/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateStatusProduct(@PathVariable("id") UUID productId,
@@ -84,11 +88,17 @@ public class ProductController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return productService.updateStatusProduct(userId, productId, status);
     }
+
     @Authenticate
     @PatchMapping(value = "/{id}/update-active", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateActiveProduct(@PathVariable("id") UUID productId,
                                                              @RequestParam boolean status) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return productService.updateActiveProduct(userId, productId, status);
+    }
+
+    @GetMapping(value = "/search/{keyword}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<List<String>> findCategoryNamesAndProductNamesByKeyword(@PathVariable String keyword) {
+        return productService.findCategoryNamesAndProductNamesByKeyword(keyword);
     }
 }

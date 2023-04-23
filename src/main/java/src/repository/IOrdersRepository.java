@@ -9,6 +9,7 @@ import src.service.Statistic.Dtos.PayLoadStatisticData;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,6 +28,10 @@ public interface IOrdersRepository extends JpaRepository<Orders, UUID> {
 
     @Query("SELECT new src.service.Statistic.Dtos.PayLoadStatisticData(YEAR(r.createAt), SUM(r.amountToGd)) FROM Orders r WHERE r.createAt BETWEEN :startDate AND :endDate AND r.status = 2 GROUP BY YEAR(r.createAt) ORDER BY YEAR(r.createAt)")
     List<PayLoadStatisticData> findYearlyRevenueByDateBetween(Date startDate, Date endDate);
+
+
+    @Query("SELECT sum(s.amountToStore) FROM Orders s WHERE s.storeId = ?1 and s.isDeleted = false and s.status = 2")
+    Optional<Double> getRevenueByStore(UUID id);
 }
 
     

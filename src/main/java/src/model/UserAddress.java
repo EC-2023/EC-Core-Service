@@ -19,10 +19,10 @@ public class UserAddress {
     private UUID userId;
     @Basic
     @Column(name = "country", nullable = false, length = 255)
-    private String country;
+    private String country = "Viet Nam";
     @Basic
     @Column(name = "city", nullable = false, length = 255)
-    private String city = "Viet Nam";
+    private String city;
     @Basic
     @Column(name = "district", nullable = false, length = 255)
     private String district;
@@ -44,7 +44,6 @@ public class UserAddress {
     @Basic
     @Column(name = "createAt", nullable = true)
     private Date createAt = new Date(new java.util.Date().getTime());
-
     @Basic
     @Column(name = "updateAt", nullable = true)
     private Date updateAt = new Date(new java.util.Date().getTime());

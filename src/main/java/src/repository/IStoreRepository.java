@@ -13,6 +13,8 @@
 public interface IStoreRepository extends JpaRepository<Store, UUID> {
     @Query("SELECT s FROM Store s WHERE s.ownId = ?1 and s.isDeleted = false and s.isActive = true")
     Optional<Store> findByUserId(UUID id);
+
+
 }
 
     

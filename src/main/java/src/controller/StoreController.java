@@ -5,7 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
+import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
+import src.service.Orders.Dtos.OrdersDto;
 import src.service.Store.Dtos.StoreCreateDto;
 import src.service.Store.Dtos.StoreDto;
 import src.service.Store.Dtos.StoreUpdateDto;
@@ -21,11 +24,11 @@ public class StoreController {
     private final IStoreService storeService;
 
     public StoreController(IStoreService storeService) {
-        this.storeService = storeService;
+            this.storeService = storeService;
     }
 
 
-    @GetMapping( "/{id}")
+    @GetMapping("/{id}")
 //    @Tag(name = "stores", description = "Operations related to stores")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<StoreDto> findOneById(@PathVariable UUID id) {
@@ -36,7 +39,7 @@ public class StoreController {
 //    @Tag(name = "stores", description = "Operations related to stores")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<StoreDto>> findAll() {
-       return storeService.getAll();
+        return storeService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,8 +65,24 @@ public class StoreController {
 
     @GetMapping("/pagination")
     public CompletableFuture<PagedResultDto<StoreDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                               @RequestParam(required = false, defaultValue = "10") Integer size,
-                                                                               @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+                                                                         @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                                         @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return storeService.findAllPagination(request, size, page * size);
     }
+
+    @Authenticate
+    @GetMapping("/getOrdersByMyStore")
+    public CompletableFuture<PagedResultDto<OrdersDto>> findOrderByStore(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                                         @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                                         @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return storeService.findOrderByStore(request, size, page * size);
+    }
+
+    @Authenticate
+    @RequiresAuthorization("ADMIN")
+    @GetMapping("/{id}/set-active-store")
+    public CompletableFuture<StoreDto> setActiveStore(@PathVariable UUID id, @RequestParam boolean status) {
+        return storeService.setActiveStore(id, status);
+    }
+
 }

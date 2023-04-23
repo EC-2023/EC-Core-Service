@@ -3,14 +3,19 @@ package src.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
 import src.service.Statistic.Dtos.PayLoadStatisticData;
 import src.service.Statistic.Dtos.PayLoadTotalStatistic;
+import src.service.Statistic.Dtos.PayLoadTotalStore;
 import src.service.Statistic.IStatisticService;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -34,6 +39,14 @@ public class StatisticController {
         Date date = Date.from(instant);
         return statisticService.getStaticRevenue(option, date);
 
+    }
+
+
+    @Authenticate
+    @GetMapping("/get-total-statistic-store")
+    public  CompletableFuture<PayLoadTotalStore> getTotalProductAndRevenueStore() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return statisticService.getTotalProductAndRevenueStore(userId);
     }
 //    @GetMapping("/get-static-revenue")
 //    public  CompletableFuture<List<PayLoadStatisticData>> getStaticRevenue(@RequestParam() int option,

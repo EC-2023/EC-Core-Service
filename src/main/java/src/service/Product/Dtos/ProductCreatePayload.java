@@ -3,6 +3,7 @@ package src.service.Product.Dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +26,10 @@ public class ProductCreatePayload {
     private UUID categoryId;
     @JsonProperty(value = "dateValidPromote")
     private Date dateValidPromote;
-    @JsonProperty(value = "iamges")
-    private List<String> iamges;
+    @JsonProperty(value = "images")
+    private List<String> images = new ArrayList<>();
     @JsonProperty(value = "attributes")
-    private List<AttributePayload> attributes;
+    private List<AttributePayload> attributes = new ArrayList<>();
 }
 
 

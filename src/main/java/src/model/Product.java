@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -62,8 +63,10 @@ public class Product {
     @OneToMany(mappedBy = "productByProductId")
     private Collection<CartItems> cartItemsByProductId;
     @OneToMany(mappedBy = "attributesByProductId", fetch = FetchType.EAGER)
+    @Where(clause = "isDeleted = false")
     private Collection<Attribute> attributesByProductId;
     @OneToMany(mappedBy = "attributesValueByProductId", fetch = FetchType.EAGER)
+    @Where(clause = "isDeleted = false")
     private Collection<AttributeValue> attributesValueByProductId;
     @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
     private Collection<OrderItems> orderItemsByProductId;

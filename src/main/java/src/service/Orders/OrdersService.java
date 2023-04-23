@@ -78,9 +78,10 @@ public class OrdersService implements IOrdersService {
     @Async
     @Override
     public CompletableFuture<PagedResultDto<OrdersDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
-        long total = ordersRepository.count();
-        Pagination pagination = Pagination.create(total, skip, limit);
+         ordersRepository.count();
+        Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
+        long total =features.filter().orderBy().exec().size();
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, OrdersDto.class)).toList()));
     }
@@ -148,7 +149,7 @@ public class OrdersService implements IOrdersService {
             double discount = user.getUserLevelByUserLevelId().getDiscount();
             total += (new Date(new java.util.Date().getTime())).compareTo(cartItems.getProductByProductId().getDateValidPromote()) < 0 ? cartItems.getQuantity() * cartItems.getProductByProductId().getPromotionalPrice() : cartItems.getQuantity() * cartItems.getProductByProductId().getPrice();
             double amountFromUser = total - total * discount + priceDelivery;
-            double amountToGd = store.getStoreLevel().getDiscount() * (total - total * discount);
+            double amountToGd = store.getStoreLevelByStoreLevelId().getDiscount() * (total - total * discount);
             double amountToStore = total - amountToGd;
             if (input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
@@ -167,7 +168,7 @@ public class OrdersService implements IOrdersService {
                 total += (new Date(new java.util.Date().getTime())).compareTo(cartItems.getProductByProductId().getDateValidPromote()) < 0 ? cartItems.getQuantity() * cartItems.getProductByProductId().getPromotionalPrice() : cartItems.getQuantity() * cartItems.getProductByProductId().getPrice();
             }
             double discount = userService.getDiscountFromUserLevel(user.getId());
-            double amountToGd = store.getStoreLevel().getDiscount() * (total - total * discount);
+            double amountToGd = store.getStoreLevelByStoreLevelId().getDiscount() * (total - total * discount);
             double amountFromUser = total - total * discount + priceDelivery;
             double amountToStore = total - total * discount - amountToGd;
             if (input.isCOD() && user.getEWallet() < amountFromUser) {

@@ -77,8 +77,8 @@ public class UserService implements UserDetailsService, IUserService {
                         x -> toDto.map(x, UserDto.class)
                 ).collect(Collectors.toList()));
     }
-
-    @Async    @Override
+    @Async
+    @Override
     public CompletableFuture<UserDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(userRepository.findById(id), UserDto.class));
     }

@@ -11,7 +11,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "store")
 @Data
-
+//@DynamicUpdate
+//@DynamicInsert
 public class Store {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -26,6 +27,9 @@ public class Store {
     @Basic
     @Column(name = "commissionId", nullable = false)
     private UUID commissionId;
+    @Basic
+    @Column(name = "store_level_id", nullable = true)
+    private UUID storeLevelId;
     @Basic
     @Column(name = "bio", nullable = false, length = 255)
     private String bio;
@@ -55,11 +59,11 @@ public class Store {
     private Double eWallet = 0D;
     @Basic
     @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted= false;
+    private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = true)
     private Date createAt = new Date(new java.util.Date().getTime());
-   @UpdateTimestamp
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
@@ -71,8 +75,8 @@ public class Store {
     @JoinColumn(name = "ownId", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByOwnId;
     @ManyToOne()
-    @JoinColumn(name = "store_level_id")
-    private StoreLevel storeLevel;
+    @JoinColumn(name = "store_level_id", referencedColumnName = "store_level_id", nullable = false, insertable = false, updatable = false)
+    private StoreLevel storeLevelByStoreLevelId;
     @ManyToOne()
     @JoinColumn(name = "commissionId", referencedColumnName = "commissionId", nullable = false, insertable = false, updatable = false)
     private Commission commissionByCommissionId;

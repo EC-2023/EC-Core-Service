@@ -18,7 +18,6 @@ import src.config.utils.Constant;
 import src.model.*;
 import src.repository.*;
 import src.service.Product.Dtos.*;
-import src.service.ProductImg.IProductImgService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,20 +35,20 @@ public class ProductService implements IProductService {
     private final IUserRepository userRepository;
     private final IAttributeRepository attributeRepository;
     private final IAttributeValueRepository attributeValueRepository;
-    private final IProductImgService productImgService;
+    private final ICategoryRepository categoryRepository;
     @PersistenceContext
     EntityManager em;
     private final IProductImgRepository iProductImgRepository;
 
-    public ProductService(IProductRepository productRepository, ModelMapper toDto, IStoreRepository storeRepository, IUserRepository userRepository, IAttributeRepository attributeRepository, IAttributeValueRepository attributeValueRepository, IProductImgService productImgService,
-                          IProductImgRepository iProductImgRepository) {
+    public ProductService(IProductRepository productRepository, ModelMapper toDto, IStoreRepository storeRepository, IUserRepository userRepository, IAttributeRepository attributeRepository, IAttributeValueRepository attributeValueRepository,
+                          ICategoryRepository categoryRepository, IProductImgRepository iProductImgRepository) {
         this.productRepository = productRepository;
         this.toDto = toDto;
         this.storeRepository = storeRepository;
         this.userRepository = userRepository;
         this.attributeRepository = attributeRepository;
         this.attributeValueRepository = attributeValueRepository;
-        this.productImgService = productImgService;
+        this.categoryRepository = categoryRepository;
         this.iProductImgRepository = iProductImgRepository;
     }
 
@@ -86,14 +85,15 @@ public class ProductService implements IProductService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
         Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
         Product product = toDto.map(input, Product.class);
+        product.setStoreId(store.getId());
         product = productRepository.save(product);
         // them tat ca attribute
         if (input.getAttributes().size() > 0) {
             for (AttributePayload attribute : input.getAttributes()) {
                 List<AttributeValue> attributeValues = new ArrayList<>();
-                attributeRepository.save(new Attribute(product.getId(), attribute.getName()));
+                Attribute attribute1 = attributeRepository.save(new Attribute(product.getId(), attribute.getName()));
                 for (String value : attribute.getValues()) {
-                    attributeValues.add(new AttributeValue(product.getId(), value));
+                    attributeValues.add(new AttributeValue(attribute1.getId(), value));
                 }
                 if (attributeValues.size() > 0)
                     attributeValueRepository.saveAll(attributeValues);
@@ -101,14 +101,13 @@ public class ProductService implements IProductService {
         }
         // them tat ca anh
         List<ProductImg> productImgs = new ArrayList<>();
-        if (input.getIamges().size() > 0) {
-            for (String img : input.getIamges()) {
+        if (input.getImages().size() > 0) {
+            for (String img : input.getImages()) {
                 productImgs.add(new ProductImg(product.getId(), img, img));
             }
             iProductImgRepository.saveAll(productImgs);
         }
-        product = productRepository.findById(product.getId()).orElseThrow(() -> new NotFoundException("Unable to find product!"));
-        return CompletableFuture.completedFuture(toDto.map(productRepository.save(product), ProductDto.class));
+        return CompletableFuture.completedFuture(toDto.map(product, ProductDto.class));
     }
 
     @Async
@@ -174,6 +173,17 @@ public class ProductService implements IProductService {
         product.setUpdateAt(new Date(new java.util.Date().getTime()));
         product = productRepository.save(product);
         return CompletableFuture.completedFuture(toDto.map(product, ProductDto.class));
+    }
+
+
+    @Async
+    @Override
+    public CompletableFuture<List<String>> findCategoryNamesAndProductNamesByKeyword(String keyword) {
+        List<Category> categories = categoryRepository.findByNameStartingWithIgnoreCase(keyword);
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(keyword);
+        List<String> results = new ArrayList<>(products.stream().map(Product::getName).toList());
+        results.addAll(categories.stream().map(Category::getName).toList());
+        return CompletableFuture.completedFuture(results);
     }
 }
 

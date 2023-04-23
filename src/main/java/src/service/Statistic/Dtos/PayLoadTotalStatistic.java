@@ -17,4 +17,6 @@ public class PayLoadTotalStatistic {
         this.totalStore = totalStore;
         this.totalUser = totalUser;
     }
+
+
 }

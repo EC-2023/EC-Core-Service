@@ -5,18 +5,22 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import src.config.exception.NotFoundException;
+import src.model.Store;
 import src.repository.IOrdersRepository;
 import src.repository.IProductRepository;
 import src.repository.IStoreRepository;
 import src.repository.IUserRepository;
 import src.service.Statistic.Dtos.PayLoadStatisticData;
 import src.service.Statistic.Dtos.PayLoadTotalStatistic;
+import src.service.Statistic.Dtos.PayLoadTotalStore;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -99,6 +103,15 @@ public class StatisticService implements IStatisticService {
         query.setParameter("startDate", Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         query.setParameter("endDate", date);
         return query.getResultList();
+    }
+
+
+    public  CompletableFuture<PayLoadTotalStore> getTotalProductAndRevenueStore(UUID userId) {
+        Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Store not found"));
+        return CompletableFuture.completedFuture(PayLoadTotalStore.create(
+                productRepository.count(),
+                ordersRepository.getRevenueByStore(store.getId()).get()
+        ));
     }
 
 }
