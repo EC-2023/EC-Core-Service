@@ -13,9 +13,6 @@ import java.util.UUID;
 public interface IUserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
     @Query("SELECT u FROM User u WHERE u.email = ?1")
     User findByEmail(String email);
-
-
-
 }
 
     
