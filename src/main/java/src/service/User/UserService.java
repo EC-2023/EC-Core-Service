@@ -165,15 +165,18 @@ public class UserService implements UserDetailsService, IUserService {
         return CompletableFuture.completedFuture(userProfileDto);
     }
 
+    @Transactional
     @Override
     @Async
     public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) {
+
+
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
         /// why delll dudwojc
-       MapperUtils.toDto(input, existingUser);
+        MapperUtils.toDto(input, existingUser);
 //        existingUser.setFirstName(input.getFirstName());
 //        existingUser = userRepository.save(existingUser);
-        existingUser =  userRepository.saveAndFlush(existingUser);
+        existingUser = userRepository.saveAndFlush(existingUser);
         return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));
     }
 }
