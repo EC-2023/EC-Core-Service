@@ -172,10 +172,11 @@ public class UserService implements UserDetailsService, IUserService {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User!"));
         MapperUtils.toDto(input, existingUser);
         Logger.getLogger("MapperUtils chua luu").info("Field " + existingUser.getFirstName() + " mapped");
-
-        existingUser = userRepository.saveAndFlush(existingUser);
+        em.merge(existingUser);
+        em.flush();
+//        existingUser = userRepository.saveAndFlush(existingUser);
         Logger.getLogger("MapperUtils da luu").info("Field " + userRepository.findById(id).get().getFirstName() + " mapped");
-        return CompletableFuture.completedFuture(toDto.map(existingUser, UserProfileDto.class));
+        return CompletableFuture.completedFuture(null);
     }
 }
 
