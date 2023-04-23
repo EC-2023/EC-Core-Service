@@ -7,12 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import src.model.User;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
+    @Query("SELECT u FROM User u WHERE u.phoneNumber = ?1")
+    Optional<User> findByPhoneNumber(String phoneNumber);
     @Query("SELECT u FROM User u WHERE u.email = ?1")
     User findByEmail(String email);
+    @Query("SELECT u FROM User u WHERE u.tokenResetPassword = ?1")
+    Optional<User> findByTokenResetPassword(String token);
 }
 
     

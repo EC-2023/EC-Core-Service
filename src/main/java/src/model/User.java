@@ -6,11 +6,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
 @Data
+//@DynamicUpdate
+//@DynamicInsert
 public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -58,6 +63,9 @@ public class User implements UserDetails {
     @Basic
     @Column(name = "e_wallet", nullable = false, precision = 0)
     private double eWallet;
+    @Basic
+    @Column(name = "token",  length = 255)
+    private String tokenResetPassword;
     @Basic
     @Column(name = "created_at")
     private Date createAt = new Date(new java.util.Date().getTime());
