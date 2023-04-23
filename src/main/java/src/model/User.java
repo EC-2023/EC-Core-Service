@@ -93,7 +93,7 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "store_emp_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     private Store storeByStoreEmpId;
-    @OneToMany(mappedBy = "userByUserId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userByUserId", fetch = FetchType.EAGER)
     private Collection<UserAddress> userAddressesByUserId;
     @OneToMany(mappedBy = "userByUserId")
     private Collection<UserFollowProduct> userFollowProductsByUserId;
