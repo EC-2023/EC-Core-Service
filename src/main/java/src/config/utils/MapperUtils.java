@@ -1,6 +1,7 @@
 package src.config.utils;
 
 import java.lang.reflect.Field;
+import java.util.logging.Logger;
 
 public class MapperUtils<T, D> {
     public static <T, D> void toDto(T src, D des) {
@@ -20,6 +21,7 @@ public class MapperUtils<T, D> {
                 Field desField = des.getClass().getDeclaredField(field.getName());
                 desField.setAccessible(true);
                 desField.set(des, field.get(src));
+                Logger.getLogger("MapperUtils").info("Field " + field.getName() + " mapped");
             }
         }
     }
