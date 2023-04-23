@@ -27,6 +27,14 @@ public class UserDto extends UserUpdateDto {
     public String getHashedPassword(){
         return null;
     }
+    @JsonProperty(value = "displayName", required = true, defaultValue = "0")
+    private String displayName;
+    @JsonProperty(value = "userLevelId")
+    private UUID userLevelId;
+    @JsonProperty(value = "eWallet", required = true, defaultValue = "0")
+    private Double eWallet;
+    @JsonProperty(value = "point")
+    public String  point;
 
 //    @Override
 //    public String getIdCard(){

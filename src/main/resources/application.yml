@@ -12,8 +12,9 @@ cloudinary:
     cloud-name: dqe4dzug2
 # JWT
 jwt:
-    access-token-expiration: 1800000
-    refresh-token-expiration: 86400000
+  # nhows bo 4 so 0
+    access-token-expiration: 18000000000
+    refresh-token-expiration: 864000000000
     secret: W1vmiY6pBqp6#i!ly^EgP!n9aWcn9yv&A*1r@c%2Cz8lAuW
     public-key: |
             -----BEGIN PUBLIC KEY-----

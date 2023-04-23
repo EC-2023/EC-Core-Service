@@ -17,7 +17,7 @@ public class MapperUtils<T, D> {
     private static <T, D> void mapFields(T src, D des, Field[] fields) throws NoSuchFieldException, IllegalAccessException {
         for (Field field : fields) {
             field.setAccessible(true);
-            if (field.get(src) != null && !field.getName().contains("id")) {
+            if (field.get(src) != null && !(field.getName().equals("id"))) {
                 Field desField = des.getClass().getDeclaredField(field.getName());
                 desField.setAccessible(true);
                 desField.set(des, field.get(src));

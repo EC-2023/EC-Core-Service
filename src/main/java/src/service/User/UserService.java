@@ -89,8 +89,9 @@ public class UserService implements UserDetailsService, IUserService {
             roleId = roleRepository.findByName("User").orElse(null).getId();
         input.setHashedPassword(JwtTokenUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
-        input.setRoleId(roleId);
-        User user = userRepository.save(toDto.map(input, User.class));
+        User user = toDto.map(input, User.class);
+        user.setRoleId(roleId);
+        userRepository.save(user);
         // tao cart
         cartRepository.save(new Cart(user.getId()));
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);

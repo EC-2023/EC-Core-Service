@@ -40,4 +40,9 @@ public class UserProfileDto {
     @JsonProperty(value = "phoneNumber")
     public String  phoneNumber;
 
+    @JsonProperty(value = "eWallet", required = true, defaultValue = "0")
+    private Double eWallet;
+    @JsonProperty(value = "roleId")
+    private UUID roleId;
+
 }
