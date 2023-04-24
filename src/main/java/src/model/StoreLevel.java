@@ -35,6 +35,6 @@ public class StoreLevel {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
-    @OneToMany(mappedBy = "storeLevelByStoreLevelId",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "storeLevelByStoreLevelId")
     private Collection<Store> stores;
 }

@@ -74,7 +74,7 @@ public class Store {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ownId", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
     private User userByOwnId;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_level_id", referencedColumnName = "store_level_id", nullable = false, insertable = false, updatable = false)
     private StoreLevel storeLevelByStoreLevelId;
     @ManyToOne()

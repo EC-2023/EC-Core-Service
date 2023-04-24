@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -155,8 +156,8 @@ public class CartService implements ICartService {
         if (cart == null) {
             cart = new Cart(userId, product.getStoreId());
             cart = cartRepository.save(cart);
-            throw new NotFoundException("Not found cart");
         }
+        toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         CartItems cartItems = toDto.map(cartItemsCreateDto, CartItems.class);
         cartItems.setCartId(cart.getId());
         cartItems = cartItemsRepository.save(cartItems);
