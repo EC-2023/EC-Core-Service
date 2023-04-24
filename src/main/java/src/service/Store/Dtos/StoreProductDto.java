@@ -9,12 +9,18 @@ import java.util.UUID;
 @Data
 public class StoreProductDto
 {
-    @JsonProperty(value = "name")
-    private String name;
     @JsonProperty(value = "Id")
     UUID Id;
+    @JsonProperty(value = "name")
+    private String name;
     @JsonProperty(value = "createAt")
     public Date createAt ;
     @JsonProperty(value = "updateAt")
     public Date updateAt ;
+    @JsonProperty(value = "totalProduct")
+    private int totalProduct;
+    @JsonProperty(value = "totalUserFollow")
+    private int totalUserFollow;
+    @JsonProperty(value = "rating")
+    private int rating = 0;
 }

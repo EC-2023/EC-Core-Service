@@ -2,10 +2,7 @@
 package src.service.Product;
 
 import src.service.IService;
-import src.service.Product.Dtos.ProductCreateDto;
-import src.service.Product.Dtos.ProductCreatePayload;
-import src.service.Product.Dtos.ProductDto;
-import src.service.Product.Dtos.ProductUpdateDto;
+import src.service.Product.Dtos.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,4 +22,6 @@ public interface IProductService extends IService<ProductDto, ProductCreateDto, 
     public CompletableFuture<ProductDto> updateActiveProduct(UUID userId, UUID productId, boolean status);
     public CompletableFuture<ProductDto> create(UUID userId, ProductCreatePayload input);
     public CompletableFuture<List<String>> findCategoryNamesAndProductNamesByKeyword(String keyword);
+    public CompletableFuture<ProductDetailDto> getDetailProduct(UUID id);
+
 }

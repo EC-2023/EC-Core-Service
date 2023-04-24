@@ -5,11 +5,13 @@ package src.service.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
@@ -63,6 +65,18 @@ public class ProductService implements IProductService {
     @Async
     public CompletableFuture<ProductDto> getOne(UUID id) {
         return CompletableFuture.completedFuture(toDto.map(productRepository.findById(id).get(), ProductDto.class));
+    }
+
+    @Transactional
+    @Override
+    public CompletableFuture<ProductDetailDto> getDetailProduct(UUID id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find product!"));
+        Hibernate.initialize(product.getAttributesByProductId());
+        Hibernate.initialize(product.getReviewsByProductId());
+        Hibernate.initialize(product.getStoreByStoreId());
+        Hibernate.initialize(product.getCategoryByCategoryId());
+        toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        return CompletableFuture.completedFuture(toDto.map(product, ProductDetailDto.class));
     }
 
     @Async

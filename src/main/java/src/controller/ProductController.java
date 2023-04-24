@@ -11,6 +11,7 @@ import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
 import src.service.Product.Dtos.ProductCreatePayload;
+import src.service.Product.Dtos.ProductDetailDto;
 import src.service.Product.Dtos.ProductDto;
 import src.service.Product.Dtos.ProductUpdateDto;
 import src.service.Product.IProductService;
@@ -26,11 +27,19 @@ public class ProductController {
     private IProductService productService;
 
 
+//    @GetMapping("/{id}")
+////    @Tag(name = "products", description = "Operations related to products")
+////    @Operation(summary = "Hello API")
+//    public CompletableFuture<ProductDto> findOneById(@PathVariable UUID id) {
+//        return productService.getOne(id);
+//    }
+
+
     @GetMapping("/{id}")
 //    @Tag(name = "products", description = "Operations related to products")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<ProductDto> findOneById(@PathVariable UUID id) {
-        return productService.getOne(id);
+    public CompletableFuture<ProductDetailDto> getDetailProduct(@PathVariable UUID id) {
+        return productService.getDetailProduct(id);
     }
 
     @GetMapping()
@@ -39,6 +48,9 @@ public class ProductController {
     public CompletableFuture<List<ProductDto>> findAll() {
         return productService.getAll();
     }
+
+
+
 
 
     @GetMapping("/pagination")
