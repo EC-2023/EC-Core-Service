@@ -5,14 +5,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
-import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
 import src.service.Orders.IOrdersService;
-import src.service.Orders.OrdersService;
 
 import java.util.List;
 import java.util.UUID;
@@ -65,5 +66,26 @@ public class OrdersController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return ordersService.remove(id);
+    }
+
+    @PostMapping(value = "/{id}/update-delivery")
+    @Authenticate
+    public CompletableFuture<OrdersDto> acceptOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.acceptOrder(userId, id);
+    }
+
+    @PostMapping(value = "/{id}/update-cancel")
+    @Authenticate
+    public CompletableFuture<OrdersDto> cancelOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.cancelOrder(userId, id);
+    }
+
+    @PostMapping(value = "/{id}/update-success")
+    @Authenticate
+    public CompletableFuture<OrdersDto> doneOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.finishOrder(userId, id);
     }
 }
