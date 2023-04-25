@@ -5,6 +5,7 @@ package src.service.UserAddress;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -14,13 +15,14 @@ import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
-import src.config.utils.MapperUtils;
+import src.config.utils.NullAwareBeanUtilsBean;
 import src.model.UserAddress;
 import src.repository.IUserAddressRepository;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -114,11 +116,12 @@ public class UserAddressService implements IUserAddressService {
 
     @Async
     @Override
-    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id, UUID userId, UserAddressUpdateDto input) {
+    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id, UUID userId, UserAddressUpdateDto input) throws InvocationTargetException, IllegalAccessException {
         UserAddress existingUserAddress = useraddRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User Address!"));
         if (!existingUserAddress.getUserId().equals(userId))
             throw new NotFoundException("You cannot have permission to do that!");
-        MapperUtils.toDto(input, existingUserAddress);
+        BeanUtilsBean nullAwareBeanUtilsBean = NullAwareBeanUtilsBean.getInstance();
+        nullAwareBeanUtilsBean.copyProperties(existingUserAddress, input);
         existingUserAddress.setUpdateAt(new Date(new java.util.Date().getTime()));
         return CompletableFuture.completedFuture(toDto.map(useraddRepository.save(existingUserAddress), UserAddressDto.class));
     }

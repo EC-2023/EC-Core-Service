@@ -6,6 +6,7 @@ import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -15,7 +16,7 @@ public interface IUserAddressService extends IService<UserAddressDto, UserAddres
 
     CompletableFuture<UserAddressDto> addMyAddress(UUID id, UserAddressCreateDto input);
 
-    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id, UUID userId, UserAddressUpdateDto input);
+    public CompletableFuture<UserAddressDto> updateMyAddress(UUID id, UUID userId, UserAddressUpdateDto input) throws InvocationTargetException, IllegalAccessException;
 
     public CompletableFuture<UserAddressDto> deleteMyAddress(UUID id, UUID userId);
 }

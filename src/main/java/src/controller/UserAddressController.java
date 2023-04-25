@@ -15,6 +15,7 @@ import src.service.UserAddress.Dtos.UserAddressDto;
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
 import src.service.UserAddress.IUserAddressService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -108,9 +109,9 @@ public class UserAddressController {
     @PatchMapping(value = "/my-address/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<UserAddressDto> updateMyAddress(@PathVariable UUID id, @RequestBody UserAddressUpdateDto useraddress) {
+    public CompletableFuture<UserAddressDto> updateMyAddress(@PathVariable UUID id, @RequestBody UserAddressUpdateDto useradd) throws InvocationTargetException, IllegalAccessException {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return userAddressService.updateMyAddress(id, userId, useraddress);
+        return userAddressService.updateMyAddress(id, userId, useradd);
     }
 
     @Authenticate
