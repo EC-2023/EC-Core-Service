@@ -16,6 +16,7 @@ import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.Constant;
 import src.config.utils.Utils;
 import src.model.*;
 import src.repository.*;
@@ -47,12 +48,14 @@ public class OrdersService implements IOrdersService {
     private final IOrderItemsRepository orderItemsRepository;
     private final IProductRepository productRepository;
     private final IAttributeValueRepository attributeValueRepository;
+    private final IUserLevelRepository userLevelRepository;
+    private final IStoreLevelRepository storeLevelRepository;
 
     public OrdersService(ModelMapper toDto, IOrdersRepository ordersRepository,
                          IUserRepository userRepository,
                          IStoreRepository storeRepository, IDeliveryService deliveryService,
                          ICartItemsRepository cartItemsRepository, IUserService userService, IOrderItemsRepository orderItemsRepository,
-                         IProductRepository productRepository, IAttributeValueRepository attributeValueRepository) {
+                         IProductRepository productRepository, IAttributeValueRepository attributeValueRepository, IUserLevelRepository userLevelRepository, IStoreLevelRepository storeLevelRepository) {
         this.toDto = toDto;
         this.ordersRepository = ordersRepository;
         this.userRepository = userRepository;
@@ -63,6 +66,8 @@ public class OrdersService implements IOrdersService {
         this.orderItemsRepository = orderItemsRepository;
         this.productRepository = productRepository;
         this.attributeValueRepository = attributeValueRepository;
+        this.userLevelRepository = userLevelRepository;
+        this.storeLevelRepository = storeLevelRepository;
     }
 
     @Async
@@ -172,17 +177,7 @@ public class OrdersService implements IOrdersService {
             prod.setQuantity(prod.getQuantity() - cartItems.getQuantity());
 
             productRepository.save(prod);
-            order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
-            String code = Utils.generateCodeOrder();
-            while (true) {
-                if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
-                    code = Utils.generateCodeOrder();
-                } else {
-                    order.setCode(code);
-                    break;
-                }
-            }
-            order = ordersRepository.save(order);
+            order = getOrders(userId, input, amountFromUser, amountToGd, amountToStore);
             OrderItems orderItems = new OrderItems(cartItems.getProductId(), cartItems.getQuantity(), order.getId());
             orderItemsRepository.save(orderItems);
         } else {
@@ -203,17 +198,7 @@ public class OrdersService implements IOrdersService {
             if (!input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
             }
-            order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
-            String code = Utils.generateCodeOrder();
-            while (true) {
-                if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
-                    code = Utils.generateCodeOrder();
-                } else {
-                    order.setCode(code);
-                    break;
-                }
-            }
-            order = ordersRepository.save(order);
+                 order = getOrders(userId, input, amountFromUser, amountToGd, amountToStore);
 
             List<OrderItems> orderItems = new ArrayList<>();
             List<AttributeValue> attributeValues = new ArrayList<>();
@@ -238,5 +223,155 @@ public class OrdersService implements IOrdersService {
         return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
     }
 
+    private Orders getOrders(UUID userId, PayLoadOrder input, double amountFromUser, double amountToGd, double amountToStore) {
+        Orders order;
+        order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
+        String code = Utils.generateCodeOrder();
+        while (true) {
+            if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
+                code = Utils.generateCodeOrder();
+            } else {
+                order.setCode(code);
+                break;
+            }
+        }
+        order = ordersRepository.save(order);
+        return order;
+    }
+
+    @Async
+    public CompletableFuture<OrdersDto> acceptOrder(UUID userId, UUID orderId) {
+        //Get StoreId
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order"));
+        //Get OwnerId
+        Store store = storeRepository.findById(order.getStoreId())
+                .orElseThrow(() -> new NotFoundException("Not found store"));
+        //Check userId == OwnerId
+        if (userId.equals(store.getOwnId())) {
+            if (order.getStatus() == OrderStatus.NOT_PROCESSED.ordinal()) {
+                order.setStatus(OrderStatus.PROCESSING.ordinal());
+            } else if (order.getStatus() == OrderStatus.PROCESSING.ordinal()) {
+                order.setStatus(OrderStatus.DELIVERING.ordinal());
+            } else {
+                throw new BadRequestException("Can't change status");
+            }
+        } else {
+            throw new BadRequestException("Only store owner can change order status");
+        }
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
+    }
+
+    @Async
+    public CompletableFuture<OrdersDto> cancelOrder(UUID userId, UUID orderId) {
+        //Get StoreId
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order"));
+        //Get OwnerId
+        Store store = storeRepository.findById(order.getStoreId())
+                .orElseThrow(() -> new NotFoundException("Not found store"));
+        User buyer = userRepository.findById(order.getUserId())
+                .orElseThrow(() -> new NotFoundException("Not found buyer"));
+        //Check userId == OwnerId
+        if (userId.equals(store.getOwnId())
+                || userId.equals(order.getUserId())
+                || buyer.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            long dateCreateDiff = new Date().getTime() - order.getCreateAt().getTime();
+            long dateUpdateDiff = new Date().getTime() - order.getUpdateAt().getTime();
+            int point = (int) Math.floor(order.getAmountFromUser() / 5000);
+
+            //Thang mua
+            if (order.getStatus() == OrderStatus.PROCESSING.ordinal() ||
+                    (order.getStatus() == OrderStatus.DELIVERING.ordinal() && dateUpdateDiff > 15 * 24 * 60 * 60 * 1000)) {
+
+                if (order.isPaidBefore()) {
+                    buyer.setEWallet(buyer.getEWallet() + order.getAmountFromUser());
+                }
+
+                if (dateCreateDiff <= 15 * 24 * 60 * 60 * 1000) {
+                    if (userId.equals(buyer.getId())) {
+                        buyer.setPoint(buyer.getPoint() - point);
+                        userRepository.save(buyer);
+                        updateUserLevel(buyer.getId());
+                    } else if (userId.equals(store.getOwnId())) {
+                        store.setPoint(store.getPoint() - point);
+                        storeRepository.save(store);
+                        updateStoreLevel(store.getId());
+                    }
+                }
+                order.setStatus(OrderStatus.CANCELLED.ordinal());
+            } else {
+                throw new BadRequestException("Can't change status");
+            }
+
+        } else {
+            throw new BadRequestException("Not allow to cancel order");
+        }
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
+    }
+
+    @Async
+    public CompletableFuture<OrdersDto> finishOrder(UUID userId, UUID orderId) {
+        //Get StoreId
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order"));
+        Store store = storeRepository.findById(order.getStoreId())
+                .orElseThrow(() -> new NotFoundException("Not found store"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found buyer"));
+        //Check userId == OwnerId
+        User buyer = userRepository.findById(order.getUserId())
+                .orElseThrow(() -> new NotFoundException("Not found buyer"));
+        Hibernate.initialize(user.getRoleByRoleId());
+        if (user.getRoleByRoleId().getName().equals(Constant.ADMIN) || order.getUserId().equals(user.getId())) {
+
+            store.setEWallet(store.getEWallet() + order.getAmountToStore());
+
+            int point = (int) Math.floor(order.getAmountFromUser() / 10000);
+
+            //Update user, store point
+            buyer.setPoint(buyer.getPoint() + point);
+            store.setPoint(store.getPoint() + point);
+
+            //Update user, store level
+            updateUserLevel(buyer.getId());
+            updateStoreLevel(store.getId());
+
+            userRepository.save(buyer);
+            storeRepository.save(store);
+            order.setStatus(OrderStatus.DELIVERED.ordinal());
+        } else {
+            throw new RuntimeException("Only store admin or buyer can finish order");
+        }
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
+    }
+
+    private void updateUserLevel(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found userId"));
+        List<UserLevel> userLevels = userLevelRepository.findAll();
+        for (UserLevel userLevel : userLevels) {
+            if (user.getPoint() >= userLevel.getMinPoint()) {
+                user.setUserLevelId(userLevel.getId());
+            } else {
+                break;
+            }
+        }
+        userRepository.save(user);
+    }
+
+    private void updateStoreLevel(UUID storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException("Not found storeId"));
+        List<StoreLevel> storeLevels = storeLevelRepository.findAll();
+        for (StoreLevel storeLevel : storeLevels) {
+            if (store.getPoint() >= storeLevel.getMinPoint()) {
+                store.setStoreLevelId(storeLevel.getId());
+            } else {
+                break;
+            }
+        }
+        storeRepository.save(store);
+    }
 }
 

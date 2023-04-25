@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@ApiPrefixController(value = "/orderss")
+@ApiPrefixController(value = "/orders")
 public class OrdersController {
     @Autowired
     private IOrdersService ordersService;
@@ -77,5 +77,27 @@ public class OrdersController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return ordersService.remove(id);
+    }
+
+
+    @PatchMapping(value = "/{id}/update-confirm")
+    @Authenticate
+    public CompletableFuture<OrdersDto> acceptOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.acceptOrder(userId, id);
+    }
+
+    @PatchMapping(value = "/{id}/update-cancel")
+    @Authenticate
+    public CompletableFuture<OrdersDto> cancelOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.cancelOrder(userId, id);
+    }
+
+    @PatchMapping(value = "/{id}/update-success")
+    @Authenticate
+    public CompletableFuture<OrdersDto> doneOrder(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.finishOrder(userId, id);
     }
 }

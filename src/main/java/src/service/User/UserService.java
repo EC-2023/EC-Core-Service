@@ -26,6 +26,7 @@ import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
+import src.config.exception.UnauthorizedException;
 import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
 import src.config.utils.NullAwareBeanUtilsBean;
@@ -142,15 +143,15 @@ public class UserService implements UserDetailsService, IUserService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
+        if (user.getPoint() < -100) {
+            throw new UnauthorizedException("Tài khoản của bạn đã bị khóa do hủy đơn quá nhiều lần");
+        } else if (user.getIsDeleted())
+            throw new UnauthorizedException("Tài khoản của bạn đã bị xóa");
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         request.setAttribute("id", user.getId());
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        } else {
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(user.getRoleByRoleId().getName()));
-            return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-        }
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRoleByRoleId().getName()));
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
     }
 
     @Override
@@ -172,7 +173,7 @@ public class UserService implements UserDetailsService, IUserService {
     @Async
     public CompletableFuture<UserProfileDto> getMyProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User"));
-        if (user.getIsDeleted()){
+        if (user.getIsDeleted()) {
             throw new BadRequestException("User is deleted");
         }
         UserProfileDto userProfileDto = toDto.map(user, UserProfileDto.class);

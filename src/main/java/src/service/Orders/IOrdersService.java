@@ -14,4 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public interface IOrdersService extends IService<OrdersDto, OrdersCreateDto, OrdersUpdateDto> {
     public CompletableFuture<List<OrdersDto>> getMyOrders(UUID id);
     public CompletableFuture<OrdersDto> addMyOrder(UUID userId, PayLoadOrder input);
+    CompletableFuture<OrdersDto> acceptOrder(UUID userId, UUID orderId);
+    CompletableFuture<OrdersDto> cancelOrder(UUID userId, UUID orderId);
+    CompletableFuture<OrdersDto> finishOrder(UUID userId, UUID orderId);
 }
