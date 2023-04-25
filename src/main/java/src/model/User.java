@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,7 +38,7 @@ public class User implements UserDetails {
     @Column(name = "display_name", nullable = false, length = 100)
     private String displayName;
     @Basic
-    @Column(name = "id_card", nullable = false, length = 12)
+    @Column(name = "id_card", length = 12)
     private String idCard;
     @Basic
     @Column(name = "email", nullable = false, length = 50)
@@ -76,7 +77,7 @@ public class User implements UserDetails {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "role_id", nullable = false)
+    @Column(name = "role_id")
     private UUID roleId;
     @Basic
     @Column(name = "phone_number", length = 10)
@@ -85,27 +86,36 @@ public class User implements UserDetails {
     @Column(name = "store_emp_id", nullable = true)
     private UUID storeEmpId;
     @OneToMany(mappedBy = "userByUserId")
+    @Where(clause = "is_deleted = false")
     private Collection<Cart> cartsByUserId;
     @OneToMany(mappedBy = "userByUserId")
+    @Where(clause = "is_deleted = false")
     private Collection<Orders> ordersByUserId;
     @OneToMany(mappedBy = "userByUserId")
+    @Where(clause = "is_deleted = false")
     private Collection<Review> reviewsByUserId;
     @OneToMany(mappedBy = "userByOwnId")
+    @Where(clause = "is_deleted = false")
     private Collection<Store> storesByUserId;
     @ManyToOne
     @JoinColumn(name = "user_level_id", referencedColumnName = "user_level_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private UserLevel userLevelByUserLevelId;
     @ManyToOne
     @JoinColumn(name = "role_id", referencedColumnName = "role_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private Role roleByRoleId;
     @ManyToOne
     @JoinColumn(name = "store_emp_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     private Store storeByStoreEmpId;
     @OneToMany(mappedBy = "userByUserId", fetch = FetchType.EAGER)
+    @Where(clause = "is_deleted = false")
     private Collection<UserAddress> userAddressesByUserId;
     @OneToMany(mappedBy = "userByUserId")
+    @Where(clause = "is_deleted = false")
     private Collection<UserFollowProduct> userFollowProductsByUserId;
     @OneToMany(mappedBy = "userByUserId")
+    @Where(clause = "is_deleted = false")
     private Collection<UserFollowStore> userFollowStoresByUserId;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

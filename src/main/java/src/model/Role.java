@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class Role {
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "roleByRoleId")
+    @Where(clause = "is_deleted = false")
     private Collection<User> usersByRoleId;
     public Role(UUID id, String name ) {
         Id = id;

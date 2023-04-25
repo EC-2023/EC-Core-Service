@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class Commission {
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "commissionByCommissionId")
+    @Where(clause = "is_deleted = false")
     private Collection<Store> storesByCommissionId;
     public Commission(UUID id, String name, double cost, String description) {
         Id = id;

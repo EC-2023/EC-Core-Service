@@ -13,8 +13,7 @@ public class UserCreateDto {
     public String middleName;
     @JsonProperty(value = "phoneNumber")
     public String phoneNumber;
-    @JsonProperty(value = "idCard")
-    public String idCard;
+
     @JsonProperty(value = "email")
     public String email;
     @JsonProperty(value = "hashedPassword")

@@ -38,16 +38,16 @@ public class ProductDetailDto {
     private int quantity;
     @JsonProperty(value = "video")
     private String video;
-
     @JsonProperty(value = "attributes")
     public List<AttributeDto> attributesByProductId;
-
     @JsonProperty(value = "reviews")
     public Collection<ReviewDto> reviewsByProductId;
-
     @JsonProperty(value = "store")
     public StoreProductDto storeByStoreId;
-
     @JsonProperty(value = "category")
     public CategoryProductDto categoryByCategoryId;
+    @JsonProperty(value = "images")
+    private Collection<ProductImageDto> productImgsByProductId;
+    @JsonProperty(value = "categoryId", required = true)
+    private UUID categoryId;
 }

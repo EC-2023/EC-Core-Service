@@ -5,6 +5,7 @@ package src.service.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -17,10 +18,12 @@ import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.Constant;
+import src.config.utils.NullAwareBeanUtilsBean;
 import src.model.*;
 import src.repository.*;
 import src.service.Product.Dtos.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,6 +78,7 @@ public class ProductService implements IProductService {
         Hibernate.initialize(product.getReviewsByProductId());
         Hibernate.initialize(product.getStoreByStoreId());
         Hibernate.initialize(product.getCategoryByCategoryId());
+        Hibernate.initialize(product.getProductImgsByProductId());
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return CompletableFuture.completedFuture(toDto.map(product, ProductDetailDto.class));
     }
@@ -131,7 +135,65 @@ public class ProductService implements IProductService {
             throw new NotFoundException("Unable to find product!");
         BeanUtils.copyProperties(product, existingProduct);
         existingProduct.setUpdateAt(new Date(new java.util.Date().getTime()));
+
         return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductDto.class));
+    }
+
+    @Async
+    public CompletableFuture<ProductCreatePayload> update(UUID id, PayLoadUpdateProduct product) throws InvocationTargetException, IllegalAccessException {
+
+        Product existingProduct = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find product!"));
+        BeanUtilsBean nullAwareBeanUtilsBean = NullAwareBeanUtilsBean.getInstance();
+        nullAwareBeanUtilsBean.copyProperties(existingProduct, product.getInfo());
+
+        Hibernate.initialize(existingProduct.getAttributesByProductId());
+        Hibernate.initialize(existingProduct.getProductImgsByProductId());
+
+        BeanUtils.copyProperties(product, existingProduct);
+        existingProduct.setUpdateAt(new Date(new java.util.Date().getTime()));
+        // set laij attribute
+//        if (product.getAttributes().size() > 0) {
+//            for (AttributeUpdate attribute : product.getAttributes()) {
+//                if (attribute.getIsDeleted()) {
+//                    // xoa toan bo attribute value lien quan
+//                    List<AttributeValue> attributeValues = attributeValueRepository.findAllByAttributeId(attribute.getId());
+//                    attributeValues = attributeValues.stream().peek(x -> x.setIsDeleted(true)).toList();
+//                    if (attributeValues.size() > 0)
+//                        attributeValueRepository.saveAll(attributeValues);
+//                    Attribute attr = attributeRepository.findById(attribute.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+//                    attr.setIsDeleted(true);
+//                    attributeRepository.save(attr);
+//                } else {
+//                    // neu chua co se tao moi
+//                    Attribute attr = attributeRepository.findById(attribute.getId()).orElse(null);
+//                    if (attr == null) {
+//                        attr = new Attribute(existingProduct.getId(), attribute.getName());
+//                    } else {
+//                        attr.setName(attribute.getName());
+//                    }
+//                    attributeRepository.save(attr);
+//                }
+//            }
+//        }
+// set lai attribute value
+        // set laij image
+//        List<ProductImg> productImgs = new ArrayList<>();
+//        if (product.getImages().size() > 0) {
+//            ProductImg productImg;
+//            for (ProductImg img : product.getImages()) {
+//                if (img.getIsDeleted()) {
+//                    productImg = iProductImgRepository.findById(img.getId()).orElseThrow(() -> new NotFoundException("Unable to find product image!"));
+//                    productImg.setIsDeleted(true);
+//                    iProductImgRepository.save(productImg);
+//                } else {
+//                    productImgs.add(new ProductImg(existingProduct.getId(), img.getFileName(), img.getFileName()));
+//                }
+//            }
+//            if (productImgs.size() > 0)
+//                iProductImgRepository.saveAll(productImgs);
+//        }
+
+        return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductCreatePayload.class));
     }
 
     @Async

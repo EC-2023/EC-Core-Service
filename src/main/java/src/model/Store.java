@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -81,9 +82,12 @@ public class Store {
     @JoinColumn(name = "commissionId", referencedColumnName = "commissionId", nullable = false, insertable = false, updatable = false)
     private Commission commissionByCommissionId;
     @OneToMany(mappedBy = "storeByStoreEmpId")
+    @Where(clause = "is_deleted = false")
     private Collection<User> usersByStoreId;
     @OneToMany(mappedBy = "storeByStoreId")
+    @Where(clause = "is_deleted = false")
     private Collection<UserFollowStore> userFollowStoresByStoreId;
     @OneToMany(mappedBy = "storeByStoreId")
+    @Where(clause = "is_deleted = false")
     private Collection<Product> productsByStoreId;
 }

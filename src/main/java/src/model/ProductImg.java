@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class ProductImg {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private Product productByProductId;
 
     public ProductImg () {

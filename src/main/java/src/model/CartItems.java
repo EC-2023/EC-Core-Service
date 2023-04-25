@@ -46,6 +46,6 @@ public class CartItems {
     private Product productByProductId;
 
     @OneToMany(mappedBy = "cartItemsByCartItemId", fetch = FetchType.EAGER)
-   //  @Where(clause = "isDeleted = false")
+    @Where(clause = "is_deleted = false")
     private Collection<AttributeValue> attributeValuesByCartItemId;
 }

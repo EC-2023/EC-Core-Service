@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -36,5 +37,6 @@ public class StoreLevel {
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "storeLevelByStoreLevelId")
+    @Where(clause = "is_deleted = false")
     private Collection<Store> stores;
 }

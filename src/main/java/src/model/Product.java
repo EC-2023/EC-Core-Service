@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -60,19 +61,22 @@ public class Product {
     @Column(name = "category_id", nullable = true)
     private UUID categoryId;
     @OneToMany(mappedBy = "productByProductId")
+    @Where(clause = "is_deleted = false")
     private Collection<CartItems> cartItemsByProductId;
 
     @OneToMany(mappedBy = "attributesByProductId")
-  //  @Where(clause = "isDeleted = false")
+    @Where(clause = "is_deleted = false")
     private Collection<Attribute> attributesByProductId;
 
     @OneToMany(mappedBy = "attributesValueByProductId")
-   //  @Where(clause = "isDeleted = false")
+    @Where(clause = "is_deleted = false")
     private Collection<AttributeValue> attributesValueByProductId;
     @OneToMany(mappedBy = "productByProductId")
+    @Where(clause = "is_deleted = false")
     private Collection<OrderItems> orderItemsByProductId;
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id", insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private Category categoryByCategoryId;
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)

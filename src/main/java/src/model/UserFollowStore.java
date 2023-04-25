@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.UUID;
@@ -33,8 +34,10 @@ public class UserFollowStore {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
+    @Where(clause = "is_deleted = false")
     private User userByUserId;
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable=false, updatable=false)
+    @Where(clause = "is_deleted = false")
     private Store storeByStoreId;
 }

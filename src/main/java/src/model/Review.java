@@ -2,6 +2,7 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.UUID;
@@ -40,11 +41,14 @@ public class Review {
     private Date updateAt;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
+    @Where(clause = "is_deleted = false")
     private User userByUserId;
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id",insertable=false, updatable=false)
+    @Where(clause = "is_deleted = false")
     private Product productByProductId;
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id",insertable=false, updatable=false)
+    @Where(clause = "is_deleted = false")
     private Store storeByStoreId;
 }

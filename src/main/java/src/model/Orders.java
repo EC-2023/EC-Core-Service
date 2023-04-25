@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -58,14 +59,17 @@ public class Orders {
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private User userByUserId;
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
     private Store storeByStoreId;
     @ManyToOne
     @JoinColumn(name = "delivery_id", referencedColumnName = "delivery_id", nullable = false, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private Delivery deliveryByDeliveryId;
     @OneToMany(mappedBy = "orderByOrderId", fetch = FetchType.EAGER)
+    @Where(clause = "is_deleted = false")
     private Collection<OrderItems> item;
     public Orders(UUID userId,UUID storeId, UUID deliveryId, String address, String phone, int status, boolean isPaidBefore, double amountFromUser, double amountToStore, double amountToGd){
         this.userId = userId;

@@ -1,14 +1,17 @@
 package src.model;
 
+import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
 @Table(name = "attribute_value")
+@FilterDef(name = "isNotDeleted", parameters = @ParamDef(name = "isDeletedParam", type = boolean.class))
+@Filter(name = "isNotDeleted", condition = "isDeleted = :isDeletedParam")
 //@DynamicUpdate
 //@DynamicInsert
 @Data
@@ -23,7 +26,7 @@ public class AttributeValue {
 
     @Basic
     @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
     @Basic
     @Column(name = "createAt", nullable = false)
@@ -57,6 +60,7 @@ public class AttributeValue {
 
     @ManyToOne
     @JoinColumn(name = "attribute_id", referencedColumnName = "attribute_id", nullable = true, insertable = false, updatable = false)
+    @Where(clause = "is_deleted = false")
     private Attribute attributeByAttributeId;
 
     @ManyToOne

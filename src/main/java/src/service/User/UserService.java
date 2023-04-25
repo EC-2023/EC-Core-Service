@@ -63,6 +63,7 @@ public class UserService implements UserDetailsService, IUserService {
     private ICartRepository cartRepository;
     private IRoleRepository roleRepository;
     UUID roleId = null;
+    UUID userLevelId = null;
 
     @Autowired
     public UserService(IUserRepository userRepository, ModelMapper toDto, JwtTokenUtil jwtUtil, IUserLevelRepository userLevelRepository, ICartRepository cartRepository, IRoleRepository roleRepository) {
@@ -93,12 +94,15 @@ public class UserService implements UserDetailsService, IUserService {
     public CompletableFuture<UserDto> create(UserCreateDto input) {
         if (roleId == null)
             roleId = roleRepository.findByName("User").orElse(null).getId();
+        if (userLevelId == null)
+            userLevelId = userLevelRepository.findByMinPoint().orElseThrow(() -> new NotFoundException("Not found user level, please contact admin add new ")).getId();
         input.setHashedPassword(JwtTokenUtil.hashPassword(input.getHashedPassword()));
 //        input.setHashedPassword(jwtUtil.g);
         User user = toDto.map(input, User.class);
         user.setRoleId(roleId);
+        user.setUserLevelId(userLevelId);
+        user.setDisplayName(input.getLastName() + " " + (input.getMiddleName() != null ? input.getMiddleName() : "") + " " + input.getFirstName());
         userRepository.save(user);
-        // tao cart
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return CompletableFuture.completedFuture(toDto.map(user, UserDto.class));
     }

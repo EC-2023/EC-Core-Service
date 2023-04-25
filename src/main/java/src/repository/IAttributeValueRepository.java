@@ -16,6 +16,9 @@ public interface IAttributeValueRepository extends JpaRepository<AttributeValue,
 
     @Query("SELECT a FROM AttributeValue a WHERE a.cartItem_id = ?1")
     List<AttributeValue> findByCartItem_id(UUID id);
+
+    @Query("SELECT a FROM AttributeValue a WHERE a.attribute_id = ?1")
+    List<AttributeValue> findAllByAttributeId(UUID id);
 }
 
     

@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -44,7 +45,8 @@ public class OrderItems {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false, insertable = false, updatable = false)
     private Orders orderByOrderId;
-    @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.EAGER)
+    @Where(clause = "is_deleted = false")
     private Collection<AttributeValue> attributesValueByOrderItemId;
 
     public OrderItems() {

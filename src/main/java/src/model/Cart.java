@@ -44,7 +44,7 @@ public class Cart {
    //  @Where(clause = "isDeleted = false")
     private Store storeByStoreId;
     @OneToMany(mappedBy = "cartByCartId", fetch = FetchType.EAGER)
-   //  @Where(clause = "isDeleted = false")
+    @Where(clause = "is_deleted = false")
     private Collection<CartItems> cartItemsByCartId;
     public Cart() {
     }

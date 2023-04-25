@@ -3,6 +3,7 @@ package src.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import java.util.Collection;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class Delivery {
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @OneToMany(mappedBy = "deliveryByDeliveryId")
+    @Where(clause = "is_deleted = false")
     private Collection<Orders> ordersByDeliveryId;
     public Delivery(UUID id, String name, double price, String description) {
         Id = id;
