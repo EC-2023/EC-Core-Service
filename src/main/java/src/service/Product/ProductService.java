@@ -139,7 +139,7 @@ public class ProductService implements IProductService {
         return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductDto.class));
     }
 
-    @Async
+    @Transactional
     public CompletableFuture<ProductCreatePayload> update(UUID id, PayLoadUpdateProduct product) throws InvocationTargetException, IllegalAccessException {
 
         Product existingProduct = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find product!"));
@@ -170,59 +170,65 @@ public class ProductService implements IProductService {
             }
             iProductImgRepository.saveAll(productImgs);
         }
-        // check remove attribute
-        if (product.getListRemoveImage().size() > 0) {
-            productImgs = new ArrayList<>();
-            for (UUID img : product.getListRemoveImage()) {
-                ProductImg productImg = iProductImgRepository.findById(img).orElseThrow(() -> new NotFoundException("Unable to find image!"));
-                productImg.setIsDeleted(true);
-                productImgs.add(productImg);
+        // check add attribute
+        List<Attribute> attributes = new ArrayList<>();
+        if (product.getListAddAttribute().size() > 0) {
+            for (AttributeValueUpdate data : product.getListAddAttribute()) {
+                attributes.add(new Attribute(existingProduct.getId(), data.getName()));
             }
-            iProductImgRepository.saveAll(productImgs);
+            attributeRepository.saveAll(attributes);
         }
+        // check remove attribute
+        if (product.getListRemoveAttribute().size() > 0) {
+            attributes = new ArrayList<>();
+            for (AttributeValueUpdate data : product.getListRemoveAttribute()) {
+                Attribute tmp = attributeRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                tmp.setIsDeleted(true);
+                attributes.add(tmp);
+            }
+            attributeRepository.saveAll(attributes);
+        }
+        // check edit attribute
+        if (product.getListEditAttribute().size() > 0) {
+            attributes = new ArrayList<>();
+            for (AttributeValueUpdate data : product.getListRemoveAttribute()) {
+                Attribute tmp = attributeRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                tmp.setName(data.getName());
+                attributes.add(tmp);
+            }
+            attributeRepository.saveAll(attributes);
+        }
+        // check add attribute value
+        List<AttributeValue> attributeValuess = new ArrayList<>();
+        if (product.getListAddAttribute().size() > 0) {
+            for (AttributeValueUpdate data : product.getListAddAttribute()) {
+                attributeValuess.add(new AttributeValue(null, null, existingProduct.getId(), null, data.getName()));
+            }
+            attributeValueRepository.saveAll(attributeValuess);
+        }
+        // check remove attribute value
+        if (product.getListRemoveAttributeValue().size() > 0) {
+            attributeValuess = new ArrayList<>();
+            for (AttributeValueUpdate data : product.getListRemoveAttribute()) {
+                AttributeValue tmp = attributeValueRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                tmp.setIsDeleted(true);
+                attributeValuess.add(tmp);
+            }
+            attributeValueRepository.saveAll(attributeValuess);
+        }
+        // check edit attribute value
+        if (product.getListEditAttributeValue().size() > 0) {
+            attributes = new ArrayList<>();
+            for (AttributeValueUpdate data : product.getListRemoveAttribute()) {
+                AttributeValue tmp = attributeValueRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                tmp.setName(data.getName());
+                attributeValuess.add(tmp);
+            }
+            attributeRepository.saveAll(attributes);
+        }
+
         return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductCreatePayload.class));
 
-        // set laij attribute
-//        if (product.getAttributes().size() > 0) {
-//            for (AttributeUpdate attribute : product.getAttributes()) {
-//                if (attribute.getIsDeleted()) {
-//                    // xoa toan bo attribute value lien quan
-//                    List<AttributeValue> attributeValues = attributeValueRepository.findAllByAttributeId(attribute.getId());
-//                    attributeValues = attributeValues.stream().peek(x -> x.setIsDeleted(true)).toList();
-//                    if (attributeValues.size() > 0)
-//                        attributeValueRepository.saveAll(attributeValues);
-//                    Attribute attr = attributeRepository.findById(attribute.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
-//                    attr.setIsDeleted(true);
-//                    attributeRepository.save(attr);
-//                } else {
-//                    // neu chua co se tao moi
-//                    Attribute attr = attributeRepository.findById(attribute.getId()).orElse(null);
-//                    if (attr == null) {
-//                        attr = new Attribute(existingProduct.getId(), attribute.getName());
-//                    } else {
-//                        attr.setName(attribute.getName());
-//                    }
-//                    attributeRepository.save(attr);
-//                }
-//            }
-//        }
-// set lai attribute value
-        // set laij image
-//        List<ProductImg> productImgs = new ArrayList<>();
-//        if (product.getImages().size() > 0) {
-//            ProductImg productImg;
-//            for (ProductImg img : product.getImages()) {
-//                if (img.getIsDeleted()) {
-//                    productImg = iProductImgRepository.findById(img.getId()).orElseThrow(() -> new NotFoundException("Unable to find product image!"));
-//                    productImg.setIsDeleted(true);
-//                    iProductImgRepository.save(productImg);
-//                } else {
-//                    productImgs.add(new ProductImg(existingProduct.getId(), img.getFileName(), img.getFileName()));
-//                }
-//            }
-//            if (productImgs.size() > 0)
-//                iProductImgRepository.saveAll(productImgs);
-//        }
     }
 
     @Async

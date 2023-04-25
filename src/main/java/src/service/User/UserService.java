@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import src.config.auth.JwtTokenUtil;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
@@ -171,6 +172,9 @@ public class UserService implements UserDetailsService, IUserService {
     @Async
     public CompletableFuture<UserProfileDto> getMyProfile(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find User"));
+        if (user.getIsDeleted()){
+            throw new BadRequestException("User is deleted");
+        }
         UserProfileDto userProfileDto = toDto.map(user, UserProfileDto.class);
         return CompletableFuture.completedFuture(userProfileDto);
     }
