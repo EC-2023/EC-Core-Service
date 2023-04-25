@@ -2,6 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,8 +17,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Data
-//@DynamicUpdate
-//@DynamicInsert
+@DynamicUpdate
+@DynamicInsert
 public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -38,8 +40,8 @@ public class User implements UserDetails {
     @Column(name = "display_name", nullable = false, length = 100)
     private String displayName;
     @Basic
-    @Column(name = "id_card", length = 12)
-    private String idCard;
+    @Column(name = "id_card", nullable = false, length = 12)
+    private String idCard = "";
     @Basic
     @Column(name = "email", nullable = false, length = 50)
     private String email;
@@ -49,6 +51,7 @@ public class User implements UserDetails {
     @Basic
     @Column(name = "verified_at")
     private Date verifiedAt;
+
     @Basic
     @Column(name = "last_login")
     private Date lastLogin;

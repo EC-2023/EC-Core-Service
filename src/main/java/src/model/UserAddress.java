@@ -2,6 +2,8 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
 import java.util.Date;
@@ -10,8 +12,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "user_address")
 @Data
-//@DynamicUpdate
-//@DynamicInsert
+@DynamicUpdate
+@DynamicInsert
 public class UserAddress {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -54,7 +56,7 @@ public class UserAddress {
     @Column(name = "updateAt", nullable = true)
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private User userByUserId;
 }

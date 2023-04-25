@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface IUserAddressRepository extends JpaRepository<UserAddress, UUID> {
-    @Query("SELECT u FROM User u WHERE u.Id = ?1")
+    @Query("SELECT u FROM UserAddress u WHERE u.Id = ?1")
     Optional<UserAddress> findById(UUID id);
     @Query("SELECT u FROM UserAddress u WHERE u.userId = ?1")
     public List<UserAddress> findByUserId(UUID id);

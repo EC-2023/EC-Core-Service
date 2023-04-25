@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> {
+    @Override
     @Query("SELECT u FROM User u WHERE u.Id = ?1")
     Optional<User> findById(UUID id);
     @Query("SELECT u FROM User u WHERE u.phoneNumber = ?1")
