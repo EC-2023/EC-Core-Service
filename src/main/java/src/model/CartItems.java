@@ -43,6 +43,7 @@ public class CartItems {
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
    //  @Where(clause = "isDeleted = false")
+    @Where(clause = "is_deleted = false AND is_active = true")
     private Product productByProductId;
 
     @OneToMany(mappedBy = "cartItemsByCartItemId", fetch = FetchType.EAGER)

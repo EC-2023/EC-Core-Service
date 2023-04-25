@@ -73,13 +73,13 @@ public class Store {
     @OneToMany(mappedBy = "storeByStoreId")
     private Collection<Review> reviewsByStoreId;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ownId", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "ownId", referencedColumnName = "user_id", insertable = false, updatable = false)
     private User userByOwnId;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "store_level_id", referencedColumnName = "store_level_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "store_level_id", referencedColumnName = "store_level_id", insertable = false, updatable = false)
     private StoreLevel storeLevelByStoreLevelId;
-    @ManyToOne()
-    @JoinColumn(name = "commissionId", referencedColumnName = "commissionId", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "commissionId", referencedColumnName = "commissionId", insertable = false, updatable = false)
     private Commission commissionByCommissionId;
     @OneToMany(mappedBy = "storeByStoreEmpId")
     @Where(clause = "is_deleted = false")

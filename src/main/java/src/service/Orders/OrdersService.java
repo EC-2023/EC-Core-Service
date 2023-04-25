@@ -16,6 +16,7 @@ import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.Utils;
 import src.model.*;
 import src.repository.*;
 import src.service.Delivery.IDeliveryService;
@@ -129,15 +130,12 @@ public class OrdersService implements IOrdersService {
                 ).collect(Collectors.toList()));
     }
 
-    @Async
     @Override
     @Transactional
     public CompletableFuture<OrdersDto> addMyOrder(UUID userId, PayLoadOrder input) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user"));
-
         if (!user.isEnabled() || user.getIsDeleted())
             throw new BadRequestException("User is not active");
-
 
         Store store = storeRepository.findById(input.getStoreId()).orElseThrow(() -> new NotFoundException("Not found store"));
 
@@ -161,17 +159,29 @@ public class OrdersService implements IOrdersService {
                 throw new BadRequestException("Quantity product is not enough");
 
             double discount = user.getUserLevelByUserLevelId().getDiscount();
-            total += (new Date(new java.util.Date().getTime())).compareTo(prod.getDateValidPromote()) < 0 ? cartItems.getQuantity() * prod.getPromotionalPrice() : cartItems.getQuantity() * prod.getPrice();
+            if (prod.getDateValidPromote() != null)
+                total += (new Date(new java.util.Date().getTime())).compareTo(prod.getDateValidPromote()) < 0 ? cartItems.getQuantity() * prod.getPromotionalPrice() : cartItems.getQuantity() * prod.getPrice();
+            else
+                total += cartItems.getQuantity() * prod.getPrice();
             double amountFromUser = total - total * discount + priceDelivery;
             double amountToGd = store.getStoreLevelByStoreLevelId().getDiscount() * (total - total * discount);
             double amountToStore = total - amountToGd;
-            if (input.isCOD() && user.getEWallet() < amountFromUser) {
+            if (!input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
             }
             prod.setQuantity(prod.getQuantity() - cartItems.getQuantity());
 
             productRepository.save(prod);
             order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
+            String code = Utils.generateCodeOrder();
+            while (true) {
+                if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
+                    code = Utils.generateCodeOrder();
+                } else {
+                    order.setCode(code);
+                    break;
+                }
+            }
             order = ordersRepository.save(order);
             OrderItems orderItems = new OrderItems(cartItems.getProductId(), cartItems.getQuantity(), order.getId());
             orderItemsRepository.save(orderItems);
@@ -181,17 +191,28 @@ public class OrdersService implements IOrdersService {
                 Product prod = productRepository.findById(cartItems.getProductId()).orElseThrow(() -> new NotFoundException("Not found product"));
                 if (cartItems.getQuantity() > cartItems.getProductByProductId().getQuantity())
                     throw new BadRequestException("Quantity product is not enough");
-                total += (new Date(new java.util.Date().getTime())).compareTo(prod.getDateValidPromote()) < 0 ? cartItems.getQuantity() * prod.getPromotionalPrice() : cartItems.getQuantity() * prod.getPrice();
+                if (prod.getDateValidPromote() != null)
+                    total += (new Date(new java.util.Date().getTime())).compareTo(prod.getDateValidPromote()) < 0 ? cartItems.getQuantity() * prod.getPromotionalPrice() : cartItems.getQuantity() * prod.getPrice();
+                else
+                    total += cartItems.getQuantity() * prod.getPrice();
             }
             double discount = userService.getDiscountFromUserLevel(user.getId());
             double amountToGd = store.getStoreLevelByStoreLevelId().getDiscount() * (total - total * discount);
             double amountFromUser = total - total * discount + priceDelivery;
             double amountToStore = total - total * discount - amountToGd;
-            if (input.isCOD() && user.getEWallet() < amountFromUser) {
+            if (!input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
             }
             order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
-
+            String code = Utils.generateCodeOrder();
+            while (true) {
+                if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
+                    code = Utils.generateCodeOrder();
+                } else {
+                    order.setCode(code);
+                    break;
+                }
+            }
             order = ordersRepository.save(order);
 
             List<OrderItems> orderItems = new ArrayList<>();

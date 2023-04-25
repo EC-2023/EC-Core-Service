@@ -5,6 +5,7 @@ package src.service.Store;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -63,9 +64,10 @@ public class StoreService implements IStoreService {
         return CompletableFuture.completedFuture(toDto.map(storeRepository.findById(id), StoreDto.class));
     }
 
-    public CompletableFuture<StoreDto> create(StoreCreateDto input){
+    public CompletableFuture<StoreDto> create(StoreCreateDto input) {
         return null;
     }
+
     @Async
     public CompletableFuture<StoreDto> create(StoreCreateDto input, UUID userId) {
         Store store = toDto.map(input, Store.class);
@@ -114,17 +116,24 @@ public class StoreService implements IStoreService {
         ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
         long total = features.filter().orderBy().exec().size();
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
-                features.filter().orderBy().paginate().exec().stream().map(x -> toDto.map(x, OrdersDto.class)).toList()));
+                features.filter().orderBy().paginate().exec().stream().map(x ->
+                        {
+                            Hibernate.initialize(x.getDeliveryByDeliveryId());
+                            Hibernate.initialize(x.getItem());
+                            return toDto.map(x, OrdersDto.class);
+                        }
+
+                ).toList()));
     }
 
 
     @Async
     @Override
     public CompletableFuture<StoreDto> setActiveStore(UUID storeId, boolean status) {
-        Store store = storeRepository.findById(storeId).orElseThrow( () -> new NotFoundException("Unable to find store!"));
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
         store.setActive(status);
         store.setUpdateAt(new Date(new java.util.Date().getTime()));
-       store =  storeRepository.save(store);
+        store = storeRepository.save(store);
         return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
     }
 }

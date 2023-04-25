@@ -108,9 +108,17 @@ public class StatisticService implements IStatisticService {
 
     public  CompletableFuture<PayLoadTotalStore> getTotalProductAndRevenueStore(UUID userId) {
         Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Store not found"));
+        Integer valueTotal =  productRepository.getCountProductByStore(store.getId());
+        Double valueRevenue = ordersRepository.getRevenueByStore(store.getId());
+        if (valueRevenue == null) {
+            valueRevenue = 0.0;
+        }
+        if (valueTotal == null) {
+            valueTotal = 0;
+        }
         return CompletableFuture.completedFuture(PayLoadTotalStore.create(
-                productRepository.count(),
-                ordersRepository.getRevenueByStore(store.getId()).get()
+                valueTotal,
+                valueRevenue
         ));
     }
 

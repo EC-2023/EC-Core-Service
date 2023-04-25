@@ -36,7 +36,7 @@ public class Product {
     private int sold;
     @Basic
     @Column(name = "isActive", nullable = false)
-    private boolean isActive;
+    private boolean isActive = true;
     @Basic
     @Column(name = "video", nullable = true, length = 255)
     private String video;
@@ -81,8 +81,8 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
     private Store storeByStoreId;
-
     @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
+    @Where(clause = "is_deleted = false")
     private Collection<ProductImg> productImgsByProductId;
     @OneToMany(mappedBy = "productByProductId")
     private Collection<Review> reviewsByProductId;

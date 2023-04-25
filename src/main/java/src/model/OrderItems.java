@@ -40,10 +40,10 @@ public class OrderItems {
     @Column(name = "isDeleted", nullable = true)
     private Boolean isDeleted= false;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     private Product productByProductId;
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id", insertable = false, updatable = false)
     private Orders orderByOrderId;
     @OneToMany(mappedBy = "attributesValueByOrderItemId", fetch = FetchType.EAGER)
     @Where(clause = "is_deleted = false")

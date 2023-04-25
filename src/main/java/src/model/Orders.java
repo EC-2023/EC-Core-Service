@@ -11,6 +11,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
+//@DynamicInsert
+//@DynamicUpdate
 @Data
 public class Orders {
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,8 +32,11 @@ public class Orders {
     @Column(name = "address", nullable = false, length = 255)
     private String address;
     @Basic
-    @Column(name = "phone", nullable = false, length = 10)
+    @Column(name = "phone", nullable = false, length = 12)
     private String phone;
+    @Basic
+    @Column(name = "order_code", nullable = false, length = 20)
+    private String code;
     @Basic
     @Column(name = "status", nullable = false)
     private int status;
@@ -49,29 +54,30 @@ public class Orders {
     private double amountToGd;
     @Basic
     @Column(name = "isDeleted", nullable = true)
-    private Boolean isDeleted= false;
+    private Boolean isDeleted = false;
     @Basic
     @Column(name = "createAt", nullable = false, updatable = false)
-    private Date createAt= new Date(new java.util.Date().getTime());
-   @UpdateTimestamp
+    private Date createAt = new Date(new java.util.Date().getTime());
+    @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private User userByUserId;
     @ManyToOne
-    @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "store_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     private Store storeByStoreId;
     @ManyToOne
-    @JoinColumn(name = "delivery_id", referencedColumnName = "delivery_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "delivery_id", referencedColumnName = "delivery_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private Delivery deliveryByDeliveryId;
     @OneToMany(mappedBy = "orderByOrderId", fetch = FetchType.EAGER)
     @Where(clause = "is_deleted = false")
     private Collection<OrderItems> item;
-    public Orders(UUID userId,UUID storeId, UUID deliveryId, String address, String phone, int status, boolean isPaidBefore, double amountFromUser, double amountToStore, double amountToGd){
+
+    public Orders(UUID userId, UUID storeId, UUID deliveryId, String address, String phone, int status, boolean isPaidBefore, double amountFromUser, double amountToStore, double amountToGd) {
         this.userId = userId;
         this.storeId = storeId;
         this.deliveryId = deliveryId;
@@ -83,7 +89,8 @@ public class Orders {
         this.amountToStore = amountToStore;
         this.amountToGd = amountToGd;
     }
-    public Orders(){
+
+    public Orders() {
 
     }
 }

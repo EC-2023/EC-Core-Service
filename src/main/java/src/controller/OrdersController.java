@@ -5,14 +5,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
+import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
-import src.service.OrderItems.Dtos.OrderItemsDto;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Orders.Dtos.OrdersUpdateDto;
+import src.service.Orders.Dtos.PayLoadOrder;
 import src.service.Orders.IOrdersService;
-import src.service.Orders.OrdersService;
 
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +53,16 @@ public class OrdersController {
 //    @Operation(summary = "Hello API")
     public CompletableFuture<OrdersDto> create(@RequestBody OrdersCreateDto input) {
         return ordersService.create(input);
+    }
+
+
+    @Authenticate
+    @PostMapping(value = "/add-my-order",produces = MediaType.APPLICATION_JSON_VALUE)
+//    @Tag(name = "orderss", description = "Operations related to orderss")
+//    @Operation(summary = "Hello API")
+    public CompletableFuture<OrdersDto> addMyOrder(@RequestBody PayLoadOrder input) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.addMyOrder(userId, input);
     }
 
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -15,7 +15,9 @@ import src.config.utils.ApiQuery;
 import src.config.utils.MapperUtils;
 import src.model.CartItems;
 import src.model.Delivery;
+import src.model.Product;
 import src.repository.IDeliveryRepository;
+import src.repository.IProductRepository;
 import src.service.Delivery.Dtos.DeliveryCreateDto;
 import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Delivery.Dtos.DeliveryUpdateDto;
@@ -30,13 +32,15 @@ import java.util.stream.Collectors;
 @Service
 public class DeliveryService implements IDeliveryService {
     private final IDeliveryRepository deliveryRepository;
+    private final IProductRepository productRepository;
     private final ModelMapper toDto;
 
     @PersistenceContext
     EntityManager em;
 
-    public DeliveryService(IDeliveryRepository deliveryRepository, ModelMapper toDto) {
+    public DeliveryService(IDeliveryRepository deliveryRepository, IProductRepository productRepository, ModelMapper toDto) {
         this.deliveryRepository = deliveryRepository;
+        this.productRepository = productRepository;
         this.toDto = toDto;
     }
 
@@ -97,11 +101,12 @@ public class DeliveryService implements IDeliveryService {
         Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new NotFoundException("Không tìm thấy phương thức vận chuyển"));
         HashMap<UUID, Long> count = new HashMap<>();
         for (CartItems item : items) {
-            String src = item.getProductByProductId().getStoreByStoreId().getAddress();
+            Product product = productRepository.findById(item.getProductId()).orElseThrow(() -> new NotFoundException("Không tìm thấy sản phẩm"));
+            String src = product.getStoreByStoreId().getAddress();
             src = src.split(",")[src.split(",").length - 1].trim();
-            Long currentPrice = count.get(item.getProductByProductId().getStoreId());
+            Long currentPrice = count.get(product.getStoreId());
             if (currentPrice != null) {
-                count.replace(item.getProductByProductId().getStoreId(), currentPrice + 2000);
+                count.replace(product.getStoreId(), currentPrice + 2000);
                 total += 2000;
             } else {
                 long sum = 0;
@@ -111,7 +116,7 @@ public class DeliveryService implements IDeliveryService {
                     sum += 10000;
                 }
                 total += sum;
-                count.put(item.getProductByProductId().getStoreId(), sum);
+                count.put(product.getStoreId(), sum);
             }
         }
         return total;

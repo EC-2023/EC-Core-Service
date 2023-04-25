@@ -79,7 +79,6 @@ public class UserController {
     @GetMapping(value = "my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<UserProfileDto> getMyProfile(){
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-
         return userService.getMyProfile(userId);
     }
 

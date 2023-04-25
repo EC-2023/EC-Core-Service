@@ -9,7 +9,6 @@ import src.service.Statistic.Dtos.PayLoadStatisticData;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -31,7 +30,10 @@ public interface IOrdersRepository extends JpaRepository<Orders, UUID> {
 
 
     @Query("SELECT sum(s.amountToStore) FROM Orders s WHERE s.storeId = ?1 and s.isDeleted = false and s.status = 2")
-    Optional<Double> getRevenueByStore(UUID id);
+    Double getRevenueByStore(UUID id);
+
+    @Query("SELECT COUNT(o) FROM Orders o WHERE o.code = ?1")
+    Long countByOrderNumber(String orderNumber);
 }
 
     

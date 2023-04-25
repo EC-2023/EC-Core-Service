@@ -5,7 +5,7 @@ package src.service.OrderItems.Dtos;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import src.model.AttributeValue;
-import src.model.Product;
+import src.service.Product.Dtos.ProductDto;
 
 import java.util.Collection;
 import java.util.Date;
@@ -22,7 +22,7 @@ public class OrderItemsDto extends OrderItemsUpdateDto {
    @JsonProperty(value = "isDeleted")
    public Boolean isDeleted  = false;
    @JsonProperty(value = "product")
-   public Product productByProductId;
+   public ProductDto productByProductId;
    @JsonProperty(value = "attributeValues")
    public Collection<AttributeValue> attributesValueByOrderItemId;
 }
