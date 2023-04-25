@@ -1,13 +1,12 @@
 package src.service.Product.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.util.UUID;
 
 @Data
 public class AttributeValueUpdate {
+    @JsonProperty(value = "name")
     String name;
-    UUID id;
-    boolean isDeleted;
-
+    @JsonProperty(value = "Id")
+    String Id;
 }

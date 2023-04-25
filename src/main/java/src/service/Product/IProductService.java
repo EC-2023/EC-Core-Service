@@ -4,6 +4,7 @@ package src.service.Product;
 import src.service.IService;
 import src.service.Product.Dtos.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,5 +24,6 @@ public interface IProductService extends IService<ProductDto, ProductCreateDto, 
     public CompletableFuture<ProductDto> create(UUID userId, ProductCreatePayload input);
     public CompletableFuture<List<String>> findCategoryNamesAndProductNamesByKeyword(String keyword);
     public CompletableFuture<ProductDetailDto> getDetailProduct(UUID id);
+    public CompletableFuture<ProductCreatePayload> update(UUID id, PayLoadUpdateProduct product) throws InvocationTargetException, IllegalAccessException;
 
 }

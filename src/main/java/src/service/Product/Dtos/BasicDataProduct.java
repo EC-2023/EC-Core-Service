@@ -24,5 +24,4 @@ public class BasicDataProduct {
     private UUID categoryId;
     @JsonProperty(value = "dateValidPromote")
     private Date dateValidPromote;
-
 }

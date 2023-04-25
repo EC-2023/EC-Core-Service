@@ -144,13 +144,44 @@ public class ProductService implements IProductService {
 
         Product existingProduct = productRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find product!"));
         BeanUtilsBean nullAwareBeanUtilsBean = NullAwareBeanUtilsBean.getInstance();
-        nullAwareBeanUtilsBean.copyProperties(existingProduct, product.getInfo());
+        nullAwareBeanUtilsBean.copyProperties(existingProduct, product.getBasic());
+        existingProduct.setUpdateAt(new Date(new java.util.Date().getTime()));
+        existingProduct = productRepository.save(existingProduct);
+
 
         Hibernate.initialize(existingProduct.getAttributesByProductId());
         Hibernate.initialize(existingProduct.getProductImgsByProductId());
+        // check add image
+        List<ProductImg> productImgs = new ArrayList<>();
 
-        BeanUtils.copyProperties(product, existingProduct);
-        existingProduct.setUpdateAt(new Date(new java.util.Date().getTime()));
+        if (product.getListAddImage().size() > 0) {
+            for (String img : product.getListAddImage()) {
+                productImgs.add(new ProductImg(existingProduct.getId(), img, img));
+            }
+            iProductImgRepository.saveAll(productImgs);
+        }
+        // check remove image
+        if (product.getListRemoveImage().size() > 0) {
+            productImgs = new ArrayList<>();
+            for (UUID img : product.getListRemoveImage()) {
+                ProductImg productImg = iProductImgRepository.findById(img).orElseThrow(() -> new NotFoundException("Unable to find image!"));
+                productImg.setIsDeleted(true);
+                productImgs.add(productImg);
+            }
+            iProductImgRepository.saveAll(productImgs);
+        }
+        // check remove attribute
+        if (product.getListRemoveImage().size() > 0) {
+            productImgs = new ArrayList<>();
+            for (UUID img : product.getListRemoveImage()) {
+                ProductImg productImg = iProductImgRepository.findById(img).orElseThrow(() -> new NotFoundException("Unable to find image!"));
+                productImg.setIsDeleted(true);
+                productImgs.add(productImg);
+            }
+            iProductImgRepository.saveAll(productImgs);
+        }
+        return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductCreatePayload.class));
+
         // set laij attribute
 //        if (product.getAttributes().size() > 0) {
 //            for (AttributeUpdate attribute : product.getAttributes()) {
@@ -192,8 +223,6 @@ public class ProductService implements IProductService {
 //            if (productImgs.size() > 0)
 //                iProductImgRepository.saveAll(productImgs);
 //        }
-
-        return CompletableFuture.completedFuture(toDto.map(productRepository.save(existingProduct), ProductCreatePayload.class));
     }
 
     @Async

@@ -2,7 +2,6 @@
 package src.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -10,12 +9,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
+import src.service.Product.Dtos.PayLoadUpdateProduct;
 import src.service.Product.Dtos.ProductCreatePayload;
 import src.service.Product.Dtos.ProductDetailDto;
 import src.service.Product.Dtos.ProductDto;
-import src.service.Product.Dtos.ProductUpdateDto;
 import src.service.Product.IProductService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -23,8 +23,11 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @ApiPrefixController(value = "/products")
 public class ProductController {
-    @Autowired
-    private IProductService productService;
+    private final IProductService productService;
+
+    public ProductController(IProductService productService) {
+        this.productService = productService;
+    }
 
 
 //    @GetMapping("/{id}")
@@ -50,9 +53,6 @@ public class ProductController {
     }
 
 
-
-
-
     @GetMapping("/pagination")
     public CompletableFuture<PagedResultDto<ProductDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
                                                                            @RequestParam(required = false, defaultValue = "10") Integer size,
@@ -70,10 +70,11 @@ public class ProductController {
         return productService.create(userId, input);
     }
 
-    @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Authenticate
+    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "products", description = "Operations related to products")
 //    @Operation(summary = "Hello API")
-    public CompletableFuture<ProductDto> update(@PathVariable UUID id, ProductUpdateDto product) {
+    public CompletableFuture<ProductCreatePayload> update(@PathVariable UUID id, @RequestBody PayLoadUpdateProduct product) throws InvocationTargetException, IllegalAccessException {
         return productService.update(id, product);
     }
 

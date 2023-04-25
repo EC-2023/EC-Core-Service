@@ -2,20 +2,29 @@ package src.service.Product.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import src.model.ProductImg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class PayLoadUpdateProduct {
-    @JsonProperty(value = "info")
-    private BasicDataProduct info;
-    @JsonProperty(value = "images")
-    private List<ProductImg> images = new ArrayList<>();
-    @JsonProperty(value = "attributes")
-    private List<AttributeUpdate> attributes = new ArrayList<>();
-    @JsonProperty(value = "attributeValues")
-    private List<AttributeUpdate> attributeValues = new ArrayList<>();
-
+    @JsonProperty(value = "basic")
+    private BasicDataProduct basic;
+    @JsonProperty(value = "listAddAttribute")
+    List<AttributeValueUpdate> listAddAttribute = new ArrayList<>();
+    @JsonProperty(value = "listAddAttributeValue")
+    List<AttributeValueUpdate> listAddAttributeValue = new ArrayList<>();
+    @JsonProperty(value = "listRemoveAttributeValue")
+    List<AttributeValueUpdate> listRemoveAttributeValue = new ArrayList<>();
+    @JsonProperty(value = "listRemoveAttribute")
+    List<AttributeValueUpdate> listRemoveAttribute = new ArrayList<>();
+    @JsonProperty(value = "listEditAttribute")
+    List<AttributeValueUpdate> listEditAttribute = new ArrayList<>();
+    @JsonProperty(value = "listEditAttributeValue")
+    List<AttributeValueUpdate> listEditAttributeValue = new ArrayList<>();
+    @JsonProperty(value = "listAddImage")
+    List<String> listAddImage = new ArrayList<>();
+    @JsonProperty(value = "listRemoveImage")
+    List<UUID> listRemoveImage = new ArrayList<>();
 }
