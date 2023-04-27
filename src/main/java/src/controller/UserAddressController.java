@@ -10,6 +10,7 @@ import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
+import src.config.utils.Constant;
 import src.service.UserAddress.Dtos.UserAddressCreateDto;
 import src.service.UserAddress.Dtos.UserAddressDto;
 import src.service.UserAddress.Dtos.UserAddressUpdateDto;
@@ -31,7 +32,7 @@ public class UserAddressController {
 
 
     @Authenticate
-    @RequiresAuthorization("ADMIN")
+   @RequiresAuthorization(Constant.ADMIN)
     @GetMapping("/{id}")
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
@@ -41,7 +42,7 @@ public class UserAddressController {
 
 
     @Authenticate
-    @RequiresAuthorization("ADMIN")
+   @RequiresAuthorization(Constant.ADMIN)
     @GetMapping
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
@@ -57,7 +58,7 @@ public class UserAddressController {
     }
 
     @Authenticate
-    @RequiresAuthorization("ADMIN")
+   @RequiresAuthorization(Constant.ADMIN)
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
@@ -65,7 +66,7 @@ public class UserAddressController {
         return null;
     }
     @Authenticate
-    @RequiresAuthorization("ADMIN")
+   @RequiresAuthorization(Constant.ADMIN)
     @PatchMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Hello API")
@@ -73,7 +74,7 @@ public class UserAddressController {
         return userAddressService.update(id, useraddress);
     }
     @Authenticate
-    @RequiresAuthorization("ADMIN")
+   @RequiresAuthorization(Constant.ADMIN)
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "useraddresss", description = "Operations related to useraddresss")
 //    @Operation(summary = "Remove")

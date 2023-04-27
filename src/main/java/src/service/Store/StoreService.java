@@ -160,5 +160,15 @@ public class StoreService implements IStoreService {
         store = storeRepository.save(store);
         return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
     }
+
+    @Async
+    @Override
+    public CompletableFuture<StoreDto> setDeleteStore(UUID storeId, boolean status) {
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        store.setIsDeleted(status);
+        store.setUpdateAt(new Date(new java.util.Date().getTime()));
+        store = storeRepository.save(store);
+        return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
+    }
 }
 

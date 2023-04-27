@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public interface IStoreService extends IService<StoreDto, StoreCreateDto, StoreUpdateDto> {
     public CompletableFuture<PagedResultDto<OrdersDto>> findOrderByStore(HttpServletRequest request, Integer limit, Integer skip);
     public CompletableFuture<StoreDto> setActiveStore(UUID storeId, boolean status);
-
+    public CompletableFuture<StoreDto> setDeleteStore(UUID storeId, boolean status);
     public CompletableFuture<StoreDto> create(StoreCreateDto input, UUID userId);
     public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, Integer limit, Integer skip);
 }

@@ -10,6 +10,7 @@ import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
+import src.config.utils.Constant;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Product.Dtos.ProductStoreDto;
 import src.service.Store.Dtos.StoreCreateDto;
@@ -93,10 +94,17 @@ public class StoreController {
     }
 
     @Authenticate
-    @RequiresAuthorization("ADMIN")
-    @GetMapping("/{id}/set-active-store")
+    @RequiresAuthorization(Constant.ADMIN)
+    @PatchMapping("/{id}/set-active-store")
     public CompletableFuture<StoreDto> setActiveStore(@PathVariable UUID id, @RequestParam boolean status) {
         return storeService.setActiveStore(id, status);
+    }
+
+    @Authenticate
+    @RequiresAuthorization(Constant.ADMIN)
+    @PatchMapping("/{id}/set-delete-store")
+    public CompletableFuture<StoreDto> setDeleteStore(@PathVariable UUID id, @RequestParam boolean status) {
+        return storeService.setDeleteStore(id, status);
     }
 
 }
