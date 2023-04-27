@@ -2,7 +2,6 @@
 package src.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -24,8 +23,11 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @ApiPrefixController(value = "/carts")
 public class CartController {
-    @Autowired
-    private ICartService cartService;
+    private final ICartService cartService;
+
+    public CartController(ICartService cartService) {
+        this.cartService = cartService;
+    }
 
 
     @GetMapping("/{id}")

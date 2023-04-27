@@ -13,6 +13,6 @@ public class CartItemsCreateDto {
     private UUID productId;
     @JsonProperty(value = "quantity")
     private int quantity;
-    @JsonProperty(value = "quantity")
+    @JsonProperty(value = "attributesValues")
     private List<String> attributesValues = new ArrayList<>();
 }
