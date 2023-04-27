@@ -15,12 +15,14 @@ import src.config.dto.Pagination;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.Orders;
+import src.model.Product;
 import src.model.Store;
 import src.repository.ICommissionRepository;
 import src.repository.IOrdersRepository;
 import src.repository.IStoreLevelRepository;
 import src.repository.IStoreRepository;
 import src.service.Orders.Dtos.OrdersDto;
+import src.service.Product.Dtos.ProductStoreDto;
 import src.service.Store.Dtos.StoreCreateDto;
 import src.service.Store.Dtos.StoreDto;
 import src.service.Store.Dtos.StoreUpdateDto;
@@ -115,12 +117,34 @@ public class StoreService implements IStoreService {
         Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
         long total = features.filter().orderBy().exec().size();
+        pagination.setTotal(total);
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x ->
                         {
                             Hibernate.initialize(x.getDeliveryByDeliveryId());
                             Hibernate.initialize(x.getItem());
                             return toDto.map(x, OrdersDto.class);
+                        }
+
+                ).toList()));
+    }
+
+
+    @Async
+    @Override
+    public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, Integer limit, Integer skip) {
+        UUID userId = ((UUID) (request.getAttribute("id")));
+        Store existingStore = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        request.setAttribute("storeId%7B%7Beq%7D%7D", existingStore.getId());
+        Pagination pagination = Pagination.create(0, skip, limit);
+        ApiQuery<Product> features = new ApiQuery<>(request, em, Product.class, pagination);
+        long total = features.filter().orderBy().exec().size();
+        pagination.setTotal(total);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
+                features.filter().orderBy().paginate().exec().stream().map(x ->
+                        {
+                            Hibernate.initialize(x.getProductImgsByProductId());
+                            return toDto.map(x, ProductStoreDto.class);
                         }
 
                 ).toList()));

@@ -36,6 +36,8 @@ public class ProductDetailDto {
     private Date dateValidPromote;
     @JsonProperty(value = "quantity")
     private int quantity;
+    @JsonProperty(value = "sold")
+    private int sold;
     @JsonProperty(value = "video")
     private String video;
     @JsonProperty(value = "attributes")

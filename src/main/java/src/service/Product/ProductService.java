@@ -277,7 +277,7 @@ public class ProductService implements IProductService {
     }
 
     public CompletableFuture<ProductDto> updateActiveProduct(UUID userId, UUID productId, boolean status) {
-        Store store = storeRepository.findByUserId(userId).orElse(null);
+        Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
         Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("Unable to find product!"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
         if (store == null && !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {

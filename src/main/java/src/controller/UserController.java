@@ -63,10 +63,10 @@ public class UserController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
-                                                                              @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip ,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                               @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return userService.findAllPagination(request, size, page * size);
+        return userService.findAllPagination(request, limit, skip);
     }
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "users", description = "Operations related to users")

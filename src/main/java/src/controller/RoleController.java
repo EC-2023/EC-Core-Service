@@ -39,10 +39,10 @@ public class RoleController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
-                                                                        @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<RoleDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip ,
+                                                                        @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                         @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return roleService.findAllPagination(request, size, page * size);
+        return roleService.findAllPagination(request, limit, skip);
     }
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "roles", description = "Operations related to roles")

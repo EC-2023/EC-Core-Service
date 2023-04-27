@@ -54,10 +54,10 @@ public class ProductController {
 
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<ProductDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                           @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<ProductDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                           @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                            @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return productService.findAllPagination(request, size, page * size);
+        return productService.findAllPagination(request, limit, skip);
     }
 
     @Authenticate

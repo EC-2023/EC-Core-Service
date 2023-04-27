@@ -6,11 +6,11 @@ import java.util.Date;
 
 @Data
 public class PayLoadStatisticData {
-    int label;
+    String label;
     double value;
     Date date;
 
-    public PayLoadStatisticData(int label, double value) {
+    public PayLoadStatisticData(String label, double value) {
         this.label = label;
         this.value = value;
     }

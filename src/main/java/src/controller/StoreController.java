@@ -11,6 +11,7 @@ import src.config.annotation.Authenticate;
 import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
 import src.service.Orders.Dtos.OrdersDto;
+import src.service.Product.Dtos.ProductStoreDto;
 import src.service.Store.Dtos.StoreCreateDto;
 import src.service.Store.Dtos.StoreDto;
 import src.service.Store.Dtos.StoreUpdateDto;
@@ -26,7 +27,7 @@ public class StoreController {
     private final IStoreService storeService;
 
     public StoreController(IStoreService storeService) {
-            this.storeService = storeService;
+        this.storeService = storeService;
     }
 
 
@@ -69,18 +70,26 @@ public class StoreController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<StoreDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                         @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<StoreDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                         @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                          @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return storeService.findAllPagination(request, size, page * size);
+        return storeService.findAllPagination(request, limit, skip);
     }
 
     @Authenticate
     @GetMapping("/getOrdersByMyStore")
-    public CompletableFuture<PagedResultDto<OrdersDto>> findOrderByStore(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                         @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<OrdersDto>> findOrderByStore(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                         @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                          @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return storeService.findOrderByStore(request, size, page * size);
+        return storeService.findOrderByStore(request, limit, skip);
+    }
+
+    @Authenticate
+    @GetMapping("/getProductsByMyStore")
+    public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                                 @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                                 @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return storeService.findProductByStore(request, limit, skip);
     }
 
     @Authenticate

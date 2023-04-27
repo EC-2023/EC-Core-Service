@@ -17,4 +17,5 @@ public interface IOrdersService extends IService<OrdersDto, OrdersCreateDto, Ord
     CompletableFuture<OrdersDto> acceptOrder(UUID userId, UUID orderId);
     CompletableFuture<OrdersDto> cancelOrder(UUID userId, UUID orderId);
     CompletableFuture<OrdersDto> finishOrder(UUID userId, UUID orderId);
+    public CompletableFuture<OrdersDto> getOne(UUID id, UUID userId);
 }

@@ -39,10 +39,10 @@ public class AttributeValueController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<AttributeValueDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page ,
-                                                                                  @RequestParam(required = false, defaultValue = "10") Integer size,
+    public CompletableFuture<PagedResultDto<AttributeValueDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip ,
+                                                                                  @RequestParam(required = false, defaultValue = "10") Integer limit,
                                                                                   @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return attributevalueService.findAllPagination(request, size, page * size);
+        return attributevalueService.findAllPagination(request, limit, skip);
     }
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "attributevalues", description = "Operations related to attributevalues")

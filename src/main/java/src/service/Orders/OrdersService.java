@@ -82,7 +82,28 @@ public class OrdersService implements IOrdersService {
     @Async
     @Override
     public CompletableFuture<OrdersDto> getOne(UUID id) {
-        return CompletableFuture.completedFuture(toDto.map(ordersRepository.findById(id).get(), OrdersDto.class));
+        Orders order = ordersRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find orders!"));
+        return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
+    }
+
+    @Async
+    @Override
+    public CompletableFuture<OrdersDto> getOne(UUID id, UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
+        Orders order = ordersRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find orders!"));
+        Hibernate.initialize(order.getStoreByStoreId());
+        if (!order.getUserId().equals(userId)
+                || !order.getStoreByStoreId().getOwnId().equals(userId)
+                || !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            throw new BadRequestException("You don't have permission to do that!");
+        }
+        if (!user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            order.setAmountToGd(0);
+        }
+        if (!order.getStoreByStoreId().getOwnId().equals(userId)) {
+            order.setAmountToStore(0);
+        }
+        return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
     }
 
     @Async
@@ -198,7 +219,7 @@ public class OrdersService implements IOrdersService {
             if (!input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
             }
-                 order = getOrders(userId, input, amountFromUser, amountToGd, amountToStore);
+            order = getOrders(userId, input, amountFromUser, amountToGd, amountToStore);
 
             List<OrderItems> orderItems = new ArrayList<>();
             List<AttributeValue> attributeValues = new ArrayList<>();
@@ -322,9 +343,10 @@ public class OrdersService implements IOrdersService {
         //Check userId == OwnerId
         User buyer = userRepository.findById(order.getUserId())
                 .orElseThrow(() -> new NotFoundException("Not found buyer"));
-        Hibernate.initialize(user.getRoleByRoleId());
-        if (user.getRoleByRoleId().getName().equals(Constant.ADMIN) || order.getUserId().equals(user.getId())) {
 
+        if (user.getRoleByRoleId().getName().equals(Constant.ADMIN) || order.getUserId().equals(user.getId())) {
+            Hibernate.initialize(user.getRoleByRoleId());
+            Hibernate.initialize(order.getItem());
             store.setEWallet(store.getEWallet() + order.getAmountToStore());
 
             int point = (int) Math.floor(order.getAmountFromUser() / 10000);
@@ -340,6 +362,17 @@ public class OrdersService implements IOrdersService {
             userRepository.save(buyer);
             storeRepository.save(store);
             order.setStatus(OrderStatus.DELIVERED.ordinal());
+            List<Product> productList = new ArrayList<>();
+            for (OrderItems item : order.getItem()) {
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new NotFoundException("Not found product"));
+                product.setQuantity(product.getQuantity() - item.getQuantity());
+                product.setQuantity(product.getSold() - item.getQuantity());
+                productList.add(product);
+            }
+            if (productList.size() > 0) {
+                productRepository.saveAll(productList);
+            }
         } else {
             throw new RuntimeException("Only store admin or buyer can finish order");
         }

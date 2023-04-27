@@ -26,28 +26,32 @@ public class OrdersController {
     @Autowired
     private IOrdersService ordersService;
 
-
-    @GetMapping( "/{id}")
+    @Authenticate
+    @GetMapping("/{id}")
 //    @Tag(name = "orderss", description = "Operations related to orderss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<OrdersDto> findOneById(@PathVariable UUID id) {
-        return ordersService.getOne(id);
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.getOne(id, userId);
     }
 
+    @Authenticate
     @GetMapping()
 //    @Tag(name = "orderss", description = "Operations related to orderss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<OrdersDto>> findAll() {
-       return ordersService.getAll();
+        return ordersService.getAll();
     }
 
+    @Authenticate
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<OrdersDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer page,
-                                                                              @RequestParam(required = false, defaultValue = "10") Integer size,
-                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
-        return ordersService.findAllPagination(request, size, page * size);
+    public CompletableFuture<PagedResultDto<OrdersDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                          @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                          @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return ordersService.findAllPagination(request, limit, skip);
     }
 
+    @Authenticate
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "orderss", description = "Operations related to orderss")
 //    @Operation(summary = "Hello API")
@@ -57,7 +61,7 @@ public class OrdersController {
 
 
     @Authenticate
-    @PostMapping(value = "/add-my-order",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/add-my-order", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "orderss", description = "Operations related to orderss")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<OrdersDto> addMyOrder(@RequestBody PayLoadOrder input) {

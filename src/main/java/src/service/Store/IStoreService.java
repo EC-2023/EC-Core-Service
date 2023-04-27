@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import src.config.dto.PagedResultDto;
 import src.service.IService;
 import src.service.Orders.Dtos.OrdersDto;
+import src.service.Product.Dtos.ProductStoreDto;
 import src.service.Store.Dtos.StoreCreateDto;
 import src.service.Store.Dtos.StoreDto;
 import src.service.Store.Dtos.StoreUpdateDto;
@@ -17,4 +18,5 @@ public interface IStoreService extends IService<StoreDto, StoreCreateDto, StoreU
     public CompletableFuture<StoreDto> setActiveStore(UUID storeId, boolean status);
 
     public CompletableFuture<StoreDto> create(StoreCreateDto input, UUID userId);
+    public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, Integer limit, Integer skip);
 }
