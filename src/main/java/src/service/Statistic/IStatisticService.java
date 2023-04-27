@@ -19,5 +19,5 @@ public interface IStatisticService {
     public  CompletableFuture<PayLoadTotalStore> getTotalProductAndRevenueStore(UUID userId);
     public CompletableFuture<List<PayLoadStatisticData>> getStaticRevenueByStore(int option, Date date, UUID userId);
     public CompletableFuture<List<PayLoadStatisticData>> getStaticOrderByStore(int option, Date date, UUID userId);
-//    public CompletableFuture<List<PayLoadStatisticData>> getStaticProduct(int option, Date date);
+    public CompletableFuture<List<PayLoadStatisticData>> getStaticOrder(int option, Date date);
 }

@@ -41,5 +41,10 @@ public interface IOrdersRepository extends JpaRepository<Orders, UUID> {
 
     @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(1) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.store_id = :storeId GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
     List<Object[]> findYearlyOrderByStore(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("storeId") UUID storeId);
+
+    @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(1) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)
+    List<Object[]> findMonthlyOrder(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(1) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
+    List<Object[]> findYearlyOrder(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }
 

@@ -49,6 +49,14 @@ public class StatisticController {
         Date date = Date.from(instant);
         return statisticService.getStaticRevenue(option, date);
     }
+    @Authenticate
+    @GetMapping("/get-static-order")
+    public CompletableFuture<List<PayLoadStatisticData>> getStaticOrder(@RequestParam() int option,
+                                                                          @RequestParam("date") long dateStr) {
+        Instant instant = Instant.ofEpochMilli(dateStr);
+        Date date = Date.from(instant);
+        return statisticService.getStaticOrder(option, date);
+    }
 
     @Authenticate
     @GetMapping("/get-total-statistic-store")

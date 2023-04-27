@@ -64,7 +64,7 @@ public class StatisticService implements IStatisticService {
         LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
         switch (option) {
             case 0 -> {
-//                startDate = date.minusDays(7);
+
                 return CompletableFuture.completedFuture(getDailyRevenue(date, null));
             }
             case 1 -> {
@@ -90,13 +90,43 @@ public class StatisticService implements IStatisticService {
 
     @Override
     @Async
+    public CompletableFuture<List<PayLoadStatisticData>> getStaticOrder(int option, Date date) {
+        Instant instant = date.toInstant();
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        switch (option) {
+            case 0 -> {
+                return CompletableFuture.completedFuture(getDailyOrder(date, null));
+            }
+            case 1 -> {
+                LocalDate startDate = YearMonth.from(localDate).atDay(1);
+                LocalDate endDate = startDate.plusMonths(1);
+                List<Object[]> rawResults = ordersRepository.findMonthlyOrder(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()), Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                return CompletableFuture.completedFuture(rawResults.stream().map(r -> {
+                    Timestamp timestamp = (Timestamp) r[0];
+                    return new PayLoadStatisticData(new Date(timestamp.getTime()), Double.parseDouble(r[1].toString()));
+                }).collect(Collectors.toList()));
+            }
+            case 2 -> {
+                LocalDate startDate = localDate.minusYears(1);
+                List<Object[]> rawResults = ordersRepository.findYearlyOrder(Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()), date);
+                return CompletableFuture.completedFuture(rawResults.stream().map(r -> {
+                            return new PayLoadStatisticData(r[0].toString(), Double.parseDouble(r[1].toString()));
+                        }
+                ).toList());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    @Async
     public CompletableFuture<List<PayLoadStatisticData>> getStaticRevenueByStore(int option, Date date, UUID userId) {
         Instant instant = date.toInstant();
         LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
         Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Store not found"));
         switch (option) {
             case 0 -> {
-//                startDate = date.minusDays(7);
+
                 return CompletableFuture.completedFuture(getDailyRevenue(date, store.getId()));
             }
             case 1 -> {
@@ -130,7 +160,7 @@ public class StatisticService implements IStatisticService {
         Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Store not found"));
         switch (option) {
             case 0 -> {
-//                startDate = date.minusDays(7);
+
                 return CompletableFuture.completedFuture(getDailyOrder(date, store.getId()));
             }
             case 1 -> {
