@@ -176,7 +176,7 @@ public class ProductService implements IProductService {
             for (AttributeValueUpdate data : product.getListAddAttribute()) {
                 Attribute tmp = attributeRepository.save(new Attribute(existingProduct.getId(), data.getName()));
                 if (data.getValues().size() > 0) {
-                    for (AttributeValueUpdate value : product.getListAddAttributeValue()) {
+                    for (AttributeValueUpdate value : data.getValues()) {
                         attributeValueRepository.save(new AttributeValue(tmp.getId(), null, null, null, value.getName()));
                     }
                 }
