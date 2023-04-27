@@ -20,7 +20,7 @@ public class AttributeDto extends AttributeUpdateDto {
     public Date updateAt ;
     @JsonProperty(value = "isDeleted")
     public Boolean isDeleted  = false;
-    @JsonProperty(value = " attributeValues")
+    @JsonProperty(value = "attributeValues")
     public List<AttributeValueDto> attributeValueByAttribute;
 }
 
