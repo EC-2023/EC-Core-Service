@@ -4,8 +4,8 @@ package src.service.Cart.Dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import src.model.Store;
 import src.service.CartItems.Dtos.CartItemsDto;
+import src.service.Store.Dtos.StoreProductDto;
 
 import java.util.Date;
 import java.util.List;
@@ -26,6 +26,6 @@ public class CartDto extends CartUpdateDto {
    @JsonProperty(value = "cartItems")
    public List<CartItemsDto> cartItemsByCartId ;
    @JsonProperty(value = "store")
-   public Store storeByStoreId;
+   public StoreProductDto storeByStoreId;
 }
 

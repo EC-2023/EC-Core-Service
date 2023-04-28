@@ -5,7 +5,6 @@ package src.service.Orders;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
-import org.aspectj.weaver.ast.Or;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -423,13 +422,14 @@ public class OrdersService implements IOrdersService {
                         .orElseThrow(() -> new NotFoundException("Not found product"));
                 product.setQuantity(product.getQuantity() - item.getQuantity());
                 product.setQuantity(product.getSold() - item.getQuantity());
+                product.setSold(product.getSold() - item.getQuantity());
                 productList.add(product);
             }
             if (productList.size() > 0) {
                 productRepository.saveAll(productList);
             }
         } else {
-            throw new RuntimeException("Only store admin or buyer can finish order");
+            throw new RuntimeException("Only admin or buyer can finish order");
         }
         return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
     }

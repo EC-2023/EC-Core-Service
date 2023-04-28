@@ -22,7 +22,6 @@ public class ProductDto extends ProductUpdateDto {
     public Boolean isDeleted = false;
     @JsonProperty(value = "isActive", required = true)
     public boolean isActive;
-
     @JsonProperty(value = "images")
     public Collection<ProductImgDto> productImgsByProductId;
 
