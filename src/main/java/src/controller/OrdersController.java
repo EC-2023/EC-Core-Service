@@ -98,6 +98,20 @@ public class OrdersController {
         return ordersService.cancelOrder(userId, id);
     }
 
+    @PatchMapping(value = "/{id}/update-delivery")
+    @Authenticate
+    public CompletableFuture<OrdersDto> confirmDelivery(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.confirmDelivery(userId, id);
+    }
+
+    @PatchMapping(value = "/{id}/cancel-delivery")
+    @Authenticate
+    public CompletableFuture<OrdersDto> cancelDelivery(@PathVariable UUID id) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return ordersService.cancelDelivery(userId, id);
+    }
+
     @PatchMapping(value = "/{id}/update-success")
     @Authenticate
     public CompletableFuture<OrdersDto> doneOrder(@PathVariable UUID id) {

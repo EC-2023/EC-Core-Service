@@ -5,6 +5,7 @@ package src.service.Orders;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.aspectj.weaver.ast.Or;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -260,6 +261,29 @@ public class OrdersService implements IOrdersService {
         return order;
     }
 
+
+    @Async
+    @Override
+    public CompletableFuture<OrdersDto> confirmDelivery(UUID userId, UUID orderId) {
+        //Get StoreId
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order"));
+        //Get OwnerId
+      User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user"));
+        //Check userId == OwnerId
+        if (user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+           if (order.getStatus() == OrderStatus.PROCESSING.ordinal()) {
+                order.setStatus(OrderStatus.DELIVERING.ordinal());
+            } else {
+                throw new BadRequestException("Can't change status");
+            }
+        } else {
+            throw new BadRequestException("Only admin can confirm delivery status");
+        }
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
+    }
+
     @Async
     public CompletableFuture<OrdersDto> acceptOrder(UUID userId, UUID orderId) {
         //Get StoreId
@@ -272,8 +296,6 @@ public class OrdersService implements IOrdersService {
         if (userId.equals(store.getOwnId())) {
             if (order.getStatus() == OrderStatus.NOT_PROCESSED.ordinal()) {
                 order.setStatus(OrderStatus.PROCESSING.ordinal());
-            } else if (order.getStatus() == OrderStatus.PROCESSING.ordinal()) {
-                order.setStatus(OrderStatus.DELIVERING.ordinal());
             } else {
                 throw new BadRequestException("Can't change status");
             }
@@ -325,6 +347,39 @@ public class OrdersService implements IOrdersService {
                 throw new BadRequestException("Can't change status");
             }
 
+        } else {
+            throw new BadRequestException("Not allow to cancel order");
+        }
+        return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
+    }
+    @Override
+    @Async
+    public CompletableFuture<OrdersDto> cancelDelivery(UUID userId, UUID orderId) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Not found order"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user"));
+
+        //Check userId == OwnerId
+        if (user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            if (order.getStatus() == OrderStatus.DELIVERING.ordinal()) {
+                if (order.isPaidBefore()){
+                    User buyer = userRepository.findById(order.getUserId())
+                            .orElseThrow(() -> new NotFoundException("Not found buyer"));
+                    buyer.setEWallet(buyer.getEWallet() + order.getAmountFromUser());
+                    List<OrderItems> orderItems = orderItemsRepository.findByOrderId(order.getId());
+                    for (OrderItems orderItem : orderItems){
+                        Product product = productRepository.findById(orderItem.getProductId())
+                                .orElseThrow(() -> new NotFoundException("Not found product"));
+                        product.setQuantity(product.getQuantity() + orderItem.getQuantity());
+                        productRepository.save(product);
+                    }
+                    userRepository.save(buyer);
+                }
+                order.setStatus(OrderStatus.CANCELLED.ordinal());
+            } else {
+                throw new BadRequestException("Can't change status");
+            }
         } else {
             throw new BadRequestException("Not allow to cancel order");
         }
