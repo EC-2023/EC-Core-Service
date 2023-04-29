@@ -82,7 +82,7 @@ public class CartController {
     }
 
     @Authenticate
-    @PostMapping(value = "/my-carts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/my-carts", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<List<CartDto>> getMyCarts() {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return cartService.getMyCarts(userId);
