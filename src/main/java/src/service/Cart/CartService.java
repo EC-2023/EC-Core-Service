@@ -16,14 +16,8 @@ import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
-import src.model.AttributeValue;
-import src.model.Cart;
-import src.model.CartItems;
-import src.model.Product;
-import src.repository.IAttributeValueRepository;
-import src.repository.ICartItemsRepository;
-import src.repository.ICartRepository;
-import src.repository.IProductRepository;
+import src.model.*;
+import src.repository.*;
 import src.service.Cart.Dtos.CartCreateDto;
 import src.service.Cart.Dtos.CartDto;
 import src.service.Cart.Dtos.CartUpdateDto;
@@ -40,6 +34,7 @@ public class CartService implements ICartService {
     private final ICartRepository cartRepository;
 
     private final ICartItemsRepository cartItemsRepository;
+    private final IUserRepository userRepository;
     private final ModelMapper toDto;
     final
     ICartItemsService cartItemsService;
@@ -49,9 +44,10 @@ public class CartService implements ICartService {
     @PersistenceContext
     EntityManager em;
 
-    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository) {
+    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, IUserRepository userRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository) {
         this.cartRepository = cartRepository;
         this.cartItemsRepository = cartItemsRepository;
+        this.userRepository = userRepository;
         this.toDto = toDto;
         this.cartItemsService = cartItemsService;
         this.productRepository = productRepository;
@@ -82,9 +78,20 @@ public class CartService implements ICartService {
 
     @Async
     @Override
-    public CompletableFuture<List<CartDto>> getMyCarts(UUID userId) {
-        List<Cart> carts = cartRepository.findCartsByUserId(userId);
-        return CompletableFuture.completedFuture(carts.stream().map(x -> toDto.map(x, CartDto.class)).toList());
+    public CompletableFuture<PagedResultDto<CartDto>> getMyCarts(HttpServletRequest request, Integer limit, Integer skip) {
+        UUID userId = ((UUID) (request.getAttribute("id")));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user by id " + userId));
+        request.setAttribute("userId%7B%7Beq%7D%7D", userId);
+        Pagination pagination = Pagination.create(0, skip, limit);
+        ApiQuery<Cart> features = new ApiQuery<>(request, em, Cart.class, pagination);
+        pagination.setTotal(features.filter().orderBy().exec().size());
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
+                features.filter().orderBy().paginate().exec().stream().map(x ->
+                        {
+                            return toDto.map(x, CartDto.class);
+                        }
+
+                ).toList()));
     }
 
     @Async

@@ -83,10 +83,12 @@ public class CartController {
 
     @Authenticate
     @GetMapping(value = "/my-carts", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<List<CartDto>> getMyCarts() {
-        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return cartService.getMyCarts(userId);
+    public CompletableFuture<PagedResultDto<CartDto>> getMyCarts(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                 @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                 @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return cartService.getMyCarts(request, limit, skip);
     }
+
 
     @Authenticate
     @DeleteMapping(value = "/remove/{cartItemID}", produces = MediaType.APPLICATION_JSON_VALUE)
