@@ -186,7 +186,7 @@ public class ProductService implements IProductService {
         if (product.getListRemoveAttribute().size() > 0) {
             attributes = new ArrayList<>();
             for (AttributeValueUpdate data : product.getListRemoveAttribute()) {
-                Attribute tmp = attributeRepository.findById(data.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                Attribute tmp = attributeRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
                 tmp.setIsDeleted(true);
                 attributes.add(tmp);
             }
@@ -196,7 +196,7 @@ public class ProductService implements IProductService {
         if (product.getListEditAttribute().size() > 0) {
             attributes = new ArrayList<>();
             for (AttributeValueUpdate data : product.getListEditAttribute()) {
-                Attribute tmp = attributeRepository.findById(data.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                Attribute tmp = attributeRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
                 tmp.setName(data.getName());
                 attributes.add(tmp);
             }
@@ -215,7 +215,7 @@ public class ProductService implements IProductService {
         if (product.getListRemoveAttributeValue().size() > 0) {
             attributeValuess = new ArrayList<>();
             for (AttributeValueUpdate data : product.getListRemoveAttributeValue()) {
-                AttributeValue tmp = attributeValueRepository.findById(data.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                AttributeValue tmp = attributeValueRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
                 tmp.setIsDeleted(true);
                 attributeValuess.add(tmp);
             }
@@ -225,7 +225,7 @@ public class ProductService implements IProductService {
         if (product.getListEditAttributeValue().size() > 0) {
             attributes = new ArrayList<>();
             for (AttributeValueUpdate data : product.getListEditAttributeValue()) {
-                AttributeValue tmp = attributeValueRepository.findById(data.getId()).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
+                AttributeValue tmp = attributeValueRepository.findById(UUID.fromString(data.getId())).orElseThrow(() -> new NotFoundException("Unable to find attribute!"));
                 tmp.setName(data.getName());
                 attributeValuess.add(tmp);
             }

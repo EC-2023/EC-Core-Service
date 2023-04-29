@@ -170,39 +170,30 @@ public class CartService implements ICartService {
         List<CartItems> cartItems = cartItemsRepository.findByCartItemByProductId(cartItemsCreateDto.getProductId());
         if (cartItems.size() > 0) {
             for (CartItems cartItem : cartItems) {
-                String check = "";
+                StringBuilder check = new StringBuilder();
                 for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {
                     Hibernate.initialize(attributeValue.getAttributeByAttributeId());
-                    check += attributeValue.getAttributeByAttributeId().getName() + ": " + attributeValue.getName() + ", ";
+                    check.append(attributeValue.getAttributeByAttributeId().getName()).append(": ").append(attributeValue.getName()).append(", ");
                 }
                 for (String val : cartItemsCreateDto.getAttributesValues()) {
-                    if (check.contains(val)) {
+                    if (check.toString().contains(val)) {
                         cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
                         return CompletableFuture.completedFuture(toDto.map(cartItemsRepository.save(cartItem), CartItemsDto.class));
                     }
                 }
             }
-//            cartItem.getAttributeValuesByCartItemId();
-//            if (cartItem.getAttributesValues().equals(cartItemsCreateDto.getAttributesValues())) {
-//                cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
-//                cartItem.setUpdateAt(new Date(new java.util.Date().getTime()));
-//                cartItem = cartItemsRepository.save(cartItem);
-//                return CompletableFuture.completedFuture(toDto.map(cartItem, CartItemsDto.class));
-//            }
-        } else {
-            CartItems cartItem = toDto.map(cartItemsCreateDto, CartItems.class);
-            cartItem.setCartId(cart.getId());
-            cartItem = cartItemsRepository.save(cartItem);
-            if (cartItemsCreateDto.getAttributesValues().size() > 0) {
-                List<AttributeValue> attributeValues = new ArrayList<>();
-                for (String attributeValue : cartItemsCreateDto.getAttributesValues()) {
-                    attributeValues.add(new AttributeValue(null, cartItem.getId(), null, null, attributeValue));
-                }
-                attributeValueRepository.saveAll(attributeValues);
-            }
-            return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
         }
-        return null;
+        CartItems cartItem = toDto.map(cartItemsCreateDto, CartItems.class);
+        cartItem.setCartId(cart.getId());
+        cartItem = cartItemsRepository.save(cartItem);
+        if (cartItemsCreateDto.getAttributesValues().size() > 0) {
+            List<AttributeValue> attributeValues = new ArrayList<>();
+            for (String attributeValue : cartItemsCreateDto.getAttributesValues()) {
+                attributeValues.add(new AttributeValue(null, cartItem.getId(), null, null, attributeValue));
+            }
+            attributeValueRepository.saveAll(attributeValues);
+        }
+        return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
     }
 
     @Async
