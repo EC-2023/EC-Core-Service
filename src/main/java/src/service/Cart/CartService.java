@@ -88,6 +88,7 @@ public class CartService implements ICartService {
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
                 features.filter().orderBy().paginate().exec().stream().map(x ->
                         {
+                            Hibernate.initialize(x.getCartItemsByCartId());
                             return toDto.map(x, CartDto.class);
                         }
 
@@ -159,25 +160,49 @@ public class CartService implements ICartService {
     @Async
     @Override
     public CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto cartItemsCreateDto, UUID userId) {
-
+        toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Product product = productRepository.findById(cartItemsCreateDto.getProductId()).orElseThrow(() -> new NotFoundException("Not found product"));
         Cart cart = cartRepository.findCartsByUserIdAndStoreId(userId, product.getStoreId());
         if (cart == null) {
             cart = new Cart(userId, product.getStoreId());
             cart = cartRepository.save(cart);
         }
-        toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        CartItems cartItems = toDto.map(cartItemsCreateDto, CartItems.class);
-        cartItems.setCartId(cart.getId());
-        cartItems = cartItemsRepository.save(cartItems);
-        if (cartItemsCreateDto.getAttributesValues().size() > 0) {
-            List<AttributeValue> attributeValues = new ArrayList<>();
-            for (String attributeValue : cartItemsCreateDto.getAttributesValues()) {
-                attributeValues.add(new AttributeValue(null, cartItems.getId(), null, null, attributeValue));
+        List<CartItems> cartItems = cartItemsRepository.findByCartItemByProductId(cartItemsCreateDto.getProductId());
+        if (cartItems.size() > 0) {
+            for (CartItems cartItem : cartItems) {
+                String check = "";
+                for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {
+                    Hibernate.initialize(attributeValue.getAttributeByAttributeId());
+                    check += attributeValue.getAttributeByAttributeId().getName() + ": " + attributeValue.getName() + ", ";
+                }
+                for (String val : cartItemsCreateDto.getAttributesValues()) {
+                    if (check.contains(val)) {
+                        cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
+                        return CompletableFuture.completedFuture(toDto.map(cartItemsRepository.save(cartItem), CartItemsDto.class));
+                    }
+                }
             }
-            attributeValueRepository.saveAll(attributeValues);
+//            cartItem.getAttributeValuesByCartItemId();
+//            if (cartItem.getAttributesValues().equals(cartItemsCreateDto.getAttributesValues())) {
+//                cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
+//                cartItem.setUpdateAt(new Date(new java.util.Date().getTime()));
+//                cartItem = cartItemsRepository.save(cartItem);
+//                return CompletableFuture.completedFuture(toDto.map(cartItem, CartItemsDto.class));
+//            }
+        } else {
+            CartItems cartItem = toDto.map(cartItemsCreateDto, CartItems.class);
+            cartItem.setCartId(cart.getId());
+            cartItem = cartItemsRepository.save(cartItem);
+            if (cartItemsCreateDto.getAttributesValues().size() > 0) {
+                List<AttributeValue> attributeValues = new ArrayList<>();
+                for (String attributeValue : cartItemsCreateDto.getAttributesValues()) {
+                    attributeValues.add(new AttributeValue(null, cartItem.getId(), null, null, attributeValue));
+                }
+                attributeValueRepository.saveAll(attributeValues);
+            }
+            return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
         }
-        return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
+        return null;
     }
 
     @Async

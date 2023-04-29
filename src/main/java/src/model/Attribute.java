@@ -12,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "attribute")
 @Data
-public class Attribute {
+public class    Attribute {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
     @Column(name = "attribute_id", nullable = false)
