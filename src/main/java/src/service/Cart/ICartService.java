@@ -17,6 +17,6 @@ public interface ICartService extends IService<CartDto, CartCreateDto, CartUpdat
     CompletableFuture<CartDto> getOneByUserId(UUID userId);
     CompletableFuture<CartDto> create(UUID userId) ;
     CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto input, UUID userId) throws ExecutionException, InterruptedException;
-    CompletableFuture<Boolean> removeFromCart(UUID productId, UUID userId);
+    CompletableFuture<Boolean> removeFromCart(UUID cartItemID, UUID userId);
     public CompletableFuture<List<CartDto>> getMyCarts(UUID userId);
 }

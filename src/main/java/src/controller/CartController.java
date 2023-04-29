@@ -88,10 +88,10 @@ public class CartController {
         return cartService.getMyCarts(userId);
     }
 
-//    @Authenticate
-//    @DeleteMapping(value = "/remove/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public CompletableFuture<Boolean> removeFromCart(@PathVariable UUID productId) {
-//        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-//        return cartService.removeFromCart(productId, userId);
-//    }
+    @Authenticate
+    @DeleteMapping(value = "/remove/{cartItemID}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<Boolean> removeFromCart(@PathVariable UUID cartItemID) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return cartService.removeFromCart(cartItemID, userId);
+    }
 }

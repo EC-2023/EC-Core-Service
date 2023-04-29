@@ -3,7 +3,6 @@ package src.controller.auth;
 import lombok.Data;
 
 @Data
-public class PayLoadResetPasswordByPhone {
-    String newPassword;
+public class TokenDto {
     String token;
 }

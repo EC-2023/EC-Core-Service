@@ -2,8 +2,10 @@
 package src.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import src.model.AttributeValue;
 
 import java.util.Collection;
@@ -19,6 +21,10 @@ public interface IAttributeValueRepository extends JpaRepository<AttributeValue,
 
     @Query("SELECT a FROM AttributeValue a WHERE a.attribute_id = ?1")
     List<AttributeValue> findAllByAttributeId(UUID id);
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM AttributeValue ci WHERE ci.cartItem_id = ?1")
+    void  deleteByCartItemId(UUID id);
 }
 
     

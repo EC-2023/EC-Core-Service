@@ -17,8 +17,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "users")
 @Data
-@DynamicUpdate
-@DynamicInsert
+//@DynamicUpdate
+//@DynamicInsert
 public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Id
@@ -42,6 +42,12 @@ public class User implements UserDetails {
     @Basic
     @Column(name = "id_card", nullable = false, length = 12)
     private String idCard = "";
+    @Basic
+    @Column(name = "request_count")
+    private int requestCount = 0;
+    @Basic
+    @Column(name = "last_request")
+    private Date lastRequest;
     @Basic
     @Column(name = "email", nullable = false, length = 50)
     private String email;
@@ -68,7 +74,7 @@ public class User implements UserDetails {
     @Column(name = "e_wallet", nullable = false, precision = 0)
     private double eWallet;
     @Basic
-    @Column(name = "token",  length = 255)
+    @Column(name = "token", length = 255)
     private String tokenResetPassword;
     @Basic
     @Column(name = "created_at")
@@ -120,30 +126,37 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "userByUserId")
     @Where(clause = "is_deleted = false")
     private Collection<UserFollowStore> userFollowStoresByUserId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(roleByRoleId.getName()));
     }
+
     @Override
     public String getPassword() {
         return this.hashedPassword;
     }
+
     @Override
     public String getUsername() {
         return this.email;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
     @Override
     public boolean isEnabled() {
         return !this.isDeleted;

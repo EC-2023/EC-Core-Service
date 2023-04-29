@@ -1,6 +1,5 @@
 package src.controller.auth;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,6 +7,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
@@ -21,10 +21,15 @@ import src.service.Email.EmailService;
 import src.service.SMS.SMSService;
 import src.service.User.Dtos.UserProfileDto;
 
-import java.io.IOException;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -38,6 +43,11 @@ public class AuthController {
     private final SMSService smsService;
     private final ModelMapper toDto;
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    //    @Value("${jwt.secret}")
+    private String ENCRYPTION_KEY = "Jf57xtfgC5X9tktm"; // Thay đổi bằng khóa bí mật 16 ký tự của bạn
+    private static final String AES_ALGORITHM = "AES";
+    @Value("${URL_FE}")
+    private String URL;
 
     public AuthController(EmailService emailService, JwtTokenUtil jwtUtil, IUserRepository userRepository, SMSService smsService, ModelMapper toDto) {
         this.emailService = emailService;
@@ -78,7 +88,7 @@ public class AuthController {
     }
 
     @PostMapping("/request-reset-password-by-email")
-    public ResponseEntity<?> requestPasswordResetByEmail(@RequestParam("email") String userEmail) throws MessagingException {
+    public ResponseEntity<?> requestResetPasswordByEmail(@RequestParam("email") String userEmail) throws MessagingException, UnsupportedEncodingException {
         User user = userRepository.findByEmail(userEmail);
         if (user == null) {
             throw new NotFoundException("User not found");
@@ -86,16 +96,16 @@ public class AuthController {
         String token = UUID.randomUUID().toString();
         LocalDateTime expiryDate = LocalDateTime.now().plusMinutes(5);
         TokenResetPasswordDto tokenResetPassword = new TokenResetPasswordDto(token, userEmail, expiryDate, 0);
-        user.setTokenResetPassword(encodeToken(tokenResetPassword));
-        user = userRepository.save(user);
-        String resetPasswordUrl = "http://localhost:8080/reset-password-by-email?token=" + tokenResetPassword;
+        setToken(user, tokenResetPassword);
+        userRepository.save(user);
+        String resetPasswordUrl = URL + URLEncoder.encode(user.getTokenResetPassword(), "UTF-8");
         emailService.sendResetPasswordEmail(userEmail, resetPasswordUrl);
         return ResponseEntity.ok(true);
     }
 
-    @PostMapping("/reset-password-by-email/{token}")
-    public ResponseEntity<?> resetPasswordByEmail(@PathVariable String token, @RequestBody String newPassword) {
-        User user = userRepository.findByTokenResetPassword(token).orElseThrow(() -> new NotFoundException("User not found"));
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPasswordByToken( @RequestBody PayLoadResetPasswordByPhone input) {
+        User user = userRepository.findByTokenResetPassword(input.getToken()).orElseThrow(() -> new NotFoundException("User not found"));
         TokenResetPasswordDto tokenResetPassword = decodeToken(user.getTokenResetPassword());
         if (tokenResetPassword == null || tokenResetPassword.isExpired()) {
             return ResponseEntity.badRequest().body("Token is expired");
@@ -103,37 +113,42 @@ public class AuthController {
         if (!tokenResetPassword.getEmail().equals(user.getEmail())) {
             return ResponseEntity.badRequest().body("Email not match!");
         }
-        user.setHashedPassword(JwtTokenUtil.hashPassword(newPassword));
+        user.setRequestCount(0);
+        user.setLastRequest(null);
+        user.setHashedPassword(JwtTokenUtil.hashPassword(input.getNewPassword()));
+        userRepository.save(user);
         return ResponseEntity.ok(true);
     }
 
-    @PostMapping("/request-reset-password-by-phone")
-    public void requestPasswordResetByPhone(@RequestParam("phone") String phoneNumber) {
+    @PostMapping("/request-pin/{phone}")
+    public void requestPin(@PathVariable("phone") String phoneNumber) {
         User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new NotFoundException("User not found"));
         TokenResetPasswordDto token = new TokenResetPasswordDto();
         token.setToken(generateRandomDigits());
         token.setEmail(user.getEmail());
-        token.setExpire(LocalDateTime.now().plusMinutes(5));
+        token.setExpired(LocalDateTime.now().plusMinutes(1).plusSeconds(2));
         token.setType(1);
-        user.setTokenResetPassword(encodeToken(token));
+        setToken(user, token);
         user = userRepository.save(user);
         String messageText = "Mã xác thực của bạn là: " + token.getToken();
         smsService.sendSMS(phoneNumber.replaceFirst("^0", "+84"), messageText);
     }
 
-    @PostMapping("/reset-password-by-email/{email}")
-    public ResponseEntity<?> resetPasswordByPhone(@PathVariable String email, @RequestBody PayLoadResetPasswordByPhone payload) {
-        User user = userRepository.findByPhoneNumber(payload.getPhone()).orElseThrow(() -> new NotFoundException("User not found"));
+    @PostMapping("/validate-pin/{phone}")
+    public ResponseEntity<?> validatePin(@PathVariable String phone, @RequestBody TokenDto input) throws UnsupportedEncodingException {
+        User user = userRepository.findByPhoneNumber(phone).orElseThrow(() -> new NotFoundException("User not found"));
         TokenResetPasswordDto tokenResetPassword = decodeToken(user.getTokenResetPassword());
         if (tokenResetPassword == null || tokenResetPassword.isExpired()) {
             return ResponseEntity.badRequest().body("Token is expired");
         }
-        if (!tokenResetPassword.getToken().equals(payload.getToken())) {
+        if (!tokenResetPassword.getToken().equals(input.getToken())) {
             return ResponseEntity.badRequest().body("Pin code is not correct!");
         }
-        user.setHashedPassword(JwtTokenUtil.hashPassword(payload.getNewPassword()));
+        tokenResetPassword.setExpired(LocalDateTime.now().plusMinutes(1).plusSeconds(2).plusSeconds(2));
+        user.setTokenResetPassword(encodeToken(tokenResetPassword));
         userRepository.save(user);
-        return ResponseEntity.ok(true);
+
+        return ResponseEntity.ok(URL + URLEncoder.encode(user.getTokenResetPassword(), "UTF-8"));
     }
 
     private String generateRandomDigits() {
@@ -149,19 +164,44 @@ public class AuthController {
     private String encodeToken(TokenResetPasswordDto tokenResetPassword) {
         try {
             String jsonString = objectMapper.writeValueAsString(tokenResetPassword);
-            return Base64.getEncoder().encodeToString(jsonString.getBytes(StandardCharsets.UTF_8));
-        } catch (JsonProcessingException e) {
+            byte[] encryptedBytes = encryptAES(jsonString.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encryptedBytes);
+        } catch (Exception e) {
             throw new RuntimeException("Error encoding token", e);
         }
     }
 
     private TokenResetPasswordDto decodeToken(String encodedToken) {
         try {
-            String jsonString = new String(Base64.getDecoder().decode(encodedToken), StandardCharsets.UTF_8);
+            byte[] decryptedBytes = decryptAES(Base64.getDecoder().decode(encodedToken));
+            String jsonString = new String(decryptedBytes, StandardCharsets.UTF_8);
             return objectMapper.readValue(jsonString, TokenResetPasswordDto.class);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error decoding token", e);
         }
     }
 
+    private byte[] encryptAES(byte[] data) throws Exception {
+        Key key = new SecretKeySpec(ENCRYPTION_KEY.getBytes(StandardCharsets.UTF_8), AES_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        return cipher.doFinal(data);
+    }
+
+    private byte[] decryptAES(byte[] encryptedData) throws Exception {
+        Key key = new SecretKeySpec(ENCRYPTION_KEY.getBytes(StandardCharsets.UTF_8), AES_ALGORITHM);
+        Cipher cipher = Cipher.getInstance(AES_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, key);
+        return cipher.doFinal(encryptedData);
+    }
+
+    private void setToken(User user, TokenResetPasswordDto token) {
+        user.setTokenResetPassword(encodeToken(token));
+        if (user.getRequestCount() > 3
+                && (user.getLastRequest() == null || user.getLastRequest().getTime() - new Date().getTime() < 24 * 60 * 60 * 1000)) {
+            throw new BadRequestException("Bạn đã gửi quá nhiều yêu cầu để cấp lại mật khẩu, hãy đợi 24h sau để thực hiện lại chức năng");
+        }
+        user.setRequestCount(user.getRequestCount() + 1);
+        user.setLastRequest(new Date(new Date().getTime()));
+    }
 }

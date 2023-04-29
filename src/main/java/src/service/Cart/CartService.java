@@ -5,6 +5,7 @@ package src.service.Cart;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
 import src.model.AttributeValue;
@@ -82,7 +84,7 @@ public class CartService implements ICartService {
     @Override
     public CompletableFuture<List<CartDto>> getMyCarts(UUID userId) {
         List<Cart> carts = cartRepository.findCartsByUserId(userId);
-        return CompletableFuture.completedFuture(carts.stream().map( x -> toDto.map(x, CartDto.class)).toList());
+        return CompletableFuture.completedFuture(carts.stream().map(x -> toDto.map(x, CartDto.class)).toList());
     }
 
     @Async
@@ -173,21 +175,16 @@ public class CartService implements ICartService {
 
     @Async
     @Override
-    public CompletableFuture<Boolean> removeFromCart(UUID productId, UUID userId) {
+    public CompletableFuture<Boolean> removeFromCart(UUID cartItemID, UUID userId) {
 
-//        CartDto cartDto = null;
-//        try {
-//            cartDto = getOneByUserId(userId).get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (cartDto != null) {
-//            return cartItemsService.removeByCartIdAndProductId(cartDto.getId(), productId);
-//        }
-//
-//        return CompletableFuture.completedFuture(false);
-        return null;
+        CartItems cartItem = cartItemsRepository.findById(cartItemID).orElseThrow(() -> new NotFoundException("Not found cart item"));
+        Hibernate.initialize(cartItem.getCartByCartId());
+        if (cartItem.getCartByCartId().getUserId().equals(userId)) {
+            attributeValueRepository.deleteByCartItemId(cartItemID);
+            cartItemsRepository.delete(cartItem);
+            return CompletableFuture.completedFuture(true);
+        }
+        throw new BadRequestException("Don't have permission to delete this cart item");
     }
 
 }
