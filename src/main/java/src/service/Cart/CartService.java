@@ -174,8 +174,7 @@ public class CartService implements ICartService {
             for (CartItems cartItem : cartItems) {
                 StringBuilder check = new StringBuilder();
                 for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {
-                    Attribute attr = attributeRepository.findById(attributeValue.getAttribute_id()).orElseThrow(() -> new NotFoundException("Not found attribute"));
-                    check.append(attr.getName()).append(": ").append(attributeValue.getName()).append(", ");
+                    check.append(attributeValue.getName()).append(", ");
                 }
                 for (String val : cartItemsCreateDto.getAttributesValues()) {
                     if (check.toString().contains(val)) {
