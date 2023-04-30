@@ -41,10 +41,12 @@ public class CartService implements ICartService {
     final
     IProductRepository productRepository;
     private final IAttributeValueRepository attributeValueRepository;
+    private final IAttributeRepository attributeRepository;
+
     @PersistenceContext
     EntityManager em;
 
-    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, IUserRepository userRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository) {
+    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, IUserRepository userRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository, IAttributeRepository attributeRepository) {
         this.cartRepository = cartRepository;
         this.cartItemsRepository = cartItemsRepository;
         this.userRepository = userRepository;
@@ -52,6 +54,7 @@ public class CartService implements ICartService {
         this.cartItemsService = cartItemsService;
         this.productRepository = productRepository;
         this.attributeValueRepository = attributeValueRepository;
+        this.attributeRepository = attributeRepository;
     }
 
     @Async
@@ -171,8 +174,8 @@ public class CartService implements ICartService {
             for (CartItems cartItem : cartItems) {
                 StringBuilder check = new StringBuilder();
                 for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {
-                    Hibernate.initialize(attributeValue.getAttributeByAttributeId());
-                    check.append(attributeValue.getAttributeByAttributeId().getName()).append(": ").append(attributeValue.getName()).append(", ");
+                    Attribute attr = attributeRepository.findById(attributeValue.getAttribute_id()).orElseThrow(() -> new NotFoundException("Not found attribute"));
+                    check.append(attr.getName()).append(": ").append(attributeValue.getName()).append(", ");
                 }
                 for (String val : cartItemsCreateDto.getAttributesValues()) {
                     if (check.toString().contains(val)) {

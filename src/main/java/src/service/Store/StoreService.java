@@ -113,7 +113,7 @@ public class StoreService implements IStoreService {
     public CompletableFuture<PagedResultDto<OrdersDto>> findOrderByStore(HttpServletRequest request, Integer limit, Integer skip) {
         UUID userId = ((UUID) (request.getAttribute("id")));
         Store existingStore = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
-        request.setAttribute("storeId%7B%7Beq%7D%7D", existingStore.getId());
+        request.setAttribute("custom", request.getQueryString() + "&storeId%7B%7Beq%7D%7D=" + existingStore.getId());
         Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
         long total = features.filter().orderBy().exec().size();
@@ -135,7 +135,8 @@ public class StoreService implements IStoreService {
     public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, Integer limit, Integer skip) {
         UUID userId = ((UUID) (request.getAttribute("id")));
         Store existingStore = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
-        request.setAttribute("storeId%7B%7Beq%7D%7D", existingStore.getId());
+
+        request.setAttribute("custom", request.getQueryString() + "&storeId%7B%7Beq%7D%7D=" + existingStore.getId());
         Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Product> features = new ApiQuery<>(request, em, Product.class, pagination);
         long total = features.filter().orderBy().exec().size();
