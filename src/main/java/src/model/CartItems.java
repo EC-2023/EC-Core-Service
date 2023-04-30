@@ -41,7 +41,7 @@ public class CartItems {
    //  @Where(clause = "isDeleted = false")
     private Cart cartByCartId;
     @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id",  insertable = false, updatable = false)
    //  @Where(clause = "isDeleted = false")
     @Where(clause = "is_deleted = false AND is_active = true")
     private Product productByProductId;

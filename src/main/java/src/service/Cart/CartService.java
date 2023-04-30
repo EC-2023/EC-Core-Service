@@ -197,10 +197,8 @@ public class CartService implements ICartService {
         return CompletableFuture.completedFuture(toDto.map(cartItems, CartItemsDto.class));
     }
 
-    @Async
     @Override
     public CompletableFuture<Boolean> removeFromCart(UUID cartItemID, UUID userId) {
-
         CartItems cartItem = cartItemsRepository.findById(cartItemID).orElseThrow(() -> new NotFoundException("Not found cart item"));
         Hibernate.initialize(cartItem.getCartByCartId());
         if (cartItem.getCartByCartId().getUserId().equals(userId)) {
