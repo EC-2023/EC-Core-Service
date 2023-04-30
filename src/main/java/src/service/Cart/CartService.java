@@ -81,7 +81,7 @@ public class CartService implements ICartService {
     public CompletableFuture<PagedResultDto<CartDto>> getMyCarts(HttpServletRequest request, Integer limit, Integer skip) {
         UUID userId = ((UUID) (request.getAttribute("id")));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Not found user by id " + userId));
-        request.setAttribute("userId%7B%7Beq%7D%7D", userId);
+        request.setAttribute("custom", request.getQueryString() + "&userId%7B%7Beq%7D%7D=" + userId);
         Pagination pagination = Pagination.create(0, skip, limit);
         ApiQuery<Cart> features = new ApiQuery<>(request, em, Cart.class, pagination);
         pagination.setTotal(features.filter().orderBy().exec().size());
@@ -91,7 +91,6 @@ public class CartService implements ICartService {
                             Hibernate.initialize(x.getCartItemsByCartId());
                             return toDto.map(x, CartDto.class);
                         }
-
                 ).toList()));
     }
 

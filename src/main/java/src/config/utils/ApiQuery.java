@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,9 @@ public class ApiQuery<T> {
 //        req.getAttribute("user")
 //        predicates.add(cb.equal(root.get("isDeleted"), false));
         String queryString;
-        queryString = URLDecoder.decode(req.getQueryString(), StandardCharsets.UTF_8);
+        if (req.getAttribute("custom") == null)
+            queryString = URLDecoder.decode(req.getQueryString(), StandardCharsets.UTF_8);
+        else queryString = URLDecoder.decode(req.getAttribute("custom").toString(), StandardCharsets.UTF_8);
         if (queryString != null) {
             Pattern pattern = Pattern.compile("(?i)(\\w+)\\{\\{(lt|lte|gt|gte|neq|in|eq|search)}}=(.*?)(&|$)");
             Matcher matcher = pattern.matcher(queryString);
@@ -60,7 +63,10 @@ public class ApiQuery<T> {
                         }
                     }
                     case "eq" -> {
-                        predicates.add(cb.equal(root.get(matcher.group(1)), matcher.group(3)));
+                        if (matcher.group(1).contains("Id")) {
+                            predicates.add(cb.equal(root.get(matcher.group(1)), UUID.fromString(matcher.group(3))));
+                        } else
+                            predicates.add(cb.equal(root.get(matcher.group(1)), matcher.group(3)));
                     }
                     case "in" -> {
                         String[] list = matcher.group(3).split("\\s*,\\s*");
