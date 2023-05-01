@@ -79,7 +79,7 @@ public class Product {
     @Where(clause = "is_deleted = false")
     private Category categoryByCategoryId;
     @ManyToOne
-    @JoinColumn(name = "store_id", referencedColumnName = "store_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "store_id", referencedColumnName = "store_id",  insertable = false, updatable = false)
     private Store storeByStoreId;
     @OneToMany(mappedBy = "productByProductId", fetch = FetchType.EAGER)
     @Where(clause = "is_deleted = false")
