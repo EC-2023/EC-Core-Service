@@ -26,7 +26,7 @@ public class OrdersDto extends OrdersUpdateDto {
     @JsonProperty(value = "updateAt", required = true)
     public Date updateAt;
     @JsonProperty(value = "delivery")
-    public DeliveryDto deliveryByDeliveryId;
+    public DeliveryDto D;
     @JsonIgnore
     public double amountToGd;
     @JsonProperty(value = "orderItems")

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import src.config.annotation.ApiPrefixController;
 import src.config.dto.PagedResultDto;
+import src.model.CartItems;
 import src.service.Delivery.Dtos.DeliveryCreateDto;
 import src.service.Delivery.Dtos.DeliveryDto;
 import src.service.Delivery.Dtos.DeliveryUpdateDto;
@@ -63,5 +64,11 @@ public class DeliveryController {
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
         return deliveryService.remove(id);
+    }
+
+    @GetMapping(value = "/calc-price", produces = MediaType.APPLICATION_JSON_VALUE)
+    public long calcPrice(UUID deliveryId, String cityDest, List<CartItems> items)
+    {
+        return deliveryService.calcPrice(deliveryId, cityDest, items);
     }
 }
