@@ -24,4 +24,5 @@ public interface ICartService extends IService<CartDto, CartCreateDto, CartUpdat
     CompletableFuture<Boolean> removeFromCart(UUID cartItemID, UUID userId);
 
     public CompletableFuture<PagedResultDto<CartDto>> getMyCarts(HttpServletRequest request, Integer limit, Integer skip);
+    public CompletableFuture<Boolean> removeAllCart(UUID userId);
 }

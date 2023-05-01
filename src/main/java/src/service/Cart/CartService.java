@@ -11,6 +11,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
 import src.config.exception.BadRequestException;
@@ -198,6 +199,7 @@ public class CartService implements ICartService {
     }
 
     @Override
+    @Transactional
     public CompletableFuture<Boolean> removeFromCart(UUID cartItemID, UUID userId) {
         CartItems cartItem = cartItemsRepository.findById(cartItemID).orElseThrow(() -> new NotFoundException("Not found cart item"));
         Hibernate.initialize(cartItem.getCartByCartId());
@@ -207,6 +209,21 @@ public class CartService implements ICartService {
             return CompletableFuture.completedFuture(true);
         }
         throw new BadRequestException("Don't have permission to delete this cart item");
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<Boolean> removeAllCart(UUID userId) {
+        List<Cart> carts = cartRepository.findCartsByUserId(userId);
+        for (Cart cart : carts) {
+            List<CartItems> cartItems = cartItemsRepository.findByCartId(cart.getId());
+            for (CartItems cartItem : cartItems) {
+                Hibernate.initialize(cartItem.getCartByCartId());
+                attributeValueRepository.deleteByCartItemId(cartItem.getId());
+                cartItemsRepository.delete(cartItem);
+            }
+        }
+        return CompletableFuture.completedFuture(true);
     }
 
 }

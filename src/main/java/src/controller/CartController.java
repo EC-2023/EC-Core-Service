@@ -96,4 +96,11 @@ public class CartController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return cartService.removeFromCart(cartItemID, userId);
     }
+
+    @Authenticate
+    @DeleteMapping(value = "/remove-all", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<Boolean> removeAllCart() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return cartService.removeAllCart(userId);
+    }
 }
