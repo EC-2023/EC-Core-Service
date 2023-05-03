@@ -44,7 +44,7 @@ public class ApiQuery<T> {
         else
             queryString = URLDecoder.decode(req.getAttribute("custom").toString(), StandardCharsets.UTF_8);
         if (req.getAttribute("category") != null) {
-            queryString = req.getQueryString() + "&categoryId%7B%7Beq%7D%7D=1";
+            queryString = URLDecoder.decode(req.getQueryString() + "&categoryId%7B%7Bin%7D%7D=1", StandardCharsets.UTF_8) ;
         }
         if (queryString != null) {
             Pattern pattern = Pattern.compile("(?i)(\\w+)\\{\\{(lt|lte|gt|gte|neq|in|eq|search)}}=(.*?)(&|$)");
@@ -73,7 +73,7 @@ public class ApiQuery<T> {
                             predicates.add(cb.equal(root.get(matcher.group(1)), matcher.group(3)));
                     }
                     case "in" -> {
-                        if (matcher.group(1).contains("Id")) {
+                        if (matcher.group(1).contains("categoryId")) {
                             List<UUID> list = (List<UUID>) req.getAttribute("category");
                             predicates.add(root.get(matcher.group(1)).in(list));
                         } else {

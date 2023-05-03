@@ -12,10 +12,10 @@ import java.util.UUID;
 @Repository
 public interface ICategoryRepository extends JpaRepository<Category, UUID> {
     //    @Query("SELECT c FROM Category c WHERE c.Id = ?1")
-    @Query("SELECT c FROM Category c WHERE c.parentCategoryId IS NOT NULL")
+    @Query("SELECT c FROM Category c WHERE c.parentCategoryId IS NULL")
     List<Category> findFeatureCategories();
     @Query("SELECT c FROM Category c WHERE c.parentCategoryId = ?1")
-    Category findAllChild(UUID id);
+    List<Category> findAllChild(UUID id);
 
     List<Category> findByNameStartingWithIgnoreCase(String name);
 }

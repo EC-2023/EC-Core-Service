@@ -91,12 +91,17 @@ public class ProductService implements IProductService {
         if (cateId != null) {
             List<UUID> cates = new ArrayList<>();
             cates.add(UUID.fromString(cateId));
-            Category cate = categoryRepository.findAllChild(UUID.fromString(cateId));
-            Category tmp = cate.getParentCategory();
-            while (tmp != null) {
-                cates.add(tmp.getParentCategoryId());
-                tmp = tmp.getParentCategory();
+            List<Category> categories = categoryRepository.findAllChild(UUID.fromString(cateId));
+            for (Category cate : categories) {
+                if (cate != null) {
+                    Category tmp = cate.getParentCategory();
+                    while (tmp != null) {
+                        cates.add(tmp.getId());
+                        tmp = tmp.getParentCategory();
+                    }
+                }
             }
+
             request.setAttribute("category", cates);
         }
         ApiQuery<Product> features = new ApiQuery<>(request, em, Product.class, pagination);
