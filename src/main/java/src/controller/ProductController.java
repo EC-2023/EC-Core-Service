@@ -8,7 +8,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
+import src.config.annotation.RequiresAuthorization;
 import src.config.dto.PagedResultDto;
+import src.config.utils.Constant;
 import src.service.Product.Dtos.PayLoadUpdateProduct;
 import src.service.Product.Dtos.ProductCreatePayload;
 import src.service.Product.Dtos.ProductDetailDto;
@@ -71,6 +73,7 @@ public class ProductController {
     }
 
     @Authenticate
+    @RequiresAuthorization(Constant.VENDOR)
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "products", description = "Operations related to products")
 //    @Operation(summary = "Hello API")
@@ -79,6 +82,7 @@ public class ProductController {
     }
 
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequiresAuthorization(Constant.VENDOR)
 //    @Tag(name = "products", description = "Operations related to products")
 //    @Operation(summary = "Remove")
     public CompletableFuture<Void> remove(@PathVariable UUID id) {
@@ -87,6 +91,7 @@ public class ProductController {
 
 
     @Authenticate
+    @RequiresAuthorization(Constant.VENDOR)
     @PatchMapping(value = "/{id}/update-quantity", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateQuantity(@PathVariable("id") UUID productId,
                                                         @RequestParam int quantity) {
@@ -95,6 +100,7 @@ public class ProductController {
     }
 
     @Authenticate
+    @RequiresAuthorization(Constant.ADMIN)
     @PatchMapping(value = "/{id}/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateStatusProduct(@PathVariable("id") UUID productId,
                                                              @RequestParam boolean status) {
@@ -103,6 +109,7 @@ public class ProductController {
     }
 
     @Authenticate
+    @RequiresAuthorization(Constant.VENDOR)
     @PatchMapping(value = "/{id}/update-active", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<ProductDto> updateActiveProduct(@PathVariable("id") UUID productId,
                                                              @RequestParam boolean status) {

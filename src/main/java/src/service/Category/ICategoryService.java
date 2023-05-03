@@ -7,10 +7,9 @@ import src.service.Category.Dtos.CategoryUpdateDto;
 import src.service.IService;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface ICategoryService extends IService<CategoryDto, CategoryCreateDto, CategoryUpdateDto> {
-//    public CompletableFuture<List<CategoryDto>> get(UUID parentCategoryId);
-public CompletableFuture<List<CategoryDto>> getCategoryFeatures(UUID parentCategoryId);
+    //    public CompletableFuture<List<CategoryDto>> get(UUID parentCategoryId);
+    public CompletableFuture<List<CategoryDto>> getCategoryFeatures();
 }

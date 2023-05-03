@@ -67,9 +67,9 @@ public class CategoryController {
         return categoryService.remove(id);
     }
 
-    @GetMapping("/{id}/features")
-    public CompletableFuture<List<CategoryDto>> getCategoryFeatures(@PathVariable("id") UUID parentCategoryId) {
-        return categoryService.getCategoryFeatures(parentCategoryId);
+    @GetMapping("/features")
+    public CompletableFuture<List<CategoryDto>> getCategoryFeatures() {
+        return categoryService.getCategoryFeatures();
     }
 
 

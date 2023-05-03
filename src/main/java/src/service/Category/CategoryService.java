@@ -116,22 +116,13 @@ public class CategoryService implements ICategoryService {
     }
 
     @Async
-    public CompletableFuture<List<CategoryDto>> getCategoryFeatures(UUID parentCategoryId) {
+    public CompletableFuture<List<CategoryDto>> getCategoryFeatures() {
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        List<Category> categories = categoryRepository.findFeatureCategories();
 
-        if (parentCategoryId == null) {
-            throw new IllegalArgumentException("Parent category ID cannot be null");
-        }
-
-        List<Category> categories = categoryRepository.findAllByParentCategoryId(parentCategoryId);
-        if (categories == null) {
-            throw new NotFoundException("Unable to find categories with parent category ID " + parentCategoryId);
-        }
         return CompletableFuture.completedFuture(categories.stream().map(
                 x -> toDto.map(x, CategoryDto.class)
         ).collect(Collectors.toList()));
     }
-
-
 }
 

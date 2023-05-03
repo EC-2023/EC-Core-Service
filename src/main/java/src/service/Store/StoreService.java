@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.BadRequestException;
 import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.config.utils.Constant;
 import src.model.Orders;
 import src.model.Product;
 import src.model.Store;
-import src.repository.ICommissionRepository;
-import src.repository.IOrdersRepository;
-import src.repository.IStoreLevelRepository;
-import src.repository.IStoreRepository;
+import src.model.User;
+import src.repository.*;
 import src.service.Orders.Dtos.OrdersDto;
 import src.service.Product.Dtos.ProductStoreDto;
 import src.service.Store.Dtos.StoreCreateDto;
@@ -38,18 +38,20 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class StoreService implements IStoreService {
     private final IStoreRepository storeRepository;
-    private final IOrdersRepository ordersRepository;
     private final IStoreLevelRepository storeLevelRepository;
     private final ICommissionRepository commissionRepository;
+    private final IUserRepository userRepository;
+    private final IRoleRepository roleRepository;
     private final ModelMapper toDto;
     @PersistenceContext
     EntityManager em;
 
-    public StoreService(IStoreRepository storeRepository, IOrdersRepository ordersRepository, IStoreLevelRepository storeLevelRepository, ICommissionRepository commissionRepository, ModelMapper toDto) {
+    public StoreService(IStoreRepository storeRepository, IOrdersRepository ordersRepository, IStoreLevelRepository storeLevelRepository, ICommissionRepository commissionRepository, IUserRepository userRepository, IRoleRepository roleRepository, ModelMapper toDto) {
         this.storeRepository = storeRepository;
-        this.ordersRepository = ordersRepository;
         this.storeLevelRepository = storeLevelRepository;
         this.commissionRepository = commissionRepository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.toDto = toDto;
     }
 
@@ -151,14 +153,22 @@ public class StoreService implements IStoreService {
                 ).toList()));
     }
 
-
     @Async
     @Override
     public CompletableFuture<StoreDto> setActiveStore(UUID storeId, boolean status) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        User user = userRepository.findById(store.getOwnId()).orElseThrow(() -> new NotFoundException("Unable to find user!"));
+        if (status) {
+            user.setRoleId(roleRepository.findByName(Constant.VENDOR).get().getId());
+        } else {
+            user.setRoleId(roleRepository.findByName(Constant.USER).get().getId());
+        }
+        userRepository.save(user);
         store.setActive(status);
         store.setUpdateAt(new Date(new java.util.Date().getTime()));
         store = storeRepository.save(store);
+
+
         return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
     }
 
@@ -167,6 +177,22 @@ public class StoreService implements IStoreService {
     public CompletableFuture<StoreDto> setDeleteStore(UUID storeId, boolean status) {
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
         store.setIsDeleted(status);
+        store.setUpdateAt(new Date(new java.util.Date().getTime()));
+        store = storeRepository.save(store);
+        return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
+    }
+
+
+    @Async
+    @Override
+    public CompletableFuture<StoreDto> register(UUID userId, StoreCreateDto input) {
+        Store existStore = storeRepository.findByUserId(userId).orElse(null);
+        if (existStore != null && (existStore.getIsDeleted() || !existStore.isActive()))
+            throw new BadRequestException("Store has been banned!");
+        Store store = toDto.map(input, Store.class);
+        store.setOwnId(userId);
+        store.setStoreLevelId(storeLevelRepository.findMinStoreLevel().getId());
+        store.setCommissionId(commissionRepository.findMinCommission().getId());
         store.setUpdateAt(new Date(new java.util.Date().getTime()));
         store = storeRepository.save(store);
         return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));

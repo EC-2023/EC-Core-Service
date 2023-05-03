@@ -66,7 +66,7 @@ public class Orders {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private User userByUserId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     private Store storeByStoreId;
     @ManyToOne

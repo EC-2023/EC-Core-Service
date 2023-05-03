@@ -36,6 +36,7 @@ public class CartService implements ICartService {
 
     private final ICartItemsRepository cartItemsRepository;
     private final IUserRepository userRepository;
+    private final IStoreRepository storeRepository;
     private final ModelMapper toDto;
     final
     ICartItemsService cartItemsService;
@@ -47,10 +48,11 @@ public class CartService implements ICartService {
     @PersistenceContext
     EntityManager em;
 
-    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, IUserRepository userRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository, IAttributeRepository attributeRepository) {
+    public CartService(ICartRepository cartRepository, ICartItemsRepository cartItemsRepository, IUserRepository userRepository, IStoreRepository storeRepository, ModelMapper toDto, ICartItemsService cartItemsService, IProductRepository productRepository, IAttributeValueRepository attributeValueRepository, IAttributeRepository attributeRepository) {
         this.cartRepository = cartRepository;
         this.cartItemsRepository = cartItemsRepository;
         this.userRepository = userRepository;
+        this.storeRepository = storeRepository;
         this.toDto = toDto;
         this.cartItemsService = cartItemsService;
         this.productRepository = productRepository;
@@ -93,6 +95,8 @@ public class CartService implements ICartService {
                 features.filter().orderBy().paginate().exec().stream().map(x ->
                         {
                             Hibernate.initialize(x.getCartItemsByCartId());
+//                            Hibernate.initialize(x.getStoreByStoreId());
+                            x.setStoreByStoreId(storeRepository.findById(x.getStoreId()).orElseThrow(() -> new NotFoundException("Not found store by id " + x.getStoreId())));
                             return toDto.map(x, CartDto.class);
                         }
                 ).toList()));

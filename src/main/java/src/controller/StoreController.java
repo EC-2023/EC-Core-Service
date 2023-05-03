@@ -107,4 +107,10 @@ public class StoreController {
         return storeService.setDeleteStore(id, status);
     }
 
+    @Authenticate
+    @PostMapping("/register")
+    public CompletableFuture<StoreDto> register(@RequestBody StoreCreateDto input) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return storeService.register(userId, input);
+    }
 }

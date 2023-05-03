@@ -39,7 +39,7 @@ public class Cart {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
     //  @Where(clause = "isDeleted = false")
     private User userByUserId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "store_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     //  @Where(clause = "isDeleted = false")
     private Store storeByStoreId;
