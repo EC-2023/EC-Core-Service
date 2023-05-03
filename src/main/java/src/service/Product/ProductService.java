@@ -87,6 +87,18 @@ public class ProductService implements IProductService {
     public CompletableFuture<PagedResultDto<ProductDto>> findAllPagination(HttpServletRequest request, Integer limit, Integer skip) {
         long total = productRepository.count();
         Pagination pagination = Pagination.create(total, skip, limit);
+        String cateId = request.getParameter("category");
+        if (cateId != null) {
+            List<UUID> cates = new ArrayList<>();
+            cates.add(UUID.fromString(cateId));
+            Category cate = categoryRepository.findAllChild(UUID.fromString(cateId));
+            Category tmp = cate.getParentCategory();
+            while (tmp != null) {
+                cates.add(tmp.getParentCategoryId());
+                tmp = tmp.getParentCategory();
+            }
+            request.setAttribute("category", cates);
+        }
         ApiQuery<Product> features = new ApiQuery<>(request, em, Product.class, pagination);
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         return CompletableFuture.completedFuture(PagedResultDto.create(pagination,

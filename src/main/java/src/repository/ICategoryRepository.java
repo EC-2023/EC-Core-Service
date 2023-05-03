@@ -14,7 +14,8 @@ public interface ICategoryRepository extends JpaRepository<Category, UUID> {
     //    @Query("SELECT c FROM Category c WHERE c.Id = ?1")
     @Query("SELECT c FROM Category c WHERE c.parentCategoryId IS NOT NULL")
     List<Category> findFeatureCategories();
-
+    @Query("SELECT c FROM Category c WHERE c.parentCategoryId = ?1")
+    Category findAllChild(UUID id);
 
     List<Category> findByNameStartingWithIgnoreCase(String name);
 }
