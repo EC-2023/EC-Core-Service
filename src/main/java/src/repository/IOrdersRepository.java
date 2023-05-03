@@ -46,5 +46,7 @@ public interface IOrdersRepository extends JpaRepository<Orders, UUID> {
     List<Object[]> findMonthlyOrder(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
     @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(1) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
     List<Object[]> findYearlyOrder(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query(value = "SELECT EXISTS(SELECT 1 FROM orders o INNER JOIN order_items oi ON o.order_id = oi.order_id WHERE o.user_id = :userId AND oi.product_id = :productId and o.status = 3 LIMIT 1)", nativeQuery = true)
+    boolean checkUserPurchasedProduct(@Param("userId") UUID userId, @Param("productId") UUID productId);
 }
 

@@ -10,15 +10,15 @@ import java.util.UUID;
 
 @Data
 public class ReviewDto extends ReviewUpdateDto {
- @JsonProperty(value = "Id", required = true)
+    @JsonProperty(value = "Id")
     public UUID Id;
-    @JsonProperty(value = "createAt", required = true)
-    public Date createAt ;
-    @JsonProperty(value = "updateAt", required = true)
-    public Date updateAt ;
-   @JsonProperty(value = "isDeleted")
-   public Boolean isDeleted  = false;
-    @JsonProperty(value = "userId", required = true)
-    private UUID userId;
+    @JsonProperty(value = "createAt")
+    public Date createAt;
+    @JsonProperty(value = "updateAt")
+    public Date updateAt;
+    @JsonProperty(value = "isDeleted")
+    public Boolean isDeleted;
+    @JsonProperty(value = "user")
+    public UserDto userByUserId;
 }
 

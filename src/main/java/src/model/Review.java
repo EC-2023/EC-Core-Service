@@ -2,13 +2,18 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name="review")
+@Table(name = "review")
+
+@DynamicInsert
+@DynamicUpdate
 @Data
 public class Review {
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,21 +39,21 @@ public class Review {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
     @Basic
-    @Column(name = "createAt")
-    private Date createAt;
+    @Column(name = "create_at")
+    private Date createAt = new Date(new java.util.Date().getTime());
     @Basic
-    @Column(name = "updateAt")
-    private Date updateAt;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, insertable=false, updatable=false)
-    @Where(clause = "is_deleted = false")
+    @Column(name = "update_at")
+    private Date updateAt = new Date(new java.util.Date().getTime());
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+//    @Where(clause = "is_deleted = false")
     private User userByUserId;
     @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id",insertable=false, updatable=false)
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private Product productByProductId;
     @ManyToOne
-    @JoinColumn(name = "store_id", referencedColumnName = "store_id",insertable=false, updatable=false)
+    @JoinColumn(name = "store_id", referencedColumnName = "store_id", insertable = false, updatable = false)
     @Where(clause = "is_deleted = false")
     private Store storeByStoreId;
 }

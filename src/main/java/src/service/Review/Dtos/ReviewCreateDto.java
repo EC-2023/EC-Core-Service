@@ -11,7 +11,8 @@ public class ReviewCreateDto {
     private String content;
     @JsonProperty(value = "rating", required = true)
     private int rating;
-    @JsonProperty(value = "storeId", required = true)
+    @JsonProperty(value = "productId")
+    private UUID productId;
+    @JsonProperty(value = "storeId")
     private UUID storeId;
-
 }

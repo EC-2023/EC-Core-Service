@@ -2,8 +2,6 @@ package src.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -100,8 +98,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "userByUserId")
     @Where(clause = "is_deleted = false")
     private Collection<Orders> ordersByUserId;
-    @OneToMany(mappedBy = "userByUserId")
-    @Where(clause = "is_deleted = false")
+    @OneToMany(mappedBy = "userByUserId", fetch = FetchType.EAGER)
+//    @Where(clause = "is_deleted = false")
     private Collection<Review> reviewsByUserId;
     @OneToMany(mappedBy = "userByOwnId")
     @Where(clause = "is_deleted = false")
