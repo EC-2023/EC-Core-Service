@@ -68,7 +68,7 @@ public class Store {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updateAt")
     private Date updateAt = new Date(new java.util.Date().getTime());
-    @OneToMany(mappedBy = "storeByStoreId")
+    @OneToMany(mappedBy = "storeByStoreId", fetch = FetchType.EAGER)
     private Collection<Orders> ordersByStoreId;
     @OneToMany(mappedBy = "storeByStoreId")
     private Collection<Review> reviewsByStoreId;

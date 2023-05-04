@@ -96,7 +96,6 @@ public class CartService implements ICartService {
                         {
                             Hibernate.initialize(x.getCartItemsByCartId());
 //                            Hibernate.initialize(x.getStoreByStoreId());
-                            x.setStoreByStoreId(storeRepository.findById(x.getStoreId()).orElseThrow(() -> new NotFoundException("Not found store by id " + x.getStoreId())));
                             return toDto.map(x, CartDto.class);
                         }
                 ).toList()));
