@@ -23,17 +23,17 @@ public interface IOrdersRepository extends JpaRepository<Orders, UUID> {
     @Query("SELECT COUNT(o) FROM Orders o WHERE o.code = ?1")
     Long countByOrderNumber(String orderNumber);
 
-    @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(r.amount_togd) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 2 GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)
+    @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(r.amount_togd) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 3 GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)
     List<Object[]> findMonthlyRevenueByDateBetween(Date startDate, Date endDate);
 
-    @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(r.amount_togd) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 2 GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
+    @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(r.amount_togd) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 3 GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
     List<Object[]> findYearlyRevenueByDateBetween(Date startDate, Date endDate);
 
-    @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(r.amount_to_store) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 2 AND r.store_id= :storeId GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)
+    @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(r.amount_to_store) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 3 AND r.store_id= :storeId GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)
 //    @Query("SELECT new src.service.Statistic.Dtos.PayLoadStatisticData(r.createAt, SUM(r.amountToGd)) FROM Orders r WHERE r.createAt BETWEEN :startDate AND :endDate AND r.status = 2 AND r.storeId = :storeId GROUP BY EXTRACT(DATE FROM r.createAt) ORDER BY DATE(r.createAt)")
     List<Object[]> findMonthlyRevenueByDateBetweenByStore(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("storeId") UUID storeId);
 
-    @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(r.amount_to_store) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 2 AND r.store_id = :storeId GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
+    @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(r.amount_to_store) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.status = 3 AND r.store_id = :storeId GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
     List<Object[]> findYearlyRevenueByDateBetweenByStore(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("storeId") UUID storeId);
 
     @Query(value = "SELECT DATE_TRUNC('day', r.create_at) as date, SUM(1) FROM orders r WHERE r.create_at BETWEEN :startDate AND :endDate AND r.store_id = :storeId GROUP BY DATE_TRUNC('day', r.create_at) ORDER BY DATE_TRUNC('day', r.create_at)", nativeQuery = true)

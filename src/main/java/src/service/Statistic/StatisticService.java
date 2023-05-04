@@ -64,7 +64,6 @@ public class StatisticService implements IStatisticService {
         LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
         switch (option) {
             case 0 -> {
-
                 return CompletableFuture.completedFuture(getDailyRevenue(date, null));
             }
             case 1 -> {
