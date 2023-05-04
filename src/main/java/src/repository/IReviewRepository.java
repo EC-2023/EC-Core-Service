@@ -13,6 +13,10 @@ import java.util.UUID;
 public interface IReviewRepository extends JpaRepository<Review, UUID> {
     @Query("SELECT p FROM Review p WHERE p.productId =  ?1")
     List<Review> getReviewByProduct(UUID productId);
+
+
+    @Query("SELECT AVG(r.rating) FROM Review r WHERE r.productId = ?1")
+    Double findAverageRatingByProductId(UUID productId);
 }
 
     

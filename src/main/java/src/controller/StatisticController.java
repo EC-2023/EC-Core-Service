@@ -47,7 +47,7 @@ public class StatisticController {
                                                                           @RequestParam("date") long dateStr) {
         Instant instant = Instant.ofEpochMilli(dateStr);
         Date date = Date.from(instant);
-        return statisticService.getStaticRevenue(option, date);
+        return statisticService.getStaticProduct(option, date);
     }
     @Authenticate
     @GetMapping("/get-static-order")

@@ -20,4 +20,5 @@ public interface IStoreService extends IService<StoreDto, StoreCreateDto, StoreU
     public CompletableFuture<StoreDto> create(StoreCreateDto input, UUID userId);
     public CompletableFuture<PagedResultDto<ProductStoreDto>> findProductByStore(HttpServletRequest request, Integer limit, Integer skip);
     public CompletableFuture<StoreDto> register(UUID userId, StoreCreateDto input);
+    public CompletableFuture<StoreDto> getMyStore(UUID userId);
 }

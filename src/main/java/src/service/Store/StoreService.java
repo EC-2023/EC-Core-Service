@@ -182,6 +182,13 @@ public class StoreService implements IStoreService {
         return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
     }
 
+    @Async
+    @Override
+    public CompletableFuture<StoreDto> getMyStore(UUID userId) {
+        Store store = storeRepository.findByUserId(userId).orElseThrow(() -> new NotFoundException("Unable to find store!"));
+        return CompletableFuture.completedFuture(toDto.map(store, StoreDto.class));
+    }
+
 
     @Async
     @Override

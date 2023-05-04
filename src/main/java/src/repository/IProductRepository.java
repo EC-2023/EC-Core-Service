@@ -30,5 +30,7 @@ public interface IProductRepository extends JpaRepository<Product, UUID> {
     @Query(value = "SELECT to_char(DATE_TRUNC('MONTH', r.create_at), 'Month') as month, SUM(1) FROM Product r WHERE r.create_at BETWEEN :startDate AND :endDate  AND r.store_id = :storeId GROUP BY DATE_TRUNC('MONTH', r.create_at) ORDER BY DATE_TRUNC('MONTH', r.create_at)", nativeQuery = true)
 //    @Query(value = "SELECT new src.service.Statistic.Dtos.PayLoadStatisticData(CAST(FUNCTION('date_trunc', 'MONTH', r.createAt) as date), SUM(1)) FROM Product r WHERE r.createAt BETWEEN :startDate AND :endDate  AND r.storeId = :storeId GROUP BY EXTRACT(MONTH FROM r.createAt) ORDER BY  EXTRACT(MONTH FROM r.createAt)", nativeQuery = true)
     List<Object[]> findYearlyProductByDateBetweenByStore(@Param("startDate") Date startDate, @Param("endDate") Date endDate, @Param("storeId") UUID storeId);
+
+
 }
 

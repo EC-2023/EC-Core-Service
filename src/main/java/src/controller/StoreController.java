@@ -113,4 +113,11 @@ public class StoreController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return storeService.register(userId, input);
     }
+
+    @Authenticate
+    @GetMapping("/my-store")
+    public CompletableFuture<StoreDto> getMyStore() {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return storeService.getMyStore(userId);
+    }
 }

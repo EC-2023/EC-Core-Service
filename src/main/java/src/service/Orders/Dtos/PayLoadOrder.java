@@ -15,5 +15,4 @@ public class PayLoadOrder {
     UUID deliveryId;
     String address;
     String phone;
-
 }

@@ -10,12 +10,16 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import src.config.dto.PagedResultDto;
 import src.config.dto.Pagination;
+import src.config.exception.NotFoundException;
 import src.config.utils.ApiQuery;
+import src.model.Product;
 import src.model.Review;
 import src.repository.IOrdersRepository;
+import src.repository.IProductRepository;
 import src.repository.IReviewRepository;
 import src.repository.IUserRepository;
 import src.service.Review.Dtos.ReviewCreateDto;
@@ -34,16 +38,18 @@ public class ReviewService implements IReviewService {
     private final IReviewRepository reviewRepository;
     private final IOrdersRepository ordersRepository;
     private final IUserRepository userRepository;
+    private final IProductRepository productRepository;
 
     private final ModelMapper toDto;
 
     @PersistenceContext
     EntityManager em;
 
-    public ReviewService(IReviewRepository reviewRepository, IOrdersRepository ordersRepository, IUserRepository userRepository, ModelMapper toDto) {
+    public ReviewService(IReviewRepository reviewRepository, IOrdersRepository ordersRepository, IUserRepository userRepository, IProductRepository productRepository, ModelMapper toDto) {
         this.reviewRepository = reviewRepository;
         this.ordersRepository = ordersRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
         this.toDto = toDto;
     }
 
@@ -65,14 +71,17 @@ public class ReviewService implements IReviewService {
         return null;
     }
 
-    @Async
+    @Transactional
     public CompletableFuture<ReviewDto> create(UUID userId, ReviewCreateDto review) {
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Review rev = toDto.map(review, Review.class);
         rev.setUserId(userId);
-        rev =reviewRepository.save(rev);
+        rev = reviewRepository.save(rev);
         rev.setUserByUserId(userRepository.findById(userId).orElse(null));
         ReviewDto reviewDto = toDto.map(rev, ReviewDto.class);
+        Product prod = productRepository.findById(review.getProductId()).orElseThrow(() -> new NotFoundException("Unable to find Product!"));
+        prod.setRating(reviewRepository.findAverageRatingByProductId(review.getProductId()));
+        productRepository.save(prod);
         return CompletableFuture.completedFuture(reviewDto);
     }
 

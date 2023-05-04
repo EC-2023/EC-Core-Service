@@ -176,6 +176,11 @@ public class CartService implements ICartService {
         List<CartItems> cartItems = cartItemsRepository.findByCartItemByProductId(cartItemsCreateDto.getProductId());
         if (cartItems.size() > 0) {
             for (CartItems cartItem : cartItems) {
+                // neu khong co attribute value nafo
+                if (cartItem.getAttributeValuesByCartItemId().size() == 0 && cartItemsCreateDto.getAttributesValues().size() == 0) {
+                    cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
+                    return CompletableFuture.completedFuture(toDto.map(cartItemsRepository.save(cartItem), CartItemsDto.class));
+                }
                 StringBuilder check = new StringBuilder();
                 for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {
                     check.append(attributeValue.getName()).append(", ");
