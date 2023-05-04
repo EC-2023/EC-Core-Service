@@ -179,7 +179,8 @@ public class CartService implements ICartService {
                 // neu khong co attribute value nafo
                 if (cartItem.getAttributeValuesByCartItemId().size() == 0 && cartItemsCreateDto.getAttributesValues().size() == 0) {
                     cartItem.setQuantity(cartItem.getQuantity() + cartItemsCreateDto.getQuantity());
-                    return CompletableFuture.completedFuture(toDto.map(cartItemsRepository.save(cartItem), CartItemsDto.class));
+                    cartItemsRepository.save(cartItem);
+                    return CompletableFuture.completedFuture(toDto.map(cartItem, CartItemsDto.class));
                 }
                 StringBuilder check = new StringBuilder();
                 for (AttributeValue attributeValue : cartItem.getAttributeValuesByCartItemId()) {

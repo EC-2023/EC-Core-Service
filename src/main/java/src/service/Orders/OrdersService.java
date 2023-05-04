@@ -195,17 +195,26 @@ public class OrdersService implements IOrdersService {
             if (!input.isCOD() && user.getEWallet() < amountFromUser) {
                 throw new BadRequestException("Not enough money in your wallet");
             }
-            prod.setQuantity(prod.getQuantity() - cartItems.getQuantity());
 
+            prod.setQuantity(prod.getQuantity() - cartItems.getQuantity());
             productRepository.save(prod);
             order = getOrders(userId, input, amountFromUser, amountToGd, amountToStore);
             OrderItems orderItems = new OrderItems(cartItems.getProductId(), cartItems.getQuantity(), order.getId());
-            orderItemsRepository.save(orderItems);
+            orderItems = orderItemsRepository.save(orderItems);
+            List<AttributeValue> attributeValues = new ArrayList<>();
+            if (cartItems.getAttributeValuesByCartItemId() != null) {
+                for (AttributeValue a : cartItems.getAttributeValuesByCartItemId()) {
+                    a.setCartItem_id(null);
+                    a.setOrderItem_id(orderItems.getId());
+                    attributeValues.add(a);
+                }
+                attributeValueRepository.saveAll(attributeValues);
+            }
         } else {
 //            xoa trong cart item
             for (CartItems cartItems : input.getOrders()) {
                 Product prod = productRepository.findById(cartItems.getProductId()).orElseThrow(() -> new NotFoundException("Not found product"));
-                if (cartItems.getQuantity() > cartItems.getProductByProductId().getQuantity())
+                if (cartItems.getQuantity() > prod.getQuantity())
                     throw new BadRequestException("Quantity product is not enough");
                 if (prod.getDateValidPromote() != null)
                     total += (new Date(new java.util.Date().getTime())).compareTo(prod.getDateValidPromote()) < 0 ? cartItems.getQuantity() * prod.getPromotionalPrice() : cartItems.getQuantity() * prod.getPrice();
@@ -228,18 +237,29 @@ public class OrdersService implements IOrdersService {
                 prod.setQuantity(prod.getQuantity() - cartItems.getQuantity());
                 productRepository.save(prod);
                 OrderItems orderItem = new OrderItems(cartItems.getProductId(), cartItems.getQuantity(), order.getId());
-                orderItem = orderItemsRepository.save(orderItem);
-                OrderItems finalOrderItem = orderItem;
+                OrderItems finalOrderItem = orderItemsRepository.save(orderItem);
                 Hibernate.initialize(finalOrderItem.getAttributesValueByOrderItemId());
-                cartItems.getAttributeValuesByCartItemId().forEach(x -> {
-                    x.setCartItem_id(null);
-                    x.setOrderItem_id(finalOrderItem.getId());
-                    attributeValues.add(x);
-                });
+                if (cartItems.getAttributeValuesByCartItemId() != null)
+                    for (AttributeValue a : cartItems.getAttributeValuesByCartItemId()) {
+                        a.setCartItem_id(null);
+                        a.setOrderItem_id(finalOrderItem.getId());
+                        attributeValues.add(a);
+                    }
             }
-            attributeValueRepository.saveAll(attributeValues);
-            List<UUID> ids = List.of(input.getOrders().stream().map(CartItems::getId).toArray(UUID[]::new));
-            cartItemsRepository.deleteAllById(ids);
+            if (attributeValues.size() > 0)
+                attributeValueRepository.saveAll(attributeValues);
+            if (input.getOrders().size() > 0) {
+                List<UUID> ids = input.getOrders().stream().map(x -> x.getId()).toList();
+                for (UUID id : ids) {
+                    CartItems cartItems = cartItemsRepository.findById(id).orElseThrow(() -> new NotFoundException("Not found cart item by id: " + id));
+                    List<AttributeValue> atts = attributeValueRepository.findByCartItem_id(cartItems.getId());
+                    if (atts.size() > 0) {
+                        attributeValueRepository.deleteAll(atts);
+                    }
+                    attributeValueRepository.deleteAll(atts);
+                    cartItemsRepository.delete(cartItems);
+                }
+            }
         }
         return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
     }
@@ -249,7 +269,7 @@ public class OrdersService implements IOrdersService {
         order = new Orders(userId, input.getStoreId(), input.getDeliveryId(), input.getAddress(), input.getPhone(), 0, !input.isCOD(), amountFromUser, amountToStore, amountToGd);
         String code = Utils.generateCodeOrder();
         while (true) {
-            if (ordersRepository.countByOrderNumber(code) == null || ordersRepository.countByOrderNumber(code) == 0) {
+            if (ordersRepository.countByOrderNumber(code) > 0) {
                 code = Utils.generateCodeOrder();
             } else {
                 order.setCode(code);
@@ -268,11 +288,11 @@ public class OrdersService implements IOrdersService {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("Not found order"));
         //Get OwnerId
-      User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Not found user"));
         //Check userId == OwnerId
         if (user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
-           if (order.getStatus() == OrderStatus.PROCESSING.ordinal()) {
+            if (order.getStatus() == OrderStatus.PROCESSING.ordinal()) {
                 order.setStatus(OrderStatus.DELIVERING.ordinal());
             } else {
                 throw new BadRequestException("Can't change status");
@@ -351,6 +371,7 @@ public class OrdersService implements IOrdersService {
         }
         return CompletableFuture.completedFuture(toDto.map(ordersRepository.save(order), OrdersDto.class));
     }
+
     @Override
     @Async
     public CompletableFuture<OrdersDto> cancelDelivery(UUID userId, UUID orderId) {
@@ -362,12 +383,12 @@ public class OrdersService implements IOrdersService {
         //Check userId == OwnerId
         if (user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
             if (order.getStatus() == OrderStatus.DELIVERING.ordinal()) {
-                if (order.isPaidBefore()){
+                if (order.isPaidBefore()) {
                     User buyer = userRepository.findById(order.getUserId())
                             .orElseThrow(() -> new NotFoundException("Not found buyer"));
                     buyer.setEWallet(buyer.getEWallet() + order.getAmountFromUser());
                     List<OrderItems> orderItems = orderItemsRepository.findByOrderId(order.getId());
-                    for (OrderItems orderItem : orderItems){
+                    for (OrderItems orderItem : orderItems) {
                         Product product = productRepository.findById(orderItem.getProductId())
                                 .orElseThrow(() -> new NotFoundException("Not found product"));
                         product.setQuantity(product.getQuantity() + orderItem.getQuantity());
