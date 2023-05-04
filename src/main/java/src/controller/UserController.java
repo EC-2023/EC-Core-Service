@@ -9,10 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import src.config.annotation.ApiPrefixController;
 import src.config.annotation.Authenticate;
 import src.config.dto.PagedResultDto;
-import src.service.User.Dtos.UserCreateDto;
-import src.service.User.Dtos.UserDto;
-import src.service.User.Dtos.UserProfileDto;
-import src.service.User.Dtos.UserUpdateDto;
+import src.service.User.Dtos.*;
 import src.service.User.IUserService;
 
 import java.lang.reflect.InvocationTargetException;
@@ -30,7 +27,7 @@ public class UserController {
     }
 
 
-    @GetMapping( "/{id}")
+    @GetMapping("/{id}")
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<UserDto> findOneById(@PathVariable UUID id) {
@@ -45,7 +42,7 @@ public class UserController {
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Hello API")
     public CompletableFuture<List<UserDto>> findAll() {
-       return userService.getAll();
+        return userService.getAll();
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -63,11 +60,12 @@ public class UserController {
     }
 
     @GetMapping("/pagination")
-    public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip ,
-                                                                              @RequestParam(required = false, defaultValue = "10") Integer limit,
-                                                                              @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+    public CompletableFuture<PagedResultDto<UserDto>> findAllPagination(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                        @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                        @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
         return userService.findAllPagination(request, limit, skip);
     }
+
     @DeleteMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @Tag(name = "users", description = "Operations related to users")
 //    @Operation(summary = "Remove")
@@ -77,7 +75,7 @@ public class UserController {
 
     @Authenticate
     @GetMapping(value = "my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<UserProfileDto> getMyProfile(){
+    public CompletableFuture<UserProfileDto> getMyProfile() {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return userService.getMyProfile(userId);
     }
@@ -87,5 +85,12 @@ public class UserController {
     public CompletableFuture<UserProfileDto> updateMyProfile(@RequestBody UserUpdateDto input) throws InvocationTargetException, IllegalAccessException {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return userService.updateMyProfile(userId, input);
+    }
+
+    @Authenticate
+    @PatchMapping(value = "update-avatar", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CompletableFuture<UserDto> updateAvatar(@RequestBody UpdateAvatarDto input) {
+        UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
+        return userService.updateAvatar(userId, input.getAvatar());
     }
 }

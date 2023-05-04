@@ -140,6 +140,14 @@ public class UserService implements UserDetailsService, IUserService {
         return CompletableFuture.completedFuture(null);
     }
 
+    @Async
+    public CompletableFuture<UserDto> updateAvatar(UUID id, String avatar) {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Unable to find User!"));
+        existingUser.setAvatar(avatar);
+        existingUser = userRepository.save(toDto.map(existingUser, User.class));
+        return CompletableFuture.completedFuture(toDto.map(existingUser, UserDto.class));
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);

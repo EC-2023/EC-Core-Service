@@ -2,7 +2,6 @@
 package src.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,8 +22,11 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @ApiPrefixController(value = "/orders")
 public class OrdersController {
-    @Autowired
-    private IOrdersService ordersService;
+    private final IOrdersService ordersService;
+
+    public OrdersController(IOrdersService ordersService) {
+        this.ordersService = ordersService;
+    }
 
     @Authenticate
     @GetMapping("/{id}")

@@ -17,4 +17,5 @@ public interface IUserService extends IService<UserDto, UserCreateDto, UserUpdat
 
     public CompletableFuture<UserProfileDto> getMyProfile(UUID id);
     public CompletableFuture<UserProfileDto> updateMyProfile(UUID id, UserUpdateDto input) throws InvocationTargetException, IllegalAccessException;
+    public CompletableFuture<UserDto> updateAvatar(UUID id, String avatar);
 }

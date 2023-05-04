@@ -92,18 +92,18 @@ public class OrdersService implements IOrdersService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
         Orders order = ordersRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find orders!"));
         Hibernate.initialize(order.getStoreByStoreId());
-        if (!order.getUserId().equals(userId)
-                || !order.getStoreByStoreId().getOwnId().equals(userId)
-                || !user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
-            throw new BadRequestException("You don't have permission to do that!");
+        if (order.getUserId().equals(userId)
+                || order.getStoreByStoreId().getOwnId().equals(userId)
+                || user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+            if (!user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
+                order.setAmountToGd(0);
+            }
+            if (!order.getStoreByStoreId().getOwnId().equals(userId)) {
+                order.setAmountToStore(0);
+            }
+            return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
         }
-        if (!user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
-            order.setAmountToGd(0);
-        }
-        if (!order.getStoreByStoreId().getOwnId().equals(userId)) {
-            order.setAmountToStore(0);
-        }
-        return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
+        throw new BadRequestException("You don't have permission to do that!");
     }
 
     @Async
