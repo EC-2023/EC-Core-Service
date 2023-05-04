@@ -349,7 +349,6 @@ public class OrdersService implements IOrdersService {
                 if (order.isPaidBefore()) {
                     buyer.setEWallet(buyer.getEWallet() + order.getAmountFromUser());
                 }
-
                 if (dateCreateDiff <= 15 * 24 * 60 * 60 * 1000) {
                     if (userId.equals(buyer.getId())) {
                         buyer.setPoint(buyer.getPoint() - point);
@@ -362,6 +361,16 @@ public class OrdersService implements IOrdersService {
                     }
                 }
                 order.setStatus(OrderStatus.CANCELLED.ordinal());
+                List<Product> productList = new ArrayList<>();
+                for (OrderItems item : order.getItem()) {
+                    Product product = productRepository.findById(item.getProductId())
+                            .orElseThrow(() -> new NotFoundException("Not found product"));
+                    product.setQuantity(product.getQuantity() + item.getQuantity());
+                    productList.add(product);
+                }
+                if (productList.size() > 0) {
+                    productRepository.saveAll(productList);
+                }
             } else {
                 throw new BadRequestException("Can't change status");
             }
@@ -441,9 +450,7 @@ public class OrdersService implements IOrdersService {
             for (OrderItems item : order.getItem()) {
                 Product product = productRepository.findById(item.getProductId())
                         .orElseThrow(() -> new NotFoundException("Not found product"));
-                product.setQuantity(product.getQuantity() - item.getQuantity());
-                product.setQuantity(product.getSold() - item.getQuantity());
-                product.setSold(product.getSold() - item.getQuantity());
+                product.setSold(product.getSold() + item.getQuantity());
                 productList.add(product);
             }
             if (productList.size() > 0) {
