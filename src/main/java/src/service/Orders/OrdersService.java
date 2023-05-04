@@ -343,8 +343,8 @@ public class OrdersService implements IOrdersService {
             int point = (int) Math.floor(order.getAmountFromUser() / 5000);
 
             //Thang mua
-            if (order.getStatus() == OrderStatus.PROCESSING.ordinal() ||
-                    (order.getStatus() == OrderStatus.DELIVERING.ordinal() && dateUpdateDiff > 15 * 24 * 60 * 60 * 1000)) {
+            if (order.getStatus() == OrderStatus.NOT_PROCESSED.ordinal() ||
+                    ((order.getStatus() == OrderStatus.PROCESSING.ordinal() || order.getStatus() == OrderStatus.DELIVERING.ordinal()) && dateUpdateDiff > 15 * 24 * 60 * 60 * 1000)) {
 
                 if (order.isPaidBefore()) {
                     buyer.setEWallet(buyer.getEWallet() + order.getAmountFromUser());
