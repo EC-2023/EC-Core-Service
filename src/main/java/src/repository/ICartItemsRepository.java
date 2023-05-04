@@ -16,8 +16,8 @@ public interface ICartItemsRepository extends JpaRepository<CartItems, UUID> {
     @Query("SELECT i FROM CartItems i WHERE i.cartId = ?1 and i.productId = ?2")
     CartItems findCartItemsByCartIdAndProductId(UUID cartId, UUID productId);
 
-    @Query("SELECT i FROM CartItems i WHERE i.productId = ?1")
-    List<CartItems> findByCartItemByProductId(UUID id);
+    @Query("SELECT i FROM CartItems i WHERE i.productId = ?1 and i.cartId = ?2")
+    List<CartItems> findByCartItemByProductId(UUID id, UUID cartId);
 
     @Query("select  i from CartItems i where i.Id = ?1")
     Optional<CartItems> findById(UUID id);

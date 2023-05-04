@@ -163,7 +163,7 @@ public class CartService implements ICartService {
         return CompletableFuture.completedFuture(null);
     }
 
-    @Async
+    @Transactional
     @Override
     public CompletableFuture<CartItemsDto> addToCart(CartItemsCreateDto cartItemsCreateDto, UUID userId) {
         toDto.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -173,7 +173,7 @@ public class CartService implements ICartService {
             cart = new Cart(userId, product.getStoreId());
             cart = cartRepository.save(cart);
         }
-        List<CartItems> cartItems = cartItemsRepository.findByCartItemByProductId(cartItemsCreateDto.getProductId());
+        List<CartItems> cartItems = cartItemsRepository.findByCartItemByProductId(cartItemsCreateDto.getProductId(), cart.getId());
         if (cartItems.size() > 0) {
             for (CartItems cartItem : cartItems) {
                 // neu khong co attribute value nafo
