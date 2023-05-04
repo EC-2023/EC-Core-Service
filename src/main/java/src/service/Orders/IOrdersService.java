@@ -1,6 +1,8 @@
 
 package src.service.Orders;
 
+import jakarta.servlet.http.HttpServletRequest;
+import src.config.dto.PagedResultDto;
 import src.service.IService;
 import src.service.Orders.Dtos.OrdersCreateDto;
 import src.service.Orders.Dtos.OrdersDto;
@@ -20,4 +22,5 @@ public interface IOrdersService extends IService<OrdersDto, OrdersCreateDto, Ord
     public CompletableFuture<OrdersDto> getOne(UUID id, UUID userId);
     public CompletableFuture<OrdersDto> confirmDelivery(UUID userId, UUID orderId);
     public CompletableFuture<OrdersDto> cancelDelivery(UUID userId, UUID orderId);
+    public CompletableFuture<PagedResultDto<OrdersDto>> getMyOrder(HttpServletRequest request, Integer limit, Integer skip);
 }

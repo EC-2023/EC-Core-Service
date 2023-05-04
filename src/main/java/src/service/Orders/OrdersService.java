@@ -482,5 +482,26 @@ public class OrdersService implements IOrdersService {
         }
         storeRepository.save(store);
     }
+
+
+    @Async
+    @Override
+    public CompletableFuture<PagedResultDto<OrdersDto>> getMyOrder(HttpServletRequest request, Integer limit, Integer skip) {
+        UUID userId = ((UUID) (request.getAttribute("id")));
+        request.setAttribute("custom", request.getQueryString() + "&userId%7B%7Beq%7D%7D=" + userId);
+        Pagination pagination = Pagination.create(0, skip, limit);
+        ApiQuery<Orders> features = new ApiQuery<>(request, em, Orders.class, pagination);
+        long total = features.filter().orderBy().exec().size();
+        pagination.setTotal(total);
+        return CompletableFuture.completedFuture(PagedResultDto.create(pagination,
+                features.filter().orderBy().paginate().exec().stream().map(x ->
+                        {
+                            Hibernate.initialize(x.getDeliveryByDeliveryId());
+                            Hibernate.initialize(x.getItem());
+                            return toDto.map(x, OrdersDto.class);
+                        }
+
+                ).toList()));
+    }
 }
 

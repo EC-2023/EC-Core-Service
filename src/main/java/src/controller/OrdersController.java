@@ -118,4 +118,13 @@ public class OrdersController {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
         return ordersService.finishOrder(userId, id);
     }
+
+
+    @Authenticate
+    @GetMapping("/getMyOrder")
+    public CompletableFuture<PagedResultDto<OrdersDto>> getMyOrder(HttpServletRequest request, @RequestParam(required = false, defaultValue = "0") Integer skip,
+                                                                         @RequestParam(required = false, defaultValue = "10") Integer limit,
+                                                                         @RequestParam(required = false, defaultValue = "createAt") String orderBy) {
+        return ordersService.getMyOrder(request, limit, skip);
+    }
 }
