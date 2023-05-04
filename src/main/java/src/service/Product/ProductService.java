@@ -100,7 +100,6 @@ public class ProductService implements IProductService {
                     }
                 }
             }
-
             request.setAttribute("category", cates);
         }
         ApiQuery<Product> features = new ApiQuery<>(request, em, Product.class, pagination);

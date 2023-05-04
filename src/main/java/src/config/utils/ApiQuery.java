@@ -4,7 +4,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import src.config.dto.Pagination;
+import src.model.Product;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +26,7 @@ public class ApiQuery<T> {
     List<Predicate> predicates = new ArrayList<>();
     private TypedQuery<T> query = null;
     Pagination pagination;
+    Class<T> entityType;
 
     public ApiQuery(HttpServletRequest req, EntityManager em, Class<T> entityType, Pagination pagination) {
         this.em = em;
@@ -32,6 +35,8 @@ public class ApiQuery<T> {
         this.req = req;
         this.root = cq.from(entityType);
         this.pagination = pagination;
+        this.entityType = entityType;
+
     }
 
     public ApiQuery<T> filter() {
@@ -44,7 +49,7 @@ public class ApiQuery<T> {
         else
             queryString = URLDecoder.decode(req.getAttribute("custom").toString(), StandardCharsets.UTF_8);
         if (req.getAttribute("category") != null) {
-            queryString = URLDecoder.decode(req.getQueryString() + "&categoryId%7B%7Bin%7D%7D=1", StandardCharsets.UTF_8) ;
+            queryString = URLDecoder.decode(req.getQueryString() + "&categoryId%7B%7Bin%7D%7D=1", StandardCharsets.UTF_8);
         }
         if (queryString != null) {
             Pattern pattern = Pattern.compile("(?i)(\\w+)\\{\\{(lt|lte|gt|gte|neq|in|eq|search)}}=(.*?)(&|$)");
@@ -85,7 +90,14 @@ public class ApiQuery<T> {
 
             }
         }
-
+        if (entityType.equals(Product.class)) {
+            predicates.add(cb.equal(root.get("isDeleted"), false));
+            UserDetails user = (UserDetails) req.getAttribute("user");
+            if (user != null && (user.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Constant.ADMIN))
+                    || user.getAuthorities().stream().anyMatch(x -> x.getAuthority().equals(Constant.VENDOR)))) {
+            } else
+                predicates.add(cb.equal(root.get("isActive"), true));
+        }
         if (predicates.size() > 0)
             cq.where(predicates.toArray(new Predicate[0]));
         return this;
