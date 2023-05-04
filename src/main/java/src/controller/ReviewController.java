@@ -85,7 +85,6 @@ public class ReviewController {
     @GetMapping(value = "/check-buy", produces = MediaType.APPLICATION_JSON_VALUE)
     public CompletableFuture<Boolean> checkBuy(@RequestParam UUID productId) {
         UUID userId = ((UUID) (((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getAttribute("id")));
-        return reviewService.checkBuy(userId, productId);
+        return reviewService.checkBuy(productId, userId);
     }
-
 }
