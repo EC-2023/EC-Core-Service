@@ -95,7 +95,7 @@ public class ProductService implements IProductService {
                 if (cate != null) {
                     Category tmp = cate.getParentCategory();
                     while (tmp != null) {
-                        cates.add(tmp.getId());
+                        cates.add(cate.getId());
                         tmp = tmp.getParentCategory();
                     }
                 }
