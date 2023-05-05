@@ -11,7 +11,7 @@
 
 @Repository
 public interface IStoreRepository extends JpaRepository<Store, UUID> {
-    @Query("SELECT s FROM Store s WHERE s.ownId = ?1 and s.isDeleted = false and s.isActive = true")
+    @Query("SELECT s FROM Store s WHERE s.ownId = ?1 and s.isDeleted = false")
     Optional<Store> findByUserId(UUID id);
     @Override
     @Query("SELECT u FROM Store u WHERE u.Id = ?1")

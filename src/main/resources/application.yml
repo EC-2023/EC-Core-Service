@@ -61,9 +61,12 @@ spring:
     hikari:
       max-lifetime: 1800000
     driver-claPss-name: org.postgresql.Driver
-    password: q2U8MtjgrJzN
-    url: jdbc:postgresql://ep-solitary-cell-554297.ap-southeast-1.aws.neon.tech/neondb
-    username: thaithangpc
+#    password: q2U8MtjgrJzN
+#    url: jdbc:postgresql://ep-solitary-cell-554297.ap-southeast-1.aws.neon.tech/neondb
+#    username: thaithangpc
+    password: admin
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: update

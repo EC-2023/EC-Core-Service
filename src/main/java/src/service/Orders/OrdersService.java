@@ -92,14 +92,17 @@ public class OrdersService implements IOrdersService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Unable to find user!"));
         Orders order = ordersRepository.findById(id).orElseThrow(() -> new NotFoundException("Unable to find orders!"));
         Hibernate.initialize(order.getStoreByStoreId());
+
+        Double amountToGd = order.getAmountToGd();
+        Double amountToStore = order.getAmountToStore();
         if (order.getUserId().equals(userId)
                 || order.getStoreByStoreId().getOwnId().equals(userId)
                 || user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
             if (!user.getRoleByRoleId().getName().equals(Constant.ADMIN)) {
-                order.setAmountToGd(0);
+                order.setAmountToGd(order.getAmountFromUser() - order.getAmountToStore() - order.getAmountToGd());
             }
             if (!order.getStoreByStoreId().getOwnId().equals(userId)) {
-                order.setAmountToStore(0);
+                order.setAmountToStore(order.getAmountFromUser() - order.getAmountToStore() - amountToGd);
             }
             return CompletableFuture.completedFuture(toDto.map(order, OrdersDto.class));
         }
